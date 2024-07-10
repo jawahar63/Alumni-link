@@ -4,11 +4,12 @@ import { CreateError } from '../utils/error.js';
 
 var storage= multer.diskStorage({
     destination:function(req,file,next){
-        next(null,'uploads/')
+        next(null,'uploads/dp/')
     },
     filename:function(res,file,next){
         let ext=path.extname(file.originalname)
-        next(null,Date.now()+ext)
+        next(null,file.originalname.toLocaleLowerCase().split('').join('-')+Date.now()+ext);
+
     }
 })
 var uploads = multer({

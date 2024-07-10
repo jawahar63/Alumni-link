@@ -22,7 +22,8 @@ export const updateProfile = async (req, res, next) => {
 
         const updateData = { ...req.body };
         if (req.file) {
-            updateData.profileImage = req.file.path;
+            const BASE_URL = process.env.BASE_URL
+            updateData.profileImage = `${BASE_URL}${req.file.path}`;
         }
 
         const newData = await User.findByIdAndUpdate(
