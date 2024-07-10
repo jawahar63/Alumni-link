@@ -1,0 +1,14 @@
+.hidden-file-input {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+.custom-button {
+    overflow:hidden;
+    border-radius: 0.5rem;
+    background-color: #000;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: 100px;
+}

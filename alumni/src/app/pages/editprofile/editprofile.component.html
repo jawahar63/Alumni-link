@@ -1,0 +1,86 @@
+<div class="w-screen sm:w-4/5 md:w-[80%] lg:w-[75%] h-fit sm:ms-[25px] mt-[25px] bg-darkgrey rounded-lg flex flex-col">
+    <form class="flex justify-start ms-[10%] mt-[5%]" [formGroup]="profileDetailform" >
+        <div class="flex flex-col lg:flex-row justify-start gap-10">
+            <div>
+                <p class="text-red text-[12px]">Note: crop the img into 1:1</p>
+                <img [src]="profileDetails.profileImage" alt="Dp" class="w-[100px] h-[100px] border-2 border-yellow bg-dark rounded-full mt-1">
+                <!-- <div class="w-[100px] h-[100px] border-2 border-yellow bg-dark rounded-full"></div> -->
+                <!-- <label class="inline-block mt-2 p-3 bg-dark rounded-lg text-white">Change Picture</label>
+                <input type="file"  id="imgInput" class="hidden" accept="image/*" formControlName="profileImage"> -->
+                <div class="custom-file-input-wrapper">
+                    <input type="file" class="absolute z-[-1] opacity-0" #fileInput accept="image/*" formControlName="profileImage"
+                        (change)="onFileSelected($event)" />
+                    <button type="button" class=" rounded-lg bg-dark text-white p-2 cursor-pointer w-[100px]" (click)="fileInput.click()">Upload</button>
+                </div>
+            </div>
+            <div class="flex flex-col justify-center gap-[10px]" >
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-yellow hidden sm:block text-[18px] w-[50px]">Name:</span>
+                    <div class="text-yellow text-[18px] ms-[20%]">{{fullName}}</div>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Email:</span>
+                    <div class="text-white text-[18px] ms-[20%]">{{profileDetails.email}}</div>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px]">Domain:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="domain" [ngModel]="profileDetails.domain">
+                    <span *ngIf="profileDetailform.hasError('required','domain') && profileDetailform.controls['domain'].dirty" class="text-red ms-[3%] w-[50%]">Domain is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Batch:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="batch" [ngModel]="profileDetails.batch">
+                    <span *ngIf="profileDetailform.hasError('required','batch') && profileDetailform.controls['batch'].dirty" class="text-red ms-[3%] w-[50%]">Batch is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Campany:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="company" [ngModel]="profileDetails.company">
+                    <span *ngIf="profileDetailform.hasError('required','company') && profileDetailform.controls['company'].dirty" class="text-red ms-[3%] w-[50%]">Campany is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Phone no:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="Phone_no" [ngModel]="profileDetails.Phone_no">
+                    <span *ngIf="profileDetailform.hasError('required','Phone_no') && profileDetailform.controls['Phone_no'].dirty" class="text-red ms-[3%] w-[50%]">Phone no is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px]">Age:</span>
+                    <input type="number" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="age" [ngModel]="profileDetails.age">
+                    <span *ngIf="profileDetailform.hasError('required','age') && profileDetailform.controls['age'].dirty" class="text-red ms-[3%] w-[50%]">Age is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Experiences:</span>
+                    <input type="number" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="experiences" [ngModel]="profileDetails.experiences">
+                    <span *ngIf="profileDetailform.hasError('required','experiences') && profileDetailform.controls['experiences'].dirty" class="text-red ms-[3%] w-[50%]">Experiences is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Location:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="location" [ngModel]="profileDetails.location">
+                    <span *ngIf="profileDetailform.hasError('required','location') && profileDetailform.controls['location'].dirty" class="text-red ms-[3%] w-[50%]">Location is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px]">Linkedin:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="linkedin" [ngModel]="profileDetails.linkedin">
+                    <span *ngIf="profileDetailform.hasError('required','linkedin') && profileDetailform.controls['linkedin'].dirty" class="text-red ms-[3%] w-[50%]">Linkedin is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px]">Github:</span>
+                    <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="github" [ngModel]="profileDetails.github">
+                    <span *ngIf="profileDetailform.hasError('required','github') && profileDetailform.controls['github'].dirty" class="text-red ms-[3%] w-[50%]">Github is required</span>
+                </div>
+                <div class="flex flex-row items-center justify-start">
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Skill:</span>
+                    <input type="text" class="ms-[24%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" [formControl]="skillControl" (submit)="addskill()">
+                    <!-- <div class="p-2 ms-[2%] text-white bg-orange rounded-lg h-[40px] text-center cursor-pointer" (click)="addskill()">Add</div> -->
+                    <button type="submit" class="p-2 ms-[2%] text-white bg-orange rounded-lg h-[40px] text-center cursor-pointer" (click)="addskill()" >Add</button>
+                </div>
+                <div class="w-[300px] flex flex-row gap-[10px] overflow-y-scroll p-2 ">
+                    <div *ngFor="let skill of skills;let i = index" class="p-2 rounded-3xl bg-dark text-white flex flex-row gap-1">
+                        {{skill}}
+                        <span class="text-red" (click)="removeskill(i)">x</span>
+                    </div>
+                </div>
+                <button type="submit" (click)="sumbiteditform()" [disabled]="!profileDetailform.valid" [class.disabled]="!profileDetailform.valid" class="p-2 text-white bg-green rounded-lg w-[50%] m-2">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

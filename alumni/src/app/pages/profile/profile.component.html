@@ -1,0 +1,122 @@
+<div class="w-screen sm:w-4/5 md:w-[80%] lg:w-[75%] h-[85vh] sm:ms-[25px] mt-[25px] bg-darkgrey rounded-lg flex flex-col">
+    <div class="h-[30%] lg:h-[35%] w-auto  flex flex-row justify-center items-center shadow-lg">
+        <div class="w-[100%] lg:w-[45%] flex flex-row justify-center items-center">
+            <img [src]="profileDetails.profileImage||'alumni\src\assets\logo.png'" alt="Dp"
+                                class="w-[100px] h-[100px] border-2 border-yellow bg-dark rounded-full mt-1">
+            <div class="flex flex-col gap-[5px] ms-[5%]">
+                <div class="text-yellow text-[18px]">{{fullName}}</div>
+                <div class="text-white text-[16px]">{{profileDetails.domain||"No domian"}}</div>
+                <div class="text-white text-[16px]">{{profileDetails.batch|| "No batch"}}</div>
+                <div class="text-white text-[16px]">{{profileDetails.company||"No campany"}}</div>
+                <div *ngIf="!Editable" (click)="goToMessage()" class="bg-green text-white w-24 text-center rounded-lg shadow-sm cursor-pointer">Message</div>
+                <div *ngIf="Editable" (click)="Editprofile()" class="bg-dark text-white w-24 text-center rounded-lg shadow-sm cursor-pointer">Edit profile</div>
+            </div>
+        </div>
+        <div class="w-[1px] h-full bg-white hidden lg:block"></div>
+        <div class="w-[50%] hidden lg:block">
+            <div class="flex flex-row ms-[5%] justify-center items-center">
+                <div class="flex flex-col gap-[5px]">
+                    <div class="text-white text-[16px]">Phone no:</div>
+                    <div class="text-white text-[16px]">Email:</div>
+                    <div class="text-white text-[16px]">Age:</div>
+                    <div class="text-white text-[16px]">Experiences:</div>
+                    <div class="text-white text-[16px]">Location:</div>
+                </div>
+                <div class="flex flex-col gap-[5px] ms-[5%]">
+                    <div class="text-white text-[15px]">{{profileDetails.Phone_no||"No phone"}}</div>
+                    <div class="text-white text-[15px]">{{profileDetails.email||"No email"}}</div>
+                    <div class="text-white text-[15px]">{{profileDetails.age||"No age"}}</div>
+                    <div class="text-white text-[15px]">{{profileDetails.experiences||"No experiences"}}</div>
+                    <div class="text-white text-[15px]">{{profileDetails.location||"No location"}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hidden lg:block h-[65%]">
+        <div class="h-[100%] w-[100%] flex flex-row">
+            <div class="w-[80%] h-[100%] flex flex-col items-center p-5">
+                <span class="text-yellow">Post</span>
+            </div>
+            <div class="w-[20%] h-[100%] shadow-lg p-2 flex flex-col gap-[20px] mt-[10px]">
+                <div class="text-white m-2 flex flex-row gap-10 justify-center items-center">
+                    <a href="{{profileDetails.linkedin}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                            <path
+                                d="M20.8333 0C21.9384 0 22.9982 0.438987 23.7796 1.22039C24.561 2.00179 25 3.0616 25 4.16667V20.8333C25 21.9384 24.561 22.9982 23.7796 23.7796C22.9982 24.561 21.9384 25 20.8333 25H4.16667C3.0616 25 2.00179 24.561 1.22039 23.7796C0.438987 22.9982 0 21.9384 0 20.8333V4.16667C0 3.0616 0.438987 2.00179 1.22039 1.22039C2.00179 0.438987 3.0616 0 4.16667 0H20.8333ZM20.8333 2.77778H4.16667C3.79831 2.77778 3.44504 2.92411 3.18457 3.18457C2.92411 3.44504 2.77778 3.79831 2.77778 4.16667V20.8333C2.77778 21.2017 2.92411 21.555 3.18457 21.8154C3.44504 22.0759 3.79831 22.2222 4.16667 22.2222H20.8333C21.2017 22.2222 21.555 22.0759 21.8154 21.8154C22.0759 21.555 22.2222 21.2017 22.2222 20.8333V4.16667C22.2222 3.79831 22.0759 3.44504 21.8154 3.18457C21.555 2.92411 21.2017 2.77778 20.8333 2.77778ZM6.94444 9.72222C7.28463 9.72227 7.61297 9.84716 7.86718 10.0732C8.1214 10.2993 8.28381 10.6108 8.32361 10.9486L8.33333 11.1111V18.0556C8.33294 18.4096 8.19739 18.75 7.95438 19.0075C7.71136 19.2649 7.37923 19.4198 7.02584 19.4405C6.67245 19.4613 6.32447 19.3463 6.05301 19.1191C5.78155 18.8919 5.60709 18.5696 5.56528 18.2181L5.55556 18.0556V11.1111C5.55556 10.7428 5.70188 10.3895 5.96235 10.129C6.22282 9.86855 6.57609 9.72222 6.94444 9.72222ZM11.1111 8.33333C11.4364 8.33328 11.7514 8.4474 12.0011 8.65578C12.2509 8.86416 12.4196 9.15359 12.4778 9.47361C12.7573 9.31154 13.0462 9.16638 13.3431 9.03889C14.2694 8.64306 15.6569 8.425 16.9097 8.81806C17.5667 9.02639 18.2264 9.41528 18.7153 10.0778C19.1528 10.6681 19.3889 11.3861 19.4361 12.1931L19.4444 12.5V18.0556C19.4441 18.4096 19.3085 18.75 19.0655 19.0075C18.8225 19.2649 18.4903 19.4198 18.137 19.4405C17.7836 19.4613 17.4356 19.3463 17.1641 19.1191C16.8927 18.8919 16.7182 18.5696 16.6764 18.2181L16.6667 18.0556V12.5C16.6667 12.0417 16.5556 11.8278 16.4833 11.7292C16.3797 11.6002 16.2368 11.5085 16.0764 11.4681C15.5931 11.3153 14.8972 11.3958 14.4347 11.5931C13.7403 11.8903 13.1042 12.3569 12.6708 12.7889L12.5 12.9722V18.0556C12.4996 18.4096 12.3641 18.75 12.121 19.0075C11.878 19.2649 11.5459 19.4198 11.1925 19.4405C10.8391 19.4613 10.4911 19.3463 10.2197 19.1191C9.94821 18.8919 9.77376 18.5696 9.73194 18.2181L9.72222 18.0556V9.72222C9.72222 9.35387 9.86855 9.0006 10.129 8.74013C10.3895 8.47966 10.7428 8.33333 11.1111 8.33333ZM6.94444 5.55556C7.3128 5.55556 7.66607 5.70188 7.92654 5.96235C8.187 6.22282 8.33333 6.57609 8.33333 6.94444C8.33333 7.3128 8.187 7.66607 7.92654 7.92654C7.66607 8.187 7.3128 8.33333 6.94444 8.33333C6.57609 8.33333 6.22282 8.187 5.96235 7.92654C5.70188 7.66607 5.55556 7.3128 5.55556 6.94444C5.55556 6.57609 5.70188 6.22282 5.96235 5.96235C6.22282 5.70188 6.57609 5.55556 6.94444 5.55556Z"
+                                fill="white" />
+                        </svg>
+                    </a>
+                    <a href="{{profileDetails.github}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                            <path
+                                d="M12.5 0C10.8585 0 9.23303 0.331349 7.71646 0.975129C6.19989 1.61891 4.8219 2.56251 3.66117 3.75206C1.31696 6.15447 0 9.41282 0 12.8103C0 18.4725 3.5875 23.2764 8.55 24.9802C9.175 25.0826 9.375 24.6855 9.375 24.3396V22.1747C5.9125 22.9433 5.175 20.4581 5.175 20.4581C4.6 18.9721 3.7875 18.575 3.7875 18.575C2.65 17.7807 3.875 17.8064 3.875 17.8064C5.125 17.896 5.7875 19.1258 5.7875 19.1258C6.875 21.073 8.7125 20.4965 9.425 20.1891C9.5375 19.3564 9.8625 18.7928 10.2125 18.4725C7.4375 18.1522 4.525 17.0506 4.525 12.1698C4.525 10.7479 5 9.60775 5.8125 8.69822C5.6875 8.37796 5.25 7.04569 5.9375 5.31629C5.9375 5.31629 6.9875 4.97041 9.375 6.62294C10.3625 6.34112 11.4375 6.2002 12.5 6.2002C13.5625 6.2002 14.6375 6.34112 15.625 6.62294C18.0125 4.97041 19.0625 5.31629 19.0625 5.31629C19.75 7.04569 19.3125 8.37796 19.1875 8.69822C20 9.60775 20.475 10.7479 20.475 12.1698C20.475 17.0634 17.55 18.1394 14.7625 18.4597C15.2125 18.8568 15.625 19.6382 15.625 20.8296V24.3396C15.625 24.6855 15.825 25.0955 16.4625 24.9802C21.425 23.2636 25 18.4725 25 12.8103C25 11.1281 24.6767 9.46225 24.0485 7.90803C23.4203 6.35381 22.4996 4.94161 21.3388 3.75206C20.1781 2.56251 18.8001 1.61891 17.2835 0.975129C15.767 0.331349 14.1415 0 12.5 0Z"
+                                fill="white" />
+                        </svg>
+                    </a>
+                </div>
+                <div class="text-white text-[18px]">skill:</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="p-[10px] rounded-2xl bg-dark text-white text-[12px] text-center shadow-lg"
+                        *ngFor="let skill of profileDetails.skill">{{skill}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tabview block lg:hidden w-[100%] h-[70%]" (swipeleft)="swipe(SWIPE_ACTION.LEFT)" 
+     (swiperight)="swipe(SWIPE_ACTION.RIGHT)">
+        <mat-tab-group mat-stretch-tabs [(selectedIndex)]="selectedIndex" (selectedIndexChange)="selectChange()" class="tablabel">
+            <mat-tab label="Post" (swipeleft)="swipe(SWIPE_ACTION.LEFT)" (swiperight)="swipe(SWIPE_ACTION.RIGHT)" class="label">
+                <div class="w-[100%] h-[100%] flex flex-col items-center p-5">
+                    <span class="text-yellow">Post</span>
+                </div>
+            </mat-tab>
+            <mat-tab label="Details" (swipeleft)="swipe(SWIPE_ACTION.LEFT)" (swiperight)="swipe(SWIPE_ACTION.RIGHT)">
+                <div class="flex flex-col justify-center items-center mt-2 w-[95%]">
+                    <div class="w-[100%] h-[60%] flex flex-row ms-[5%] justify-center items-center">
+                        <div class="flex flex-col gap-[5px]">
+                            <div class="text-white text-[12px] sm:text-[14px]">Phone no:</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">Email:</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">Age:</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">Experiences:</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">Location:</div>
+                        </div>
+                        <div class="flex flex-col gap-[5px] ms-[5%]">
+                            <div class="text-white text-[12px] sm:text-[14px]">{{profileDetails.Phone_no||"No phone"}}</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">{{profileDetails.email||"No email"}}</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">{{profileDetails.age||"No age"}}</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">{{profileDetails.experiences||"No experiences"}}</div>
+                            <div class="text-white text-[12px] sm:text-[14px]">{{profileDetails.location||"No location"}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-[100%] h-[40%] p-2 flex flex-col gap-[10px] mt-[10px]">
+                        <div class="text-white m-2 flex flex-row gap-10 justify-center items-center">
+                            <a href="{{profileDetails.linkedin}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25"
+                                    fill="none">
+                                    <path
+                                        d="M20.8333 0C21.9384 0 22.9982 0.438987 23.7796 1.22039C24.561 2.00179 25 3.0616 25 4.16667V20.8333C25 21.9384 24.561 22.9982 23.7796 23.7796C22.9982 24.561 21.9384 25 20.8333 25H4.16667C3.0616 25 2.00179 24.561 1.22039 23.7796C0.438987 22.9982 0 21.9384 0 20.8333V4.16667C0 3.0616 0.438987 2.00179 1.22039 1.22039C2.00179 0.438987 3.0616 0 4.16667 0H20.8333ZM20.8333 2.77778H4.16667C3.79831 2.77778 3.44504 2.92411 3.18457 3.18457C2.92411 3.44504 2.77778 3.79831 2.77778 4.16667V20.8333C2.77778 21.2017 2.92411 21.555 3.18457 21.8154C3.44504 22.0759 3.79831 22.2222 4.16667 22.2222H20.8333C21.2017 22.2222 21.555 22.0759 21.8154 21.8154C22.0759 21.555 22.2222 21.2017 22.2222 20.8333V4.16667C22.2222 3.79831 22.0759 3.44504 21.8154 3.18457C21.555 2.92411 21.2017 2.77778 20.8333 2.77778ZM6.94444 9.72222C7.28463 9.72227 7.61297 9.84716 7.86718 10.0732C8.1214 10.2993 8.28381 10.6108 8.32361 10.9486L8.33333 11.1111V18.0556C8.33294 18.4096 8.19739 18.75 7.95438 19.0075C7.71136 19.2649 7.37923 19.4198 7.02584 19.4405C6.67245 19.4613 6.32447 19.3463 6.05301 19.1191C5.78155 18.8919 5.60709 18.5696 5.56528 18.2181L5.55556 18.0556V11.1111C5.55556 10.7428 5.70188 10.3895 5.96235 10.129C6.22282 9.86855 6.57609 9.72222 6.94444 9.72222ZM11.1111 8.33333C11.4364 8.33328 11.7514 8.4474 12.0011 8.65578C12.2509 8.86416 12.4196 9.15359 12.4778 9.47361C12.7573 9.31154 13.0462 9.16638 13.3431 9.03889C14.2694 8.64306 15.6569 8.425 16.9097 8.81806C17.5667 9.02639 18.2264 9.41528 18.7153 10.0778C19.1528 10.6681 19.3889 11.3861 19.4361 12.1931L19.4444 12.5V18.0556C19.4441 18.4096 19.3085 18.75 19.0655 19.0075C18.8225 19.2649 18.4903 19.4198 18.137 19.4405C17.7836 19.4613 17.4356 19.3463 17.1641 19.1191C16.8927 18.8919 16.7182 18.5696 16.6764 18.2181L16.6667 18.0556V12.5C16.6667 12.0417 16.5556 11.8278 16.4833 11.7292C16.3797 11.6002 16.2368 11.5085 16.0764 11.4681C15.5931 11.3153 14.8972 11.3958 14.4347 11.5931C13.7403 11.8903 13.1042 12.3569 12.6708 12.7889L12.5 12.9722V18.0556C12.4996 18.4096 12.3641 18.75 12.121 19.0075C11.878 19.2649 11.5459 19.4198 11.1925 19.4405C10.8391 19.4613 10.4911 19.3463 10.2197 19.1191C9.94821 18.8919 9.77376 18.5696 9.73194 18.2181L9.72222 18.0556V9.72222C9.72222 9.35387 9.86855 9.0006 10.129 8.74013C10.3895 8.47966 10.7428 8.33333 11.1111 8.33333ZM6.94444 5.55556C7.3128 5.55556 7.66607 5.70188 7.92654 5.96235C8.187 6.22282 8.33333 6.57609 8.33333 6.94444C8.33333 7.3128 8.187 7.66607 7.92654 7.92654C7.66607 8.187 7.3128 8.33333 6.94444 8.33333C6.57609 8.33333 6.22282 8.187 5.96235 7.92654C5.70188 7.66607 5.55556 7.3128 5.55556 6.94444C5.55556 6.57609 5.70188 6.22282 5.96235 5.96235C6.22282 5.70188 6.57609 5.55556 6.94444 5.55556Z"
+                                        fill="white" />
+                                </svg>
+                            </a>
+                            <a href="{{profileDetails.github}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25"
+                                    fill="none">
+                                    <path
+                                        d="M12.5 0C10.8585 0 9.23303 0.331349 7.71646 0.975129C6.19989 1.61891 4.8219 2.56251 3.66117 3.75206C1.31696 6.15447 0 9.41282 0 12.8103C0 18.4725 3.5875 23.2764 8.55 24.9802C9.175 25.0826 9.375 24.6855 9.375 24.3396V22.1747C5.9125 22.9433 5.175 20.4581 5.175 20.4581C4.6 18.9721 3.7875 18.575 3.7875 18.575C2.65 17.7807 3.875 17.8064 3.875 17.8064C5.125 17.896 5.7875 19.1258 5.7875 19.1258C6.875 21.073 8.7125 20.4965 9.425 20.1891C9.5375 19.3564 9.8625 18.7928 10.2125 18.4725C7.4375 18.1522 4.525 17.0506 4.525 12.1698C4.525 10.7479 5 9.60775 5.8125 8.69822C5.6875 8.37796 5.25 7.04569 5.9375 5.31629C5.9375 5.31629 6.9875 4.97041 9.375 6.62294C10.3625 6.34112 11.4375 6.2002 12.5 6.2002C13.5625 6.2002 14.6375 6.34112 15.625 6.62294C18.0125 4.97041 19.0625 5.31629 19.0625 5.31629C19.75 7.04569 19.3125 8.37796 19.1875 8.69822C20 9.60775 20.475 10.7479 20.475 12.1698C20.475 17.0634 17.55 18.1394 14.7625 18.4597C15.2125 18.8568 15.625 19.6382 15.625 20.8296V24.3396C15.625 24.6855 15.825 25.0955 16.4625 24.9802C21.425 23.2636 25 18.4725 25 12.8103C25 11.1281 24.6767 9.46225 24.0485 7.90803C23.4203 6.35381 22.4996 4.94161 21.3388 3.75206C20.1781 2.56251 18.8001 1.61891 17.2835 0.975129C15.767 0.331349 14.1415 0 12.5 0Z"
+                                        fill="white" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="text-white text-[18px]">skill:</div>
+                        <div class="grid grid-rows-2 grid-flow-col gap-2">
+                            <div class="p-[10px] rounded-2xl bg-dark text-white text-[12px] text-center shadow-lg"
+                                *ngFor="let skill of profileDetails.skill">{{skill}}</div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+</div>

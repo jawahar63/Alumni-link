@@ -1,0 +1,31 @@
+@import 'material-icons/iconfont/material-icons.css';
+
+.label-active {
+    color: white;
+    background-color: #EDAE2F;
+}
+
+.labels {
+    color: #EDAE2F;
+}
+::ng-deep .mat-mdc-tab .mdc-tab__text-label,
+::ng-deep .mat-mdc-tab-link .mdc-tab__text-label{
+    color: #EDAE2F;
+}
+.mdc-tab .mat-mdc-tab .mat-mdc-focus-indicator .mdc-tab--active .mdc-tab-indicator--active{
+    background-color: #EDAE2F;
+    color: white;
+}
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar{
+    --mat-tab-header-active-label-text-color: #EDAE2F;
+    --mat-tab-header-active-ripple-color: #EDAE2F;
+    --mat-tab-header-inactive-ripple-color: #EDAE2F;
+    --mat-tab-header-inactive-focus-label-text-color: white;
+    --mat-tab-header-inactive-hover-label-text-color: white;
+    --mat-tab-header-active-focus-label-text-color: #EDAE2F;
+    --mat-tab-header-active-hover-label-text-color: #EDAE2F;
+    --mat-tab-header-active-focus-indicator-color: #EDAE2F;
+    --mat-tab-header-active-hover-indicator-color: #EDAE2F;
+    --mdc-tab-indicator-active-indicator-color: #EDAE2F;
+}

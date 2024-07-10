@@ -1,0 +1,13 @@
+@import 'material-icons/iconfont/material-icons.css';
+.hideSidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+/* Define the final state when showing */
+.showSidebar {
+    transform: translateX(0);
+    opacity: 1;
+    transition: transform 0.3s, opacity 0.3s;
+}

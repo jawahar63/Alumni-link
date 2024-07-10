@@ -1,0 +1,13 @@
+.side-bar{
+    z-index: 5;
+    
+}
+.content {
+    position: fixed;
+    top: 80px;
+    right: 0;
+    bottom: 0;
+    flex: 1;
+    overflow-y: auto;   
+}
+

@@ -1,0 +1,43 @@
+
+<div *ngIf="isLoggedIn" class="flex flex-row w-screen sm:w-[250px]"  [ngClass]="{ 'showSidebar': isSidebarVisible, 'hideSidebar': !isSidebarVisible }" [@fadeInOut]>
+    <div class="w-2/3 sm:w-[250px] h-[90vh] bg-darkgrey pt-1 flex-col ">
+        <div *ngIf="ishome" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-yellow cursor-pointer">
+            <span class="material-icons-round text-darkgrey pe-10">home</span>
+            <span class="text-[16px] text-darkgrey font-medium">Home</span>
+        </div>
+        <div *ngIf="!ishome" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-darkgrey hover:bg-dark cursor-pointer" (click)="home()">
+            <span class="material-icons-round pe-10 text-white">home</span>
+            <span class="text-[16px] font-medium text-white">Home</span>
+        </div>
+        <div *ngIf="ismessage" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer" (click)="message()">
+            <span class="material-icons-round text-darkgrey pe-10">message</span>
+            <span class="text-[16px] text-darkgrey font-medium">message</span>
+        </div>
+        <div *ngIf="!ismessage" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer" (click)="message()">
+            <span class="material-icons-round pe-10 text-white">message</span>
+            <span class="text-[16px] font-medium text-white">Message</span>
+        </div>
+        <div *ngIf="isevent" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer">
+            <span class="material-icons-round text-darkgrey pe-10">event</span>
+            <span class="text-[16px] text-darkgrey font-medium">event</span>
+        </div>
+        <div *ngIf="!isevent" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer" (click)="event()">
+            <span class="material-icons-round pe-10 text-white">event</span>
+            <span class="text-[16px] font-medium text-white">Event</span>
+        </div>
+        <div *ngIf="mentor">
+            <div *ngIf="isregister" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer">
+                <span class="material-icons-round text-darkgrey pe-10">create</span>
+                <span class="text-[16px] text-darkgrey font-medium">Register</span>
+            </div>
+            <div *ngIf="!isregister" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer"
+                (click)="register()">
+                <span class="material-icons-round pe-10 text-white">create</span>
+                <span class="text-[16px] font-medium text-white">Register</span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="outsideclick" class="w-1/3 sm:w-0 bg-dark bg-opacity-55" (click)="toggleSidebar()">
+
+    </div>
+</div>

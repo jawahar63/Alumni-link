@@ -1,0 +1,62 @@
+<div class="flex justify-center">
+    <div class="bg-darkgrey rounded-lg mt-4 mx-5 w-screen lg:w-4/6  sm:w-4/5">
+        <div class="flex justify-between p-5 shadow-lg">
+            <span class="text-yellow">Create Post</span>
+            <span class="material-icons-round text-yellow">cancel</span>
+        </div>
+        <div>
+            <div class="flex justify-start gap-2 items-center px-3">
+                <div class="w-[40px] h-[40px] bg-dark rounded-full"></div>
+                <div class="flex flex-col md:flex-row justify-start p-3">
+                    <div>
+                        <span class="text-[18px] text-yellow">{{name}}</span>
+                    </div>
+                    <div class="flex justify-start items-center gap-2 md:ps-5 md:gap-5">
+                        <span class="text-white text-[12px]">{{batch}}</span>
+                        <span class="text-white text-[12px]">{{domain}}</span>
+                        <span class="text-white text-[12px]">{{company}}</span>
+                    </div>
+                </div>
+            </div>
+            <form>
+                <div *ngIf="showimg" class="flex justify-center overflow-x-auto m-2 bg-dark rounded-lg">
+                    <div class="image-slider flex">
+                        <div class="image-slide flex">
+                            <ng-container *ngFor="let postimg of postimages;let i=index">
+                                <div class="relative m-2 flex-shrink-0">
+                                    <img [src]="postimg.url" class="object-cover h-60 w-60 rounded-md cursor-pointer" alt="Image"
+                                        (click)="openModal(postimg)">
+                                    <div class="bg-dark bg-opacity-35 rounded-lg absolute top-0 left-0 w-[50px] h-[25px] flex justify-center items-center">
+                                        <span>{{i+1}}</span>
+                                        <span>/{{postimageLen}}</span>
+                                    </div>
+                                    <span class="absolute top-0 right-0 m-1 w-[25px] h-[25px] bg-red-500 text-center text-red bg-dark rounded-full cursor-pointer"
+                                        (click)="removeimg(postimg)">x</span>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="modalImage" class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
+                    (click)="closeModal()">
+                    <div class="bg-white p-4 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
+                        <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full" alt="Image">
+                    </div>
+                </div>
+
+                <div class="flex justify-center flex-col m-3">
+                    <textarea name="caption" id="" class="w-10/12 h-[100px] p-2 rounded-lg bg-darkgrey text-white outline-none"
+                        placeholder="Type something ...."></textarea>
+                    <span  class="text-red">Only 500 char</span>
+                </div>
+                <div class="flex justify-center">
+                    <input type="file" value="name" (change)="imgprev($event)" multiple
+                        class="overflow-hidden rounded-lg bg-dark text-white p-2 cursor-pointer w-64 md:w-4/6">
+                </div>
+                <div class="flex justify-center m-3">
+                    <button class="ce w-[250px] md:w-5/6 h-[40px] bg-green text-white rounded-lg">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
