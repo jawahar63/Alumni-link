@@ -25,4 +25,7 @@ export class ProfileService {
   passdetail(data:profileDetails){
     this.details.emit(data);
   }
+  uploadImage(id: string, formData: FormData) {
+  return this.http.post<{ imageUrl: string }>(`${apiUrls.profileServie}edit/${id}/upload-image`, formData);
+}
 }

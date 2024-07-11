@@ -1,11 +1,11 @@
 <h1 mat-dialog-title>Crop Image</h1>
 <div mat-dialog-content>
-    <image-cropper [imageChangedEvent]="data.imageChangedEvent" [aspectRatio]="1" [maintainAspectRatio]="true"
-        format="png" (imageCropped)="imageCropped($event)"></image-cropper>
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [aspectRatio]="1" [maintainAspectRatio]="true" format="png"
+        (imageCropped)="imageCropped($event)">
+    </image-cropper>
     <img *ngIf="croppedImage" [src]="croppedImage" />
 </div>
 <div mat-dialog-actions>
     <button mat-button class="bg-yellow rounded-lg w-[75px] p-2 text-white" (click)="onNoClick()">Cancel</button>
     <button mat-button class="bg-green rounded-lg w-[75px] p-2 text-white" (click)="saveCroppedImage()">Save</button>
 </div>
-
