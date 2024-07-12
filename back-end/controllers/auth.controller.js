@@ -6,6 +6,7 @@ import { CreateError } from "../utils/error.js";
 import { CreateSuccess } from "../utils/success.js";
 import usertoken from "../models/usertoken.js";
 import nodemailer from "nodemailer";
+import { json } from "express";
 
 export const register = async (req,res,next)=>{
    
@@ -45,7 +46,7 @@ export const login = async (req, res, next) => {
 
         // Generate JWT token
         const token = jwt.sign(
-            { id: user._id, isAdmin: user.isAdmin, roles: user.roles },
+            { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage},
             process.env.JWT_SECRET
         );
 
@@ -54,7 +55,7 @@ export const login = async (req, res, next) => {
             status: 200,
             message: "Login success",
             access_token: token,
-            data: user
+            // data: user
         });
     } catch (error) {
         return next(CreateError(500, "Something went wrong"));
@@ -185,6 +186,14 @@ export const googleLogin = async(req,res,next)=>{
         return next(CreateError(500,"Something went wrong"));
     }
 }
-export const profiledetails =async(req,res,next)=>{
-    
+export const getData =async(req,res,next)=>{
+   const user = await User.findById(req.params.id);
+    if (!user) {
+      return next(CreateError(404, "User not found"));
+    }
+    const data={
+        username:user.username,
+        profileImage:user.profileImage
+    }
+    return next(CreateSuccess(200,data));
 }

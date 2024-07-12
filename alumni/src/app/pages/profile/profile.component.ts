@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit{
   
   ngOnInit(): void {
     this.id=this.route.snapshot.paramMap.get('id')||'';
-    if(this.id===''||this.id!==localStorage.getItem('user_id')){
+    if(this.id===''||this.id!==sessionStorage.getItem('user_id')){
       this.router.navigate(['home']);
     }
     this.profileservice.viewProfile(this.id).subscribe({
@@ -35,7 +35,7 @@ export class ProfileComponent implements OnInit{
         this.profileDetails=res.message;
         this.fullName=this.profileDetails.firstName+" "+this.profileDetails.lastName;
         this.userId=this.profileDetails._id;
-        if(localStorage.getItem('user_id')===this.userId){
+        if(sessionStorage.getItem('user_id')===this.userId){
           this.Editable=true;
         }
       }
@@ -43,7 +43,7 @@ export class ProfileComponent implements OnInit{
     
   }
   Editprofile() {
-    if(this.id!== localStorage.getItem('user_id'))
+    if(this.id!== sessionStorage.getItem('user_id'))
       return
     this.router.navigate(['editprofile/'+this.id]);
   }

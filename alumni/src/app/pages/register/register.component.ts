@@ -20,7 +20,7 @@ export class RegisterComponent implements OnInit {
   firstname: any;
 
   ngOnInit(): void {
-    if(localStorage.getItem("role")!=="mentor"){
+    if(sessionStorage.getItem("role")!=="mentor"){
       this.router.navigate(['home']);
     }
     this.registerForm=this.fb.group({

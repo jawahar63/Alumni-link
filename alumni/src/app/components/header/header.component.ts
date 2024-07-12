@@ -41,16 +41,16 @@ export class HeaderComponent implements OnInit {
     // this.checkExpiration();
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();
-      this.username=localStorage.getItem('username');
-      if(localStorage.getItem('role')==="alumni"){
+      this.username=sessionStorage.getItem('username');
+      if(sessionStorage.getItem('role')==="alumni"){
       this.isalumni=true;
     }
     })
 
-    this.id=localStorage.getItem('user_id')||'';
-    this.username=localStorage.getItem('username');
+    this.id=sessionStorage.getItem('user_id')||'';
+    this.username=sessionStorage.getItem('username');
 
-    const photoUrl: string | null = localStorage.getItem('photo');
+    const photoUrl: string | null = sessionStorage.getItem('photo');
     this.profilePhoto = photoUrl;
 
     this.sidebar.searchbarVisibility$.subscribe((visible)=>{
@@ -65,10 +65,11 @@ export class HeaderComponent implements OnInit {
   }
 
  logout(){
-  localStorage.removeItem("user_id");
-    localStorage.removeItem("role");
-    localStorage.removeItem("username");
-    localStorage.removeItem("photo")
+  localStorage.removeItem('token');
+    sessionStorage.removeItem("user_id");
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("photo");
     this.authservice.isLoggedIn$.next(false);
     this.router.navigate(['login']);
     this.socialAuthService.signOut();

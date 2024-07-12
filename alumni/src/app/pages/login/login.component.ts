@@ -44,10 +44,11 @@ export class LoginComponent implements OnInit{
   login(){
     this.authServie.loginServie(this.loginForm.value).subscribe({
       next:(res)=>{
-        localStorage.setItem("user_id",res.data._id);
-        localStorage.setItem("role",res.data.roles[0].role);
-        localStorage.setItem("username",res.data.username);
-        localStorage.setItem("photo",res.data.profileImage);
+        localStorage.setItem("token",res.access_token);
+        // localStorage.setItem("user_id",res.data._id);
+        // localStorage.setItem("role",res.data.roles[0].role);
+        // localStorage.setItem("username",res.data.username);
+        // localStorage.setItem("photo",res.data.profileImage);
         this.authServie.isLoggedIn$.next(true); 
         this.loginForm.reset;
         this.router.navigate(['home']);

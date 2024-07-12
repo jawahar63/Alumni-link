@@ -24,12 +24,15 @@ export class AuthService {
     return this.http.post<any>(`${apiUrls.authServiceApi}reset`,resetObj);
   }
   isLoggedIn(){
-    return !!localStorage.getItem("user_id");
+    return !!localStorage.getItem("token");
   }
   isMentor(){
     return !!localStorage.getItem("role");
   }
   googleLoginServie(loginObj:any){
     return this.http.post<any>(`${apiUrls.authServiceApi}google-login`,loginObj);
+  }
+  getUserDataservie(id:string){
+    return this.http.get<any>(`${apiUrls.authServiceApi}getdata/${id}`,);
   }
 }

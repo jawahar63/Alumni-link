@@ -49,7 +49,7 @@ export class EditprofileComponent implements OnInit {
     });
     this.skillControl = this.profileDetailform.get('skill') as FormControl;
     this.id = this.route.snapshot.paramMap.get('id') || '';
-    if (this.id !== localStorage.getItem('user_id')) {
+    if (this.id !== sessionStorage.getItem('user_id')) {
       this.router.navigate(['profile/' + this.id]);
     }
     this.profileService.viewProfile(this.id).subscribe({

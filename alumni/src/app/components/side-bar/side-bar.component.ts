@@ -38,7 +38,7 @@ export class SideBarComponent implements OnInit{
 
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();
-      if(localStorage.getItem("role")==="mentor"){
+      if(sessionStorage.getItem("role")==="mentor"){
       this.mentor=true;
     }
     })

@@ -42,7 +42,7 @@ export class PostComponent implements OnInit{
         if(!this.isLoggedIn){
             this.router.navigate(['login']);
         }
-        if(localStorage.getItem('role')!=='alumni'){
+        if(sessionStorage.getItem('role')!=='alumni'){
           this.router.navigate(['home']);
         }
         this.name="Nithyananthan K";

@@ -28,7 +28,8 @@ const UserSchema = new Schema(
         },
         profileImage:{
             type:String,
-            required: false,// Corrected escape character
+            required: false,
+            default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgoKmrlslyJy-XsZsYrBEWNb3Ex-ECISQ8rgMROrX8QjxDsg0OdpWh6qUbHLdZnI_fRAQ&usqp=CAU'// Corrected escape character
         },
         isAdmin:{
             type:Boolean,
