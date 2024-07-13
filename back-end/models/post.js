@@ -10,6 +10,9 @@ const postSchema=new Schema(
         },
         postImages:{
             type: [String],
+        },
+        discription:{
+            type: String
         }
     }
 )
