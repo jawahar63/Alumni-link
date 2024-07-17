@@ -19,38 +19,39 @@ export type cropperDialogResult = {
 })
 export class ImageCropperDialogComponent {
   id: string = '';
-  imageChangedEvent: any;
-  croppedImage: SafeUrl | undefined;
-  croppedBlob: Blob | undefined;
-  profileService = inject(ProfileService);
+imageChangedEvent: any;
+croppedImage: SafeUrl | undefined;
+croppedBlob: Blob | undefined;
+profileService = inject(ProfileService);
 
-  constructor(
-    public dialogRef: MatDialogRef<ImageCropperDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private sanitizer: DomSanitizer,
-    private cdRef: ChangeDetectorRef
-  ) {
-    this.imageChangedEvent = data.imageChangedEvent;
-    this.id = data.id;
-  }
+constructor(
+  public dialogRef: MatDialogRef<ImageCropperDialogComponent>,
+  @Inject(MAT_DIALOG_DATA) public data: any,
+  private sanitizer: DomSanitizer,
+  private cdRef: ChangeDetectorRef
+) {
+  this.imageChangedEvent = data.imageChangedEvent;
+  this.id = data.id;
+}
 
-  imageCropped(event: ImageCroppedEvent): void {
-    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.base64 || '');
-    if (event.blob) {
-      this.croppedBlob = event.blob;
-    }
-    this.cdRef.detectChanges();
+imageCropped(event: ImageCroppedEvent): void {
+  this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.base64 || '');
+  if (event.blob) {
+    this.croppedBlob = event.blob;
   }
+  this.cdRef.detectChanges();
+}
 
-  saveCroppedImage(): void {
-    if (this.croppedBlob) {
-      this.dialogRef.close({ blog: this.croppedBlob, imageUrl: this.croppedImage as string });
-    } else {
-      console.error("Cropped blob is null or undefined");
-    }
+saveCroppedImage(): void {
+  if (this.croppedBlob) {
+    this.dialogRef.close({ blob: this.croppedBlob, imageUrl: this.croppedImage as string });
+  } else {
+    console.error("Cropped blob is null or undefined");
   }
+}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
+onNoClick(): void {
+  this.dialogRef.close();
+}
+
 }
