@@ -87,4 +87,7 @@ export class PostComponent implements OnInit{
   updateimagelen(){
     this.postimageLen=this.postimages.length;
   }
+  Submit(){
+    
+  }
 }

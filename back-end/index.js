@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import roleRoute from './routes/role.js';
 import authRoute from './routes/auth.js';
 import userRoute from './routes/user.js';
+import postRoute from './routes/post.js'
 import profileRoute from './routes/profile.js';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
@@ -32,6 +33,7 @@ app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);
 app.use("/api/profile",profileRoute);
 app.use('/uploads', express.static('uploads'));
+app.use('/api/post',postRoute);
 app.use((obj,req,res,next)=>{
     const statusCode =obj.status||500;
     const Message =obj.message||"something went wrong"
