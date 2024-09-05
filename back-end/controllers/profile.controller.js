@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from 'path'
+import sharp from "sharp"
 import User from "../models/user.js";
 import { CreateError } from "../utils/error.js"
 import { CreateSuccess } from "../utils/success.js";
@@ -52,7 +53,7 @@ export const updateProfileImg = async (req, res, next) => {
       return next(CreateError(404, "User not found"));
     }
 
-    // Delete old profile image if it exists
+    // Remove old profile image if it exists
     if (user.profileImage) {
       const oldImagePath = path.join(__dirname, 'uploads', 'dp', path.basename(user.profileImage));
       if (fs.existsSync(oldImagePath)) {
@@ -60,14 +61,22 @@ export const updateProfileImg = async (req, res, next) => {
       }
     }
 
+    // Define the path for the new image
     const filePath = `uploads/dp/${req.params.id}${path.extname(req.file.originalname)}`;
+    const fullPath = path.join(__dirname, filePath);
     const BASE_URL = process.env.BASE_URL;
     const imageUrl = `${BASE_URL}${filePath}`;
 
+    // Crop the image to 1:1 aspect ratio and save it
+    await sharp(req.file.buffer)
+      .resize({ width: 500, height: 500, fit: sharp.fit.cover }) // Resize to 500x500 or any size you want
+      .toFile(fullPath);
+
+    // Update the user profile image URL
     user.profileImage = imageUrl;
     await user.save();
 
-    res.status(200).json({ imageUrl: imageUrl });
+    res.status(200).json({ imageUrl });
   } catch (error) {
     console.error(error);
     return next(CreateError(500, "Something went wrong"));
