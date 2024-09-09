@@ -1,0 +1,82 @@
+<div class="flex flex-col items-center">
+    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-5 w-screen lg:w-4/6 sm:w-4/5">
+        <div class="p-3">
+            <!-- User Info -->
+            <div class="flex justify-start gap-2 items-center">
+                <img class="w-[40px] h-[40px] rounded-full" [src]="post.author.profileImage" alt="Profile">
+                <div class="flex flex-col">
+                    <span class="text-[18px] text-yellow">{{post.author.name}}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-white text-[12px]">{{post.author.batch}}</span>
+                        <span class="text-white text-[12px]">{{post.author.domain}}</span>
+                        <span class="text-white text-[12px]">{{post.author.company}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Content -->
+            <div class="mt-2">
+                <p class="text-white text-sm">{{post.caption}}</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <span *ngFor="let tag of post.tags" class="bg-yellow text-dark rounded-full px-2 py-1 text-xs">
+                        {{tag}}
+                    </span>
+                </div>
+                <p *ngIf="post.location" class="text-white text-xs mt-2">Location: {{post.location}}</p>
+            </div>
+
+            <!-- Media Slider -->
+            <div *ngIf="post.media.length" class="flex justify-center overflow-x-auto m-2 bg-dark rounded-lg">
+                <div class="image-slider flex">
+                    <div class="image-slide flex">
+                        <ng-container *ngFor="let media of post.media; let i = index">
+                            <div class="relative m-2 flex-shrink-0">
+                                <img [src]="media.url" class="object-cover h-60 w-60 rounded-md cursor-pointer"
+                                    alt="Image" (click)="openModal(media)">
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="modalImage"
+                class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
+                (click)="closeModal()">
+                <div class="bg-white p-4 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
+                    <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full" alt="Image">
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-around mt-4">
+                <button (click)="likePost(post)" class="flex items-center gap-1 text-white">
+                    <span class="material-icons">thumb_up</span>
+                    <span>{{post.likes.length}}</span>
+                </button>
+                <button (click)="toggleComments(post)" class="flex items-center gap-1 text-white">
+                    <span class="material-icons">comment</span>
+                    <span>{{post.comments.length}}</span>
+                </button>
+                <button (click)="sharePost(post)" class="flex items-center gap-1 text-white">
+                    <span class="material-icons">share</span>
+                </button>
+            </div>
+
+            <!-- Comments Section -->
+            <div *ngIf="post.showComments" class="mt-4">
+                <div *ngFor="let comment of post.comments" class="flex items-start gap-2 mb-2">
+                    <img class="w-[30px] h-[30px] rounded-full" [src]="comment.author.profileImage" alt="Profile">
+                    <div>
+                        <div class="text-yellow text-sm">{{comment.author.name}}</div>
+                        <div class="text-white text-sm">{{comment.text}}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <input type="text" [(ngModel)]="newComment" placeholder="Add a comment..."
+                        class="w-full p-2 rounded-lg bg-darkgrey text-white outline-none" />
+                    <button (click)="addComment(post)" class="bg-green text-white p-2 rounded-lg">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
