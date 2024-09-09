@@ -47,7 +47,7 @@ const PostSchema = new Schema({
     media:[MediaSchema],
     caption:{
         type: String,
-        maxlength: 2200,
+        maxlength: 1000,
         require:true
     },
     tags: [{

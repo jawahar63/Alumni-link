@@ -43,12 +43,20 @@ export const login = async (req, res, next) => {
         if (!isPasswordCorrect) {
             return next(CreateError(400, "Incorrect password"));
         }
-
+        let token='';
         // Generate JWT token
-        const token = jwt.sign(
-            { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage},
-            process.env.JWT_SECRET
-        );
+        if(user.roles[0].role!=='alumni'){
+            token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage},
+                process.env.JWT_SECRET
+            );
+        }else{
+            // console.log(user.batch+" "+user.domain+" "+user.company);
+            token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,batch:user.batch,domain:user.domain,company:user.company},
+                process.env.JWT_SECRET
+            );
+        }
 
         // Send token in cookie and response
         res.cookie("access_token", token, { httpOnly: true }).status(200).json({
@@ -58,6 +66,7 @@ export const login = async (req, res, next) => {
             // data: user
         });
     } catch (error) {
+        console.log(error);
         return next(CreateError(500, "Something went wrong"));
     }
 };

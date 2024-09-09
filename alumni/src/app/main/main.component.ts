@@ -35,6 +35,11 @@ export class MainComponent implements OnInit{
       sessionStorage.setItem("user_id",this.decodedtoken.id);
       console.log(this.decodedtoken.roles);
       sessionStorage.setItem("role",this.decodedtoken.roles[0].role);
+      if(this.decodedtoken.roles[0].role=="alumni"){
+        sessionStorage.setItem("batch",this.decodedtoken.batch);
+        sessionStorage.setItem("domain",this.decodedtoken.domain);
+        sessionStorage.setItem("company",this.decodedtoken.company);
+      }
       sessionStorage.setItem("username",this.decodedtoken.username);
       sessionStorage.setItem("photo",this.decodedtoken.profileImage);
       // this.authservice.getUserDataservie(this.decodedtoken.id).subscribe({
