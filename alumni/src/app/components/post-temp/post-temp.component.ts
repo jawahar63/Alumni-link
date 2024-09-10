@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { Post } from '../../models/post.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PostService } from '../../servies/post.service';
+import { formatDistanceToNow } from 'date-fns';
 
 @Component({
   selector: 'app-post-temp',
@@ -13,15 +15,16 @@ import { CommonModule } from '@angular/common';
 export class PostTempComponent implements OnInit {
   @Input() posts: Post[] = []; // An array of posts to be passed to this component
 
+  postService = inject(PostService);
   newComment: string = '';
   modalImage: any = null;
 
   ngOnInit(): void {
-    // Initialize component if needed
+    
   }
 
   navigate() {
-    // Navigate to another page or perform some action
+    
   }
 
   openModal(media: any) {
@@ -40,7 +43,7 @@ export class PostTempComponent implements OnInit {
   }
 
   likePost(post: Post) {
-    // Logic to handle liking a specific post
+    console.log(post);
   }
 
   toggleComments(post: Post) {
@@ -48,21 +51,33 @@ export class PostTempComponent implements OnInit {
   }
 
   addComment(post: Post) {
+    console.log(post._id);
     if (this.newComment.trim()) {
-      // Logic to add a new comment to the specific post
-      post.comments.push({
-        author: {
-          profileImage: '', // Add appropriate image URL
-          name: 'Current User' // Replace with current user
-        },
+      const comment={
+        userid:sessionStorage.getItem("user_id")||'',
         text: this.newComment
+      }
+      this.postService.Addcomment(post._id,comment).subscribe({
+        next:(value)=> {
+          alert(value.message);
+        },
+        error:(err)=> {
+          console.log(err);
+        },
       });
       this.newComment = '';
     }
   }
 
   sharePost(post: Post) {
+    console.log(post);
     // Logic to share the specific post
+  }
+  getTimeAgo(date?: Date): string {
+    if (!date) {
+      return 'Unknown'; // Handle cases where date is undefined
+    }
+    return formatDistanceToNow(new Date(date), { addSuffix: true });
   }
 
 }

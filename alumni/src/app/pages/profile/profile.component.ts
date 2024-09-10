@@ -5,15 +5,19 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {MatTabsModule} from '@angular/material/tabs'
 import { ActivatedRoute, Router } from '@angular/router';
+import { PostTempComponent } from '../../components/post-temp/post-temp.component';
+import { Post } from '../../models/post.model';
+import { PostService } from '../../servies/post.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [FormsModule,CommonModule,MatTabsModule],
+  imports: [FormsModule,CommonModule,MatTabsModule,PostTempComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit{
+  posts:Post[]=[];
   profileDetails!:profileDetails;
   fullName!:string;
   id!:string;
@@ -22,6 +26,7 @@ export class ProfileComponent implements OnInit{
   Editable:boolean=false;
   selectedIndex: number = 0;
   profileservice=inject(ProfileService);
+  postService = inject(PostService);
   router=inject(Router);
   route=inject(ActivatedRoute)
   
@@ -41,6 +46,11 @@ export class ProfileComponent implements OnInit{
       }
     })
     
+    this.postService.getPostByAuthor(this.id).subscribe({
+      next:(value)=> {
+        this.posts =value.posts;
+      },
+    })
   }
   Editprofile() {
     if(this.id!== sessionStorage.getItem('user_id'))

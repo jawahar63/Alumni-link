@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
 import User from "./user.js";
 const { Schema } = mongoose;
-const CommentSchema =new Schema({
-    Commenter:{
-        type:Schema.Types.ObjectId,
-        ref:'User',
-        require:true
+
+const CommentSchema = new Schema({
+    commenter: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    CommentText:{
-        type:String,
-        require:true,
-        maxlenght:500
+    text: {
+        type: String,
+        required: true,
+        maxlength: 500
     },
-    CommentAt:{
-        type:Date,
-        default:Date.now
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 const LikeSchema =new Schema({
@@ -28,6 +29,7 @@ const LikeSchema =new Schema({
         default:Date.now
     }
 })
+
 const MediaSchema = new Schema({
   type: {
     type: String,

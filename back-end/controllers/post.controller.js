@@ -80,7 +80,6 @@ export const createPost = async (req, res, next) => {
     }
 };
 
-
 export const updatePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
@@ -149,7 +148,7 @@ export const getPostById =async (req,res,next)=>{
     try {
         const { postId } = req.params;
 
-        const post = await Post.findById(postId).populate('author', 'username email batch domain company');
+        const post = await Post.findById(postId).populate('author', 'username email batch domain company profileImage');
         if (!post) {
             return next(CreateError(404, "Post not found"));
         }
@@ -161,14 +160,24 @@ export const getPostById =async (req,res,next)=>{
 }
 export const getAllPosts = async (req, res, next) => {
     try {
-        // You can implement pagination here if needed
+        // Implement pagination
         const page = parseInt(req.query.page) || 1; // Default to page 1
         const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
         const skip = (page - 1) * limit;
 
         // Fetch posts from the database with pagination
         const posts = await Post.find()
-            .populate('author', 'username email batch domain company') // Populate author field to include their details (e.g., username, email)
+            .populate({
+                path: 'author',
+                select: 'username email batch domain company profileImage', // Populate author field
+            })
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'commenter',
+                    select: 'username profileImage',
+                }
+            })
             .sort({ createdAt: -1 }) // Sort by creation date, newest first
             .skip(skip)
             .limit(limit);
@@ -199,7 +208,14 @@ export const getPostsByAuthor = async (req, res, next) => {
 
         // Fetch posts by author ID with pagination
         const posts = await Post.find({ author: authorId })
-            .populate('author', 'username email batch domain company') // Populate author field to include their details
+            .populate('author', 'username email batch domain company profileImage')
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'commenter',
+                    select: 'username profileImage',
+                }
+            })
             .sort({ createdAt: -1 }) // Sort by creation date, newest first
             .skip(skip)
             .limit(limit);
@@ -257,7 +273,7 @@ export const filterPosts = async (req, res, next) => {
 
         // Fetch posts based on the filter
         const posts = await Post.find(filter)
-            .populate('author', 'username email batch domain company')
+            .populate('author', 'username email batch domain company profileImage')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -277,44 +293,73 @@ export const filterPosts = async (req, res, next) => {
         return next(CreateError(500, "Something went wrong"));
     }
 };
-export const Addcomment =async(req,res,next)=>{
+export const AddComment = async (req, res, next) => {
     try {
-        const {postId} = req.params;
-        const {user,text} = req.body;
-        if (!user || !text) {
-            return next(CreateError(400, 'Author and comment text are required'));
+        const { postId } = req.params;
+        const { userid, text } = req.body;
+
+        // Ensure userId and text are provided
+        if (!userid || !text) {
+            return next(CreateError(400, 'User ID and comment text are required'));
         }
-        const Post = await Post.findById(postId);
-        if(!Post){
+
+        // Find the user who is commenting
+        const user = await User.findById(userid);
+        if (!user) {
+            return next(CreateError(404, 'User not found'));
+        }
+
+        // Find the post where the comment will be added
+        const post = await Post.findById(postId);
+        if (!post) {
             return next(CreateError(404, 'Post not found'));
         }
 
-        const newComment ={
-            user,
+        // Create a new comment
+        const newComment = {
+            commenter: userid,
             text,
-            createdAt: new Date(),
+            createdAt: new Date()
         };
-        Post.comments.push(newComment);
-        await Post.save();
-        return next(CreateSuccess(200, 'Comment added successfully'));
 
+        // Add the new comment to the post's comments array
+        post.comments.push(newComment);
+
+        // Save the updated post
+        await post.save();
+
+        // Populate the comments with commenter details
+        const populatedPost = await Post.findById(postId)
+            .populate({
+                path: 'comments.commenter',
+                select: 'username profileImage'
+            });
+
+        // Send success response with populated comments
+        return res.status(200).json({
+            status: 'success',
+            message: 'Comment added successfully',
+            data: populatedPost.comments
+        });
     } catch (error) {
+        console.error(error);
         return next(CreateError(500, 'Something went wrong while adding the comment'));
     }
-    
-}
+};
 export const Addlike =async(req,res,next)=>{
     try {
         const {postId} =req.params;
-        const {user} = req.body;
+        const {userid} = req.body;
+        console.log(req);
+
+        const post = await Post.findById(postId);
+        const user = await User.findById(userid);
+        if(!post){
+            return next(CreateError(404, 'Post not found'));
+        }
 
         if(!user){
             return next(CreateError(400, 'Author is required'));
-        }
-
-        const Post = await Post.findById(postId);
-        if(!Post){
-            return next(CreateError(404, 'Post not found'));
         }
 
         const like={
@@ -322,11 +367,12 @@ export const Addlike =async(req,res,next)=>{
             likedAt: new Date(),
         };
 
-        Post.likes.push(like);
-        await Post.save();
+        post.likes.push(like);
+        await post.save();
 
         return next(CreateSuccess(200, 'liked successfully'));
     } catch (error) {
+        console.log(error);
         return next(CreateError(500, 'Something went wrong while adding the like'))
     }
 }
@@ -336,20 +382,33 @@ export const getComments = async (req, res, next) => {
 
         // Find the post by its ID and populate author details inside comments
         const post = await Post.findById(postId)
-            .populate('comments.author', 'username profileImage'); // Populate with only username and profileImage
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'commenter',
+                    select: 'username profileImage',
+                }
+            });// Populate with only username and profileImage
 
         if (!post) {
             return next(CreateError(404, 'Post not found'));
         }
+        const comments = post.comments.map(comment => ({
+            commenter: comment.commenter ? {
+                username: comment.commenter.username,
+                profileImage: comment.commenter.profileImage
+            } : { username: 'Unknown', profileImage: '' }, // Handle missing commenter
+            text: comment.text || '', // Ensure this matches the field name in your schema
+            createdAt: comment.createdAt
+        }));
 
         // Return all comments of the post with author details
-        return next(CreateSuccess(200, 'Comments retrieved successfully', post.comments));
+        return next(CreateSuccess(200, 'Comments retrieved successfully', comments));
     } catch (error) {
         console.error(error);
         return next(CreateError(500, 'Something went wrong while retrieving comments'));
     }
 };
-
 export const getLikes = async (req, res, next) => {
     try {
         const { postId } = req.params;

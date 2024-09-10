@@ -15,7 +15,7 @@ dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:4200','http://10.10.159.38:4200'],
+    origin: ['http://localhost:4200'],
     Credentials:true
 }
 ));
@@ -27,7 +27,6 @@ const mongoDb= async()=>{
         throw error;
     }
 }
-
 app.use("/api/role",roleRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);

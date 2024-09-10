@@ -1,9 +1,10 @@
 export interface User {
-  profileImage: string;
-  name: string;
+  profileImage?: string;
+  username?: string;
   batch?: string;
   domain?: string;
   company?: string;
+  user?:string;
 }
 
 export interface Media {
@@ -12,13 +13,16 @@ export interface Media {
 }
 
 export interface Comment {
-  author: User;
+  commenter: {
+    username: string;
+    profileImage: string;
+  };
   text: string;
   createdAt?: Date;
 }
 
 export interface Post {
-  id: string;
+  _id: string;
   author: User;
   caption: string;
   tags: string[];

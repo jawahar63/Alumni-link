@@ -1,11 +1,11 @@
 <div class="flex flex-col items-center">
-    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-5 w-screen lg:w-4/6 sm:w-4/5">
+    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-3 w-screen lg:w-4/6 md:w-5/6 sm:w-full">
         <div class="p-3">
             <!-- User Info -->
             <div class="flex justify-start gap-2 items-center">
                 <img class="w-[40px] h-[40px] rounded-full" [src]="post.author.profileImage" alt="Profile">
                 <div class="flex flex-col">
-                    <span class="text-[18px] text-yellow">{{post.author.name}}</span>
+                    <span class="text-[18px] text-yellow">{{post.author.username}}</span>
                     <div class="flex items-center gap-2">
                         <span class="text-white text-[12px]">{{post.author.batch}}</span>
                         <span class="text-white text-[12px]">{{post.author.domain}}</span>
@@ -31,7 +31,7 @@
                     <div class="image-slide flex">
                         <ng-container *ngFor="let media of post.media; let i = index">
                             <div class="relative m-2 flex-shrink-0">
-                                <img [src]="media.url" class="object-cover h-60 w-60 rounded-md cursor-pointer"
+                                <img [src]="media.url" class="object-cover h-80 w-100 rounded-md cursor-pointer"
                                     alt="Image" (click)="openModal(media)">
                             </div>
                         </ng-container>
@@ -39,10 +39,10 @@
                 </div>
             </div>
             <div *ngIf="modalImage"
-                class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
+                class="fixed inset-0 z-50 flex items-center w-full h-screen justify-center bg-dark bg-opacity-70"
                 (click)="closeModal()">
-                <div class="bg-white p-4 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
-                    <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full" alt="Image">
+                <div class="bg-white p-4 z-40 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
+                    <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full " alt="Image">
                 </div>
             </div>
 
@@ -63,13 +63,16 @@
 
             <!-- Comments Section -->
             <div *ngIf="post.showComments" class="mt-4">
-                <div *ngFor="let comment of post.comments" class="flex items-start gap-2 mb-2">
-                    <img class="w-[30px] h-[30px] rounded-full" [src]="comment.author.profileImage" alt="Profile">
-                    <div>
-                        <div class="text-yellow text-sm">{{comment.author.name}}</div>
-                        <div class="text-white text-sm">{{comment.text}}</div>
+                <div *ngFor="let comment of post.comments" class="flex flex-row justify-between items-end mb-2">
+                    <div class="flex flex-row items-center gap-2">
+                        <img class="w-[30px] h-[30px] rounded-full" [src]="comment.commenter.profileImage" alt="Profile">
+                        <div>
+                            <div class="text-yellow text-sm">{{ comment.commenter.username }}</div>
+                            <div class="text-white text-sm">{{ comment.text }}</div>
+                        </div>
                     </div>
-                </div>
+                    <div class="me-auto h-full text-white text-[9px]">{{getTimeAgo(comment.createdAt)}}</div>
+                </div> 
                 <div class="flex items-center gap-2 mt-2">
                     <input type="text" [(ngModel)]="newComment" placeholder="Add a comment..."
                         class="w-full p-2 rounded-lg bg-darkgrey text-white outline-none" />
