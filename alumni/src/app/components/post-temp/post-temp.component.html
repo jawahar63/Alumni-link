@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center">
-    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-3 lg:w-3/6 md:w-5/6 sm:w-full">
+    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-3  md:w-5/6 sm:w-full" [ngClass]="width">
         <div class="p-3">
             <!-- User Info -->
             <div class="flex justify-between items-center">

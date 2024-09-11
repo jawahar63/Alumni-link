@@ -13,7 +13,8 @@ import { formatDistanceToNow } from 'date-fns';
   styleUrl: './post-temp.component.css'
 })
 export class PostTempComponent implements OnInit {
-  @Input() posts: Post[] = []; // An array of posts to be passed to this component
+  @Input() posts: Post[] = [];
+  @Input() width:string=''; // An array of posts to be passed to this component
 
   postService = inject(PostService);
   newComment: string = '';
