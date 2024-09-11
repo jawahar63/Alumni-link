@@ -1,15 +1,30 @@
 <div class="flex flex-col items-center">
-    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-3 w-screen lg:w-4/6 md:w-5/6 sm:w-full">
+    <div *ngFor="let post of posts" class="bg-darkgrey rounded-lg mt-4 mx-3 lg:w-3/6 md:w-5/6 sm:w-full">
         <div class="p-3">
             <!-- User Info -->
-            <div class="flex justify-start gap-2 items-center">
-                <img class="w-[40px] h-[40px] rounded-full" [src]="post.author.profileImage" alt="Profile">
-                <div class="flex flex-col">
-                    <span class="text-[18px] text-yellow">{{post.author.username}}</span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-white text-[12px]">{{post.author.batch}}</span>
-                        <span class="text-white text-[12px]">{{post.author.domain}}</span>
-                        <span class="text-white text-[12px]">{{post.author.company}}</span>
+            <div class="flex justify-between items-center">
+                <div class="flex justify-start gap-2 items-center">
+                    <img class="w-[40px] h-[40px] rounded-full" [src]="post.author.profileImage" alt="Profile">
+                    <div class="flex flex-col">
+                        <span class="text-[18px] text-yellow">{{post.author.username}}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-white text-[12px]">{{post.author.batch}}</span>
+                            <span class="text-white text-[12px]">{{post.author.domain}}</span>
+                            <span class="text-white text-[12px]">{{post.author.company}}</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- 3-dot Menu (only for the post author) -->
+                <div *ngIf="user == post.author._id" class="relative">
+                    <button (click)="toggleMenu(post)" class="text-white material-icons">
+                        more_vert
+                    </button>
+            
+                    <!-- Dropdown for Update/Delete -->
+                    <div *ngIf="post.showMenu" class="absolute right-0 top-8 bg-dark text-white rounded shadow-lg">
+                        <button (click)="updatePost(post)" class="block w-full px-4 py-2 text-sm hover:bg-grey rounded">Update</button>
+                        <button (click)="deletePost(post)" class="block w-full px-4 py-2 text-sm hover:bg-red rounded">Delete</button>
                     </div>
                 </div>
             </div>

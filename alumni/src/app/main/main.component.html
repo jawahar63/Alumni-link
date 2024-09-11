@@ -1,9 +1,9 @@
 <div class="flex flex-col min-h-screen">
     <app-header class="fixed top-0 left-0 w-full z-10"></app-header>
-    <div class="flex flex-1">
-        <app-side-bar class="fixed top-16 left-0 w-64 z-10"></app-side-bar>
-        <div class="flex-1 mt-20 md:ml-64">
-            <div *ngIf="isLoggedIn; else login" class="w-auto">
+    <div class="flex">
+        <app-side-bar class="fixed hidden md:block top-16 left-0 w-64 z-10"></app-side-bar>
+        <div class=" flex justify-center items-center">
+            <div *ngIf="isLoggedIn; else login" class="md:w-[80vw] h-[80vh] mt-20 md:ml-64">
                 <router-outlet></router-outlet>
             </div>
             <ng-template #login>

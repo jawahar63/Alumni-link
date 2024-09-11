@@ -15,10 +15,13 @@ dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:4200'],
-    Credentials:true
-}
-));
+    origin: '*',
+    // origin: [
+    //     'http://localhost:4200',
+    //     'http://192.168.137.1:4200',
+    // ],
+    credentials: true
+}));
 const mongoDb= async()=>{
     try {
         await mongoose.connect(process.env.MONGO_URL)
@@ -33,6 +36,9 @@ app.use("/api/user",userRoute);
 app.use("/api/profile",profileRoute);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/post',postRoute);
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working!' });
+});
 app.use((obj,req,res,next)=>{
     const statusCode =obj.status||500;
     const Message =obj.message||"something went wrong"
@@ -44,7 +50,7 @@ app.use((obj,req,res,next)=>{
     })
 });
 
-app.listen(4000,()=>{
+app.listen(4000,'0.0.0.0',()=>{
     mongoDb();
     console.log("Connected");
 })

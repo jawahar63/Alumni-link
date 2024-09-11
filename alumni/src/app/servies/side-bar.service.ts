@@ -8,6 +8,8 @@ export class SideBarService {
 
   constructor() { }
 
+  currPage = new BehaviorSubject<string>("home");
+
   private sidebarVisibilitySubject = new BehaviorSubject<boolean>(false);
   sidebarVisibility$ = this.sidebarVisibilitySubject.asObservable();
 

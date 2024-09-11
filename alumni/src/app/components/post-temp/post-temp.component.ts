@@ -18,9 +18,10 @@ export class PostTempComponent implements OnInit {
   postService = inject(PostService);
   newComment: string = '';
   modalImage: any = null;
+  user:string='';
 
   ngOnInit(): void {
-    
+    this.user=sessionStorage.getItem('user_id')||'';
   }
 
   navigate() {
@@ -43,7 +44,17 @@ export class PostTempComponent implements OnInit {
   }
 
   likePost(post: Post) {
-    console.log(post);
+    const user={
+      userid:sessionStorage.getItem("user_id")||''
+    }
+    this.postService.AddLike(post._id,user).subscribe({
+      next:(value)=> {
+          console.log(value.message);
+        },
+        error:(err)=> {
+          console.log(err);
+        },
+    })
   }
 
   toggleComments(post: Post) {
@@ -51,7 +62,6 @@ export class PostTempComponent implements OnInit {
   }
 
   addComment(post: Post) {
-    console.log(post._id);
     if (this.newComment.trim()) {
       const comment={
         userid:sessionStorage.getItem("user_id")||'',
@@ -78,6 +88,24 @@ export class PostTempComponent implements OnInit {
       return 'Unknown'; // Handle cases where date is undefined
     }
     return formatDistanceToNow(new Date(date), { addSuffix: true });
+  }
+  toggleMenu(post: any) {
+    post.showMenu = !post.showMenu;
+  }
+
+  // Update the post
+  updatePost(post: any) {
+    console.log('Update post:', post);
+  }
+  deletePost(post: any) {
+    this.postService.deletePost(post._id).subscribe({
+      next:(value)=> {
+          alert("Delete successfully");
+        },
+        error:(err)=> {
+          console.log(err);
+        },
+    })
   }
 
 }

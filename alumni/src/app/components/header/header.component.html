@@ -1,7 +1,7 @@
 <div *ngIf="isLoggedIn" class="flex justify-between py-4 bg-darkgrey items-center ">
     <div *ngIf="!searchbarvisible || !screenSizeSearchbar" class="flex ms-5">
         <span class="material-icons-round text-yellow"(click)="toggleSidebar()">menu</span>
-        <h6 class="hidden text-green text-[20px] ms-5 md:block">Alumni network</h6>
+        <h6 class="hidden text-green text-[20px] ms-5 md:block">Alumni Link</h6>
     </div>
     <div *ngIf="screenSizeSearchbar">
         <div *ngIf="!searchbarvisible" class="relative text-yellow search pe-5">

@@ -23,6 +23,7 @@ import { AuthService } from '../../servies/auth.service';
 })
 export class SideBarComponent implements OnInit{
   router=inject(Router);
+  activeSection: string = 'home';
   mentor:boolean=false;
   ishome:boolean=false;
   ismessage:boolean=false;
@@ -35,6 +36,10 @@ export class SideBarComponent implements OnInit{
   outsideclick!:boolean;
   
   ngOnInit(): void {
+
+    this.sidebar.currPage.subscribe((val:string)=>{
+      this.activeSection=val;
+    })
 
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();
@@ -55,30 +60,6 @@ export class SideBarComponent implements OnInit{
     // Check screen width on window resize
     window.addEventListener('resize', () => {
       this.checkScreenWidth();
-    });
-
-    this.router.events.subscribe((val) => {
-      if (this.router.url === '/home') {
-        this.ishome = true;
-        this.ismessage = false;
-        this.isevent = false;
-        this.isregister = false;
-      } else if (this.router.url === '/message') {
-        this.ishome = false;
-        this.ismessage = true;
-        this.isevent = false;
-        this.isregister = false;
-      } else if (this.router.url === '/event') {
-        this.ishome = false;
-        this.ismessage = false;
-        this.isevent = true;
-        this.isregister = false;
-      } else if (this.router.url === '/register') {
-        this.ishome = false;
-        this.ismessage = false;
-        this.isevent = false;
-        this.isregister = true;
-      }
     });
   
   }
@@ -104,5 +85,10 @@ export class SideBarComponent implements OnInit{
   if(screen.width<768){
     this.sidebar.toggleSidebar();
   }
+  }
+
+  setActiveSection(section: string) {
+    this.activeSection = section;
+    this.router.navigate([section]);
   }
 }

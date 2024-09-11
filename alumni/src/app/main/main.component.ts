@@ -25,7 +25,7 @@ export class MainComponent implements OnInit{
 
   ngOnInit(): void {
     this.sidebar.sidebarVisibility$.subscribe((isVisible) => {
-      this.isSidebarVisible = !isVisible;
+      this.isSidebarVisible = isVisible;
     });
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();

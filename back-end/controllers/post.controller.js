@@ -20,7 +20,6 @@ const { promises: fsPromises } = fs;
 
 export const createPost = async (req, res, next) => {
     try {
-        console.log('Uploaded files:', req.files);
 
         const { author, caption, tags, location } = req.body;
         const user = await User.findById(author);
@@ -57,9 +56,7 @@ export const createPost = async (req, res, next) => {
                 .toFile(outputPath);
 
             await fsPromises.unlink(file.path); // Use promises for unlinking
-
-            const BASE_URL = process.env.BASE_URL;
-            return { type: 'image', url: `${BASE_URL}uploads/post/${uniqueName}` };
+            return { type: 'image', url: `uploads/post/${uniqueName}` };
         }));
 
         // Handle tags
@@ -119,8 +116,7 @@ export const updatePost = async (req, res, next) => {
                     })
                     .toFile(outputPath);
                     
-                    const BASE_URL = process.env.BASE_URL;
-                return { type: 'image', url: `${BASE_URL}uploads/post/${uniqueName}` };
+                return { type: 'image', url: `uploads/post/${uniqueName}` };
             }));
             mediaFiles = mediaFiles.concat(newMedia); // Append new images to existing media
         }
@@ -144,32 +140,53 @@ export const updatePost = async (req, res, next) => {
         return next(CreateError(500, "Something went wrong"));
     }
 };
-export const getPostById =async (req,res,next)=>{
+export const getPostById = async (req, res, next) => {
     try {
         const { postId } = req.params;
+        const post = await Post.findById(postId)
+            .populate('author', 'username email batch domain company profileImage')
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'commenter',
+                    select: 'username profileImage',
+                }
+            });
 
-        const post = await Post.findById(postId).populate('author', 'username email batch domain company profileImage');
         if (!post) {
             return next(CreateError(404, "Post not found"));
         }
 
-        return next(CreateSuccess(200, "Post retrieved successfully", post));
+        // Get the base URL from environment variables
+        const BASE_URL = process.env.BASE_URL;
+        if (!BASE_URL) {
+            return next(CreateError(500, "BASE_URL is not defined"));
+        }
+
+        // Construct full URLs for media
+        const postWithFullUrls = {
+            ...post.toObject(),
+            media: post.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        };
+
+        return next(CreateSuccess(200, "Post retrieved successfully", postWithFullUrls));
     } catch (error) {
-        return next(CreateError(404, "Something went wrong"));
+        return next(CreateError(500, "Something went wrong"));
     }
-}
+};
 export const getAllPosts = async (req, res, next) => {
     try {
-        // Implement pagination
-        const page = parseInt(req.query.page) || 1; // Default to page 1
-        const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        // Fetch posts from the database with pagination
         const posts = await Post.find()
             .populate({
                 path: 'author',
-                select: 'username email batch domain company profileImage', // Populate author field
+                select: 'username email batch domain company profileImage',
             })
             .populate({
                 path: 'comments',
@@ -178,35 +195,47 @@ export const getAllPosts = async (req, res, next) => {
                     select: 'username profileImage',
                 }
             })
-            .sort({ createdAt: -1 }) // Sort by creation date, newest first
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        // Get the total count of posts for pagination info
         const totalPosts = await Post.countDocuments();
+
+        // Get the base URL from environment variables
+        const BASE_URL = process.env.BASE_URL;
+        if (!BASE_URL) {
+            return next(CreateError(500, "BASE_URL is not defined"));
+        }
+
+        // Construct full URLs for media
+        const postsWithFullUrls = posts.map(post => ({
+            ...post.toObject(),
+            media: post.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        }));
 
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts
+            posts: postsWithFullUrls
         });
     } catch (error) {
         console.error(error);
         return next(CreateError(500, "Something went wrong"));
     }
 };
+
 export const getPostsByAuthor = async (req, res, next) => {
     try {
-        const { authorId } = req.params; // Get the author's ID from the request parameters
-
-        // You can implement pagination if needed
-        const page = parseInt(req.query.page) || 1; // Default to page 1
-        const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
+        const { authorId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        // Fetch posts by author ID with pagination
         const posts = await Post.find({ author: authorId })
             .populate('author', 'username email batch domain company profileImage')
             .populate({
@@ -216,83 +245,105 @@ export const getPostsByAuthor = async (req, res, next) => {
                     select: 'username profileImage',
                 }
             })
-            .sort({ createdAt: -1 }) // Sort by creation date, newest first
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        // Get the total count of posts by this author
         const totalPosts = await Post.countDocuments({ author: authorId });
+
+        // Get the base URL from environment variables
+        const BASE_URL = process.env.BASE_URL;
+        if (!BASE_URL) {
+            return next(CreateError(500, "BASE_URL is not defined"));
+        }
+
+        // Construct full URLs for media
+        const postsWithFullUrls = posts.map(post => ({
+            ...post.toObject(),
+            media: post.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        }));
 
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts
+            posts: postsWithFullUrls
         });
     } catch (error) {
         console.error(error);
         return next(CreateError(500, "Something went wrong"));
     }
 };
+
 export const filterPosts = async (req, res, next) => {
     try {
-        // Get query parameters for filtering
         const { author, tags, location, startDate, endDate } = req.query;
 
-        // Initialize an empty filter object
         let filter = {};
 
-        // Add author to filter if provided
         if (author) {
             filter.author = author;
         }
 
-        // Add location to filter if provided
         if (location) {
-            filter.location = { $regex: location, $options: 'i' }; // Case-insensitive search
+            filter.location = { $regex: location, $options: 'i' };
         }
 
-        // Add tags to filter if provided (assuming tags is a comma-separated string)
         if (tags) {
             const tagArray = tags.split(',').map(tag => tag.trim());
             filter.tags = { $in: tagArray };
         }
 
-        // Add date range filtering if startDate and/or endDate are provided
         if (startDate || endDate) {
             filter.createdAt = {};
             if (startDate) filter.createdAt.$gte = new Date(startDate);
             if (endDate) filter.createdAt.$lte = new Date(endDate);
         }
 
-        // Implement pagination if needed
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        // Fetch posts based on the filter
         const posts = await Post.find(filter)
             .populate('author', 'username email batch domain company profileImage')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        // Get total count of posts that match the filter
         const totalPosts = await Post.countDocuments(filter);
+
+        // Get the base URL from environment variables
+        const BASE_URL = process.env.BASE_URL;
+        if (!BASE_URL) {
+            return next(CreateError(500, "BASE_URL is not defined"));
+        }
+
+        // Construct full URLs for media
+        const postsWithFullUrls = posts.map(post => ({
+            ...post.toObject(),
+            media: post.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        }));
 
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts
+            posts: postsWithFullUrls
         });
     } catch (error) {
         console.error(error);
         return next(CreateError(500, "Something went wrong"));
     }
 };
+
 export const AddComment = async (req, res, next) => {
     try {
         const { postId } = req.params;
@@ -346,36 +397,63 @@ export const AddComment = async (req, res, next) => {
         return next(CreateError(500, 'Something went wrong while adding the comment'));
     }
 };
-export const Addlike =async(req,res,next)=>{
+export const AddLike = async (req, res, next) => {
     try {
-        const {postId} =req.params;
-        const {userid} = req.body;
-        console.log(req);
+        const { postId } = req.params;
+        const { userid } = req.body;
 
-        const post = await Post.findById(postId);
+        // Find the post and user, and populate the likes.liker field
+        const post = await Post.findById(postId).populate({
+                path: 'likes',
+                populate: {
+                    path: 'liker',
+                    select: '_id',
+                }
+            });
         const user = await User.findById(userid);
-        if(!post){
+
+        // Check if post exists
+        if (!post) {
             return next(CreateError(404, 'Post not found'));
         }
 
-        if(!user){
-            return next(CreateError(400, 'Author is required'));
+        // Check if user exists
+        if (!user) {
+            return next(CreateError(400, 'User is required'));
         }
 
-        const like={
-            user,
-            likedAt: new Date(),
-        };
+        // Convert userid to ObjectId
+        const userIdObj = new mongoose.Types.ObjectId(userid);
 
-        post.likes.push(like);
-        await post.save();
+        const likedIndex = post.likes.findIndex(like => {
+            // Check if liker is populated and has an _id
+            if (like.liker && like.liker._id) {
+                return like.liker._id.equals(userIdObj);
+            }
+            return false;
+        });
+        if (likedIndex !== -1) {
+            post.likes.splice(likedIndex, 1);
+            await post.save();
+            return next(CreateSuccess(200, 'Like removed successfully'));
+        } else {
+            // User has not liked the post, so add the like
+            const like = {
+                liker: userIdObj, // Use ObjectId directly
+                likedAt: new Date(),
+            };
 
-        return next(CreateSuccess(200, 'liked successfully'));
+            post.likes.push(like);
+            await post.save();
+            return next(CreateSuccess(200, 'Liked successfully'));
+        }
+
     } catch (error) {
         console.log(error);
-        return next(CreateError(500, 'Something went wrong while adding the like'))
+        return next(CreateError(500, 'Something went wrong while adding/removing the like'));
     }
 }
+
 export const getComments = async (req, res, next) => {
     try {
         const { postId } = req.params;
@@ -424,5 +502,41 @@ export const getLikes = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         return next(CreateError(500, 'Something went wrong while retrieving likes'));
+    }
+};
+// Utility function to delete media files from the filesystem
+const deleteMediaFiles = async (mediaFiles) => {
+    const uploadsDir = path.join(__dirname, '../uploads/post'); // Adjust path as needed
+    for (const media of mediaFiles) {
+        const filePath = path.join(uploadsDir, path.basename(media.url));
+        if (fs.existsSync(filePath)) {
+            await fsPromises.unlink(filePath);
+        }
+    }
+};
+
+export const deletePost = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        // Find and delete the post
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(CreateError(404, "Post not found"));
+        }
+
+        // Delete associated media files
+        await deleteMediaFiles(post.media);
+
+        // Remove the post from the database
+        await Post.findByIdAndDelete(postId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Post deleted successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return next(CreateError(500, "Something went wrong"));
     }
 };

@@ -1,10 +1,10 @@
-<div class="flex justify-center">
-    <div class="bg-darkgrey rounded-lg mt-4 mx-5 w-screen lg:w-4/6 sm:w-4/5">
+<div class="flex justify-center items-center">
+    <div class="bg-darkgrey rounded-lg mt-4 mx-5 lg:w-3/6 sm:w-4/5">
         <div class="flex justify-between p-2 shadow-lg">
             <span class="text-yellow">Create Post</span>
             <span (click)="navigate()" class="material-icons-round text-yellow">cancel</span>
         </div>
-        <form (submit)="Submit($event)">
+        <form [formGroup]="postForm" (ngSubmit)="Submit($event)">
             <div class="flex justify-start gap-2 items-center px-3">
                 <img class="w-[40px] h-[40px] rounded-full" [src]="profileImage" alt="Profile">
                 <div class="flex flex-col md:flex-row justify-start p-3">
@@ -21,21 +21,33 @@
 
             <!-- Caption Field -->
             <div class="flex justify-center flex-col mx-3">
-                <textarea name="caption" [(ngModel)]="caption" maxlength="1000" required
+                <textarea formControlName="caption" maxlength="1000" required
                     class="w-full h-[60px] lg:h-[100px] text-sm lg:text-xl p-2 rounded-lg bg-darkgrey text-white outline-none"
                     placeholder="Write a caption..."></textarea>
                 <span class="text-red text-xs">Max 1000 characters</span>
+                <div
+                    *ngIf="postForm.get('caption')?.invalid && (postForm.get('caption')?.touched || postForm.get('caption')?.dirty)">
+                    <span class="text-red text-xs">Caption is required and cannot exceed 1000 characters.</span>
+                </div>
             </div>
 
             <!-- Tag Input -->
             <div class="mx-1 w-full flex flex-row lg:flex-col justify-center gap-1 items-center my-1">
                 <div class="w-full flex justify-center text-xs lg:text-sm">
-                    <input type="text" [(ngModel)]="tags" name="tags" placeholder="Add tags (comma separated)"
+                    <input type="text" formControlName="tags" placeholder="Add tags (comma separated)"
                         class="w-full mx-2 p-2 rounded-lg bg-darkgrey text-white outline-none">
+                    <div
+                        *ngIf="postForm.get('tags')?.invalid && (postForm.get('tags')?.touched || postForm.get('tags')?.dirty)">
+                        <span class="text-red text-xs">Tags are required.</span>
+                    </div>
                 </div>
                 <div class="w-full flex justify-center text-xs lg:text-sm">
-                    <input type="text" [(ngModel)]="location" name="location" placeholder="Add location City ,State"
+                    <input type="text" formControlName="location" placeholder="Add location City, State"
                         class="w-full mx-2 p-2 rounded-lg bg-darkgrey text-white outline-none">
+                    <div
+                        *ngIf="postForm.get('location')?.invalid && (postForm.get('location')?.touched || postForm.get('location')?.dirty)">
+                        <span class="text-red text-xs">Location is required.</span>
+                    </div>
                 </div>
             </div>
 
@@ -55,29 +67,26 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="modalImage" class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
+            <div *ngIf="modalImage"
+                class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
                 (click)="closeModal()">
                 <div class="bg-white p-4 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
                     <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full" alt="Image">
                 </div>
             </div>
 
-
-            <!-- Location Field -->
-            <!-- <div class="flex justify-center m-3">
-                <input type="text" [(ngModel)]="location" name="location" placeholder="Add location City ,State"
-                    class="w-10/12 p-2 rounded-lg bg-darkgrey text-white outline-none">
-            </div> -->
-
             <div class="flex justify-center flex-row gap-2 m-3">
                 <div class="flex justify-start">
-                    <label class="cursor-pointer flex items-center justify-center w-[40px] rounded-3xl bg-dark text-white p-2"
+                    <label
+                        class="cursor-pointer flex items-center justify-center w-[40px] rounded-3xl bg-dark text-white p-2"
                         for="fileInput">
-                        <input type="file" id="fileInput" accept="image/*" (change)="imgprev($event)" multiple class="hidden" />
+                        <input type="file" id="fileInput" accept="image/*" (change)="imgprev($event)" multiple
+                            class="hidden" />
                         <span class="material-icons text-white text-3xl">add</span>
                     </label>
                 </div>
-                <button type="submit" class="w-full h-[40px] bg-green text-white rounded-lg">Post</button>
+                <button type="submit" [disabled]="postForm.invalid || postimages.length === 0"
+                    class="w-full h-[40px] bg-green text-white rounded-lg">Post</button>
             </div>
         </form>
     </div>

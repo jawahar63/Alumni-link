@@ -4,7 +4,7 @@ export interface User {
   batch?: string;
   domain?: string;
   company?: string;
-  user?:string;
+  _id?:string;
 }
 
 export interface Media {
@@ -32,5 +32,6 @@ export interface Post {
   likes: string[]; // Array of user IDs who liked the post
   createdAt: Date;
   updatedAt: Date;
-  showComments?: boolean; // Optional field to control the display of comments
+  showComments?: boolean;
+  showMenu?:boolean; // Optional field to control the display of comments
 }
