@@ -25,7 +25,7 @@
                     <div *ngIf="post.showMenu" class="absolute right-0 top-8 bg-dark text-white rounded shadow-lg">
                         <button (click)="updatePost(post)"
                             class="block w-full px-4 py-2 text-sm hover:bg-grey rounded">Edit</button>
-                        <button (click)="deletePost(post)"
+                        <button (click)="confirmDelete(post)"
                             class="block w-full px-4 py-2 text-sm hover:bg-red rounded">Delete</button>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                             <button *ngIf="comment.isCommentEditable" (click)="editComment(comment)"
                                 class="block w-full px-4 py-2 text-sm hover:bg-grey rounded z-50">Edit</button>
                             <!-- Show Delete button for both comment creator and post author -->
-                            <button *ngIf="comment.isCommentDeleteable" (click)="deleteComment(post,comment)"
+                            <button *ngIf="comment.isCommentDeleteable" (click)="confirmDeleteComment(post,comment)"
                                 class="block w-full px-4 py-2 text-sm hover:bg-red rounded z-50">Delete</button>
                         </div>
                     </div>

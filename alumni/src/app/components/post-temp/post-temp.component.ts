@@ -170,6 +170,12 @@ export class PostTempComponent implements OnInit,OnChanges {
     })
 
   }
+  confirmDeleteComment(post:Post,comment:Comment){
+    const confirmed = confirm("Are you sure you want to delete this comment?");
+    if (confirmed) {
+      this.deleteComment(post,comment);
+    }
+  }
 
   deleteComment(post:Post,comment:Comment){
     const user ={
@@ -203,6 +209,13 @@ export class PostTempComponent implements OnInit,OnChanges {
   // Update the post
   updatePost(post: any) {
     this.router.navigate(['editposts/'+post._id]);
+  }
+
+  confirmDelete(post: any) {
+    const confirmed = confirm("Are you sure you want to delete this post?");
+    if (confirmed) {
+      this.deletePost(post);
+    }
   }
   deletePost(post: any) {
     this.postService.deletePost(post._id).subscribe({
