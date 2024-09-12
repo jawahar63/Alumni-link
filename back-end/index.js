@@ -15,11 +15,10 @@ dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: '*',
-    // origin: [
-    //     'http://localhost:4200',
-    //     'http://192.168.137.1:4200',
-    // ],
+    origin: [
+        'http://localhost:4200',
+        'http://192.168.137.1:4200',
+    ],
     credentials: true
 }));
 const mongoDb= async()=>{

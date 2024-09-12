@@ -14,21 +14,23 @@
                         </div>
                     </div>
                 </div>
-            
+        
                 <!-- 3-dot Menu (only for the post author) -->
                 <div *ngIf="user == post.author._id" class="relative">
                     <button (click)="toggleMenu(post)" class="text-white material-icons">
                         more_vert
                     </button>
-            
+        
                     <!-- Dropdown for Update/Delete -->
                     <div *ngIf="post.showMenu" class="absolute right-0 top-8 bg-dark text-white rounded shadow-lg">
-                        <button (click)="updatePost(post)" class="block w-full px-4 py-2 text-sm hover:bg-grey rounded">Update</button>
-                        <button (click)="deletePost(post)" class="block w-full px-4 py-2 text-sm hover:bg-red rounded">Delete</button>
+                        <button (click)="updatePost(post)"
+                            class="block w-full px-4 py-2 text-sm hover:bg-grey rounded">Edit</button>
+                        <button (click)="deletePost(post)"
+                            class="block w-full px-4 py-2 text-sm hover:bg-red rounded">Delete</button>
                     </div>
                 </div>
             </div>
-
+        
             <!-- Post Content -->
             <div class="mt-2">
                 <p class="text-white text-sm">{{post.caption}}</p>
@@ -39,15 +41,15 @@
                 </div>
                 <p *ngIf="post.location" class="text-white text-xs mt-2">Location: {{post.location}}</p>
             </div>
-
+        
             <!-- Media Slider -->
             <div *ngIf="post.media.length" class="flex justify-center overflow-x-auto m-2 bg-dark rounded-lg">
                 <div class="image-slider flex">
                     <div class="image-slide flex">
                         <ng-container *ngFor="let media of post.media; let i = index">
                             <div class="relative m-2 flex-shrink-0">
-                                <img [src]="media.url" class="object-cover h-80 w-100 rounded-md cursor-pointer"
-                                    alt="Image" (click)="openModal(media)">
+                                <img [src]="media.url" class="object-cover h-80 w-100 rounded-md cursor-pointer" alt="Image"
+                                    (click)="openModal(media)">
                             </div>
                         </ng-container>
                     </div>
@@ -60,13 +62,18 @@
                     <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full " alt="Image">
                 </div>
             </div>
+            <div *ngIf="post.showShare">
+                <app-share-buttons [post]="post"></app-share-buttons>
+            </div>
 
+        
             <!-- Actions -->
             <div class="flex justify-around mt-4">
-                <button (click)="likePost(post)" class="flex items-center gap-1 text-white">
-                    <span class="material-icons">thumb_up</span>
-                    <span>{{post.likes.length}}</span>
-                </button>
+                    <button (click)="likePost(post)" class="flex items-center gap-1"
+                        [ngClass]="{'text-yellow': post.isLiked, 'text-white': !post.isLiked}">
+                        <span class="material-icons transition-all ease-in-out delay-300">thumb_up</span>
+                        <span>{{post.likes.length}}</span>
+                    </button>
                 <button (click)="toggleComments(post)" class="flex items-center gap-1 text-white">
                     <span class="material-icons">comment</span>
                     <span>{{post.comments.length}}</span>
@@ -75,25 +82,76 @@
                     <span class="material-icons">share</span>
                 </button>
             </div>
+            <div (click)="togglelikes(post)" class="text-xs mx-[8vw] md:mx-[7vw] lg:mx-[4vw] mt-2 text-white">view likes</div>
 
-            <!-- Comments Section -->
-            <div *ngIf="post.showComments" class="mt-4">
-                <div *ngFor="let comment of post.comments" class="flex flex-row justify-between items-end mb-2">
+            <!-- like section -->
+            <div *ngIf="post.showLikes" class="mt-4">
+                <div *ngFor="let like of post.likes" class="flex flex-row justify-between items-end mb-2">
                     <div class="flex flex-row items-center gap-2">
-                        <img class="w-[30px] h-[30px] rounded-full" [src]="comment.commenter.profileImage" alt="Profile">
-                        <div>
-                            <div class="text-yellow text-sm">{{ comment.commenter.username }}</div>
-                            <div class="text-white text-sm">{{ comment.text }}</div>
+                        <img class="w-[30px] h-[30px] rounded-full" [src]="like.liker.profileImage" alt="Profile">
+                        <div class="flex flex-col">
+                            <div class="text-yellow text-sm">{{ like.liker.username }}</div>
+                            <div class="text-white text-[9px] text-left">{{ getTimeAgo(like.likedAt) }}</div>
                         </div>
                     </div>
-                    <div class="me-auto h-full text-white text-[9px]">{{getTimeAgo(comment.createdAt)}}</div>
-                </div> 
+                </div>
+
+            </div>
+        
+            <div *ngIf="post.showComments" class="mt-4">
+                <!-- Comments List -->
+                <div *ngFor="let comment of post.comments" class="flex flex-row justify-between items-start mb-2">
+                    <!-- Comment Details -->
+                    <div class="flex flex-row items-start gap-2">
+                        <img class="w-[30px] h-[30px] rounded-full" [src]="comment.commenter.profileImage" alt="Profile">
+
+                        <!-- Check if comment is being edited -->
+                        <div *ngIf="comment.isEditing; else displayComment">
+                            <input [(ngModel)]="comment.editedText" class="w-full p-2 rounded-lg bg-darkgrey text-white outline-none" />
+                            <div class="flex gap-2 mt-2">
+                                <button (click)="saveComment(post, comment)" class="bg-green text-white p-2 rounded-lg">Save</button>
+                                <button (click)="cancelEdit(comment)" class="bg-red text-white p-2 rounded-lg">Cancel</button>
+                            </div>
+                        </div>
+                        <!-- Comment Display Mode -->
+                        <ng-template #displayComment>
+                            <div>
+                                <div class="text-yellow text-sm">{{ comment.commenter.username }}</div>
+                                <div class="text-white text-sm">{{ comment.text }}</div>
+                            </div>
+                        </ng-template>
+                    </div>
+            
+                    <!-- Comment Timestamp -->
+                    <div class="text-white text-[9px] ml-2">{{ getTimeAgo(comment.createdAt) }}</div>
+            
+                    <!-- Dropdown for Edit/Delete based on permissions -->
+                    <div *ngIf="comment.isCommentEditable || comment.isCommentDeleteable" class="relative">
+                        <button (click)="toggleCommentMenu(post, comment)" class="text-white material-icons">more_vert</button>
+            
+                        <!-- Dropdown for Update/Delete -->
+                        <div *ngIf="comment.showMenu" class="absolute right-0 top-8 bg-dark text-white rounded shadow-lg">
+                            <!-- Only show Update button for the comment creator -->
+                            <button *ngIf="comment.isCommentEditable" (click)="editComment(comment)"
+                                class="block w-full px-4 py-2 text-sm hover:bg-grey rounded z-50">Edit</button>
+                            <!-- Show Delete button for both comment creator and post author -->
+                            <button *ngIf="comment.isCommentDeleteable" (click)="deleteComment(post,comment)"
+                                class="block w-full px-4 py-2 text-sm hover:bg-red rounded z-50">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Add Comment Input -->
                 <div class="flex items-center gap-2 mt-2">
                     <input type="text" [(ngModel)]="newComment" placeholder="Add a comment..."
                         class="w-full p-2 rounded-lg bg-darkgrey text-white outline-none" />
                     <button (click)="addComment(post)" class="bg-green text-white p-2 rounded-lg">Post</button>
                 </div>
             </div>
+
+
+
+
         </div>
     </div>
 </div>

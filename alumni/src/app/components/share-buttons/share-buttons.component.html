@@ -1,0 +1,24 @@
+<!-- share-buttons.component.html -->
+<div class="flex space-x-4">
+    <button (click)="shareOnWhatsApp(post)"
+        class="share-btn bg-[#075e54] hover:bg-[#25d366] p-2 rounded-full flex items-center justify-center">
+        <i class="fab fa-whatsapp text-white text-xl"></i>
+
+    </button>
+
+    <button (click)="shareOnFacebook(post)"
+        class="share-btn bg-[#4267B2] hover:bg-[#3b5998] p-2 rounded-full flex items-center justify-center">
+        <span class="material-icons text-white">facebook</span>
+    </button>
+
+    <button (click)="copyLink(post)"
+        class="share-btn bg-orange hover:bg-yellow p-2 rounded-full flex items-center justify-center">
+        <span class="material-icons text-white">link</span>
+    </button>
+</div>
+
+
+    <!-- <button (click)="shareOnInstagram(post)"
+        class="instagram-btn p-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition-all duration-300 ease-in-out transform hover:scale-110">
+        Instagram
+    </button> -->

@@ -1,22 +1,25 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { Post } from '../../models/post.model';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Post,Comment } from '../../models/post.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PostService } from '../../servies/post.service';
 import { formatDistanceToNow } from 'date-fns';
+import { Router } from '@angular/router';
+import { ShareButtonsComponent } from '../share-buttons/share-buttons.component';
 
 @Component({
   selector: 'app-post-temp',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule,CommonModule,ShareButtonsComponent],
   templateUrl: './post-temp.component.html',
   styleUrl: './post-temp.component.css'
 })
-export class PostTempComponent implements OnInit {
+export class PostTempComponent implements OnInit,OnChanges {
   @Input() posts: Post[] = [];
   @Input() width:string=''; // An array of posts to be passed to this component
 
   postService = inject(PostService);
+  router=inject(Router);
   newComment: string = '';
   modalImage: any = null;
   user:string='';
@@ -24,9 +27,50 @@ export class PostTempComponent implements OnInit {
   ngOnInit(): void {
     this.user=sessionStorage.getItem('user_id')||'';
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['posts'] && this.posts.length > 0) {
+      this.updateLikedStatus();
+      this.updateCommentEditStatus();
+    }
+  }
 
   navigate() {
     
+  }
+  updateCommentEditStatus() {
+    if (!this.posts || !this.posts.length) {
+      console.log('Posts array is empty or not defined');
+      return;
+    }
+
+      this.posts.forEach(post => {
+        if (post.comments) {
+          post.comments.forEach(comment => {
+            comment.isCommentEditable = comment.commenter._id === this.user;
+            comment.isCommentDeleteable = comment.commenter._id === this.user;
+            if(post.author._id===this.user){
+              comment.isCommentDeleteable = true; 
+            }
+          });
+        } else {
+          console.log('No comments available for post:', post);
+        }
+      });
+  }
+
+
+  updateLikedStatus() {
+    if (!this.posts || !this.posts.length) {
+      console.log('Posts array is empty or not defined');
+      return;
+    }
+    this.posts.forEach(post => {
+      if (post.likes) {
+        post.isLiked = post.likes.some(like => like.liker._id===this.user);
+      } else {
+        console.log('No likes available for post:', post);
+      }
+    });
   }
 
   openModal(media: any) {
@@ -51,6 +95,7 @@ export class PostTempComponent implements OnInit {
     this.postService.AddLike(post._id,user).subscribe({
       next:(value)=> {
           console.log(value.message);
+          post.isLiked=!post.isLiked;
         },
         error:(err)=> {
           console.log(err);
@@ -60,6 +105,11 @@ export class PostTempComponent implements OnInit {
 
   toggleComments(post: Post) {
     post.showComments = !post.showComments;
+    post.showLikes=false;
+  }
+  togglelikes(post: Post) {
+    post.showLikes = !post.showLikes;
+    post.showComments = false;
   }
 
   addComment(post: Post) {
@@ -79,10 +129,66 @@ export class PostTempComponent implements OnInit {
       this.newComment = '';
     }
   }
+  toggleCommentMenu(post:Post, comment:Comment) {
+  if (!comment.showMenu) {
+    // Hide menu for other comments
+    post.comments.forEach(c => c.showMenu = false);
+  }
+  comment.showMenu = !comment.showMenu;
+}
 
+
+  editComment(comment:Comment) {
+    comment.isEditing = true;
+    comment.editedText = comment.text;
+  }
+
+  cancelEdit(comment:Comment) {
+    comment.isEditing = false;
+    comment.editedText = '';
+  }
+
+  saveComment(post:Post, comment:Comment) {
+    // Perform validation
+    if (!comment.editedText.trim()) {
+      alert('Comment cannot be empty.');
+      return;
+    }
+    const tempcomment={
+      userid:comment.commenter._id,
+      newText:comment.editedText
+    }
+    this.postService.editComment(post._id,comment._id,tempcomment).subscribe({
+      next:(value) =>{
+        alert("successfully");
+        comment.isEditing = false;
+        comment.editedText = '';
+      },
+      error:(err)=> {
+        alert("Something when Wrong, try sometimes later");
+      },
+    })
+
+  }
+
+  deleteComment(post:Post,comment:Comment){
+    const user ={
+      userid:comment.commenter._id
+    }
+    this.postService.deleteComment(post._id,comment._id,user).subscribe({
+      next:(value)=> {
+        alert("Delete successfully");
+      },
+      error:(err)=> {
+        alert(err.message);//"Something when Wrong, try sometimes later"
+      },
+
+    })
+    
+  }
   sharePost(post: Post) {
-    console.log(post);
-    // Logic to share the specific post
+    post.showShare=!post.showShare;
+    
   }
   getTimeAgo(date?: Date): string {
     if (!date) {
@@ -96,7 +202,7 @@ export class PostTempComponent implements OnInit {
 
   // Update the post
   updatePost(post: any) {
-    console.log('Update post:', post);
+    this.router.navigate(['editposts/'+post._id]);
   }
   deletePost(post: any) {
     this.postService.deletePost(post._id).subscribe({
@@ -107,6 +213,10 @@ export class PostTempComponent implements OnInit {
           console.log(err);
         },
     })
+  }
+
+  viewPost(post:Post):void{
+    this.router.navigate(['posts/'+post._id]);
   }
 
 }

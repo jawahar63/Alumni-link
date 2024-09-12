@@ -7,7 +7,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  http =inject(HttpClient)
+  http =inject(HttpClient);
+  AuthData = new Map<String,String>();
+
 
   isLoggedIn$ =new BehaviorSubject<boolean>(false);
 

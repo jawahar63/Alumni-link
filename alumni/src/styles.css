@@ -12,3 +12,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.share-btn {
+    @apply text-white py-2 px-4 rounded-lg transition-transform duration-200 ease-in-out;
+}
+
+.share-btn:hover {
+    @apply transform scale-105;
+    /* Button scales up when hovered */
+}

@@ -55,7 +55,7 @@ export const createPost = async (req, res, next) => {
                 })
                 .toFile(outputPath);
 
-            await fsPromises.unlink(file.path); // Use promises for unlinking
+            // await fsPromises.unlink(file.path); // Use promises for unlinking
             return { type: 'image', url: `uploads/post/${uniqueName}` };
         }));
 
@@ -81,8 +81,6 @@ export const updatePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const { author, caption, tags, location, existingMedia } = req.body;
-        
-        // Check if the user exists
         const user = await User.findById(author);
         if (!user) {
             return next(CreateError(404, "User not found"));
@@ -128,7 +126,7 @@ export const updatePost = async (req, res, next) => {
 
         // Update post fields
         post.caption = caption || post.caption;
-        post.tags = tags ? tags.split(',').map(tag => tag.trim()) : post.tags;
+        const tagsArray = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : []);
         post.location = location || post.location;
         post.media = mediaFiles;
 
@@ -150,6 +148,12 @@ export const getPostById = async (req, res, next) => {
                 populate: {
                     path: 'commenter',
                     select: 'username profileImage',
+                }
+            }).populate({
+                path:'likes',
+                populate:{
+                    path:'liker',
+                    select:'username profileImage',
                 }
             });
 
@@ -193,6 +197,12 @@ export const getAllPosts = async (req, res, next) => {
                 populate: {
                     path: 'commenter',
                     select: 'username profileImage',
+                }
+            }).populate({
+                path:'likes',
+                populate:{
+                    path:'liker',
+                    select:'username profileImage',
                 }
             })
             .sort({ createdAt: -1 })
@@ -243,6 +253,12 @@ export const getPostsByAuthor = async (req, res, next) => {
                 populate: {
                     path: 'commenter',
                     select: 'username profileImage',
+                }
+            }).populate({
+                path:'likes',
+                populate:{
+                    path:'liker',
+                    select:'username profileImage',
                 }
             })
             .sort({ createdAt: -1 })
@@ -309,7 +325,13 @@ export const filterPosts = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         const posts = await Post.find(filter)
-            .populate('author', 'username email batch domain company profileImage')
+            .populate('author', 'username email batch domain company profileImage').populate({
+                path:'likes',
+                populate:{
+                    path:'liker',
+                    select:'username profileImage',
+                }
+            })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -395,6 +417,85 @@ export const AddComment = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         return next(CreateError(500, 'Something went wrong while adding the comment'));
+    }
+};
+
+export const deleteComment = async (req, res, next) => {
+    try {
+        const { postId, commentId } = req.params;
+        const { userid } = req.body;
+        if (!userid) {
+            return next(CreateError(400, 'User ID is required'));
+        }
+
+        // Find the post where the comment will be deleted
+        const post = await Post.findById(postId);
+        if (!post) {
+            
+            return next(CreateError(404, 'Post not found'));
+        }
+
+        // Find the comment to delete
+        const commentIndex = post.comments.findIndex(comment => comment._id.toString() === commentId && (comment.commenter.toString() === userid||post._id===userid));
+        if (commentIndex === -1) {
+            console.log('s');
+            return next(CreateError(404, 'Comment not found or you are not authorized to delete this comment'));
+        }
+
+        // Remove the comment from the post's comments array
+        post.comments.splice(commentIndex, 1);
+
+        // Save the updated post
+        await post.save();
+
+        // Send success response
+        return res.status(200).json({
+            status: 'success',
+            message: 'Comment deleted successfully'
+        });
+    } catch (error) {
+        console.error(error);
+        return next(CreateError(500, 'Something went wrong while deleting the comment'));
+    }
+};
+export const editComment = async (req, res, next) => {
+    try {
+        const { postId, commentId } = req.params;
+        const { userid, newText } = req.body;
+
+        // Ensure userId and newText are provided
+        if (!userid || !newText) {
+            return next(CreateError(400, 'User ID and new comment text are required'));
+        }
+
+        // Find the post where the comment will be edited
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(CreateError(404, 'Post not found'));
+        }
+
+        // Find the comment to edit
+        const comment = post.comments.id(commentId);
+        if (!comment || comment.commenter.toString() !== userid) {
+            return next(CreateError(404, 'Comment not found or you are not authorized to edit this comment'));
+        }
+
+        // Update the comment text
+        comment.text = newText;
+        comment.createdAt = new Date(); // Optional: add an updatedAt field if you have one
+
+        // Save the updated post
+        await post.save();
+
+        // Send success response
+        return res.status(200).json({
+            status: 'success',
+            message: 'Comment updated successfully',
+            data: comment
+        });
+    } catch (error) {
+        console.error(error);
+        return next(CreateError(500, 'Something went wrong while editing the comment'));
     }
 };
 export const AddLike = async (req, res, next) => {

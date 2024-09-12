@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middleware/post_upload.js"
-import { AddComment, AddLike, createPost, deletePost, filterPosts, getAllPosts, getComments, getLikes, getPostById, getPostsByAuthor, updatePost } from "../controllers/post.controller.js";
+import { AddComment, AddLike, createPost, deleteComment, deletePost, editComment, filterPosts, getAllPosts, getComments, getLikes, getPostById, getPostsByAuthor, updatePost } from "../controllers/post.controller.js";
 
 const router =express.Router();
 
@@ -13,6 +13,8 @@ router.get('/posts/filter', filterPosts);
 
 router.delete('/:postId/delete',deletePost);
 router.post('/:postId/newcomment',AddComment);
+router.put('/:postId/editcomment/:commentId',editComment);
+router.put('/:postId/deletecomment/:commentId',deleteComment);
 router.post('/:postId/newlike',AddLike);
 router.get('/:postId/comments', getComments);
 router.get('/:postId/likes', getLikes);

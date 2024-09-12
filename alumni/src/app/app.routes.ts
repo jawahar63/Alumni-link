@@ -9,6 +9,8 @@ import { EventComponent } from './pages/event/event.component';
 import { PostComponent } from './pages/post/post.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { EditprofileComponent } from './pages/editprofile/editprofile.component';
+import { SinglePostComponent } from './components/single-post/single-post.component';
+import { EditPostComponent } from './components/edit-post/edit-post.component';
 
 export const routes: Routes = [
     {path:'',component:HomeComponent},
@@ -20,6 +22,8 @@ export const routes: Routes = [
     {path:'message',component:MessageComponent},
     {path:'event',component:EventComponent},
     {path:'post',component:PostComponent},
+    {path:'posts/:id',component:SinglePostComponent},
+    {path:'editposts/:id',component:EditPostComponent},
     {path:'profile/:id',component:ProfileComponent},
     {path:'editprofile/:id',component:EditprofileComponent},
 ];

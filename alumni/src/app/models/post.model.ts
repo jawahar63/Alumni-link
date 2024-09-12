@@ -14,11 +14,26 @@ export interface Media {
 
 export interface Comment {
   commenter: {
+    _id:string;
     username: string;
     profileImage: string;
   };
+  _id:string
   text: string;
   createdAt?: Date;
+  isCommentEditable?:boolean;
+  isCommentDeleteable?:boolean;
+  showMenu?:boolean;
+  isEditing?:boolean;
+  editedText:string;
+}
+export interface like {
+  liker: {
+    _id:string;
+    username: string;
+    profileImage: string;
+  };
+  likedAt?: Date;
 }
 
 export interface Post {
@@ -29,9 +44,13 @@ export interface Post {
   location?: string;
   media: Media[];
   comments: Comment[];
-  likes: string[]; // Array of user IDs who liked the post
+  likes: like[]; // Array of user IDs who liked the post
   createdAt: Date;
   updatedAt: Date;
   showComments?: boolean;
-  showMenu?:boolean; // Optional field to control the display of comments
+  showLikes?:boolean;
+  showMenu?:boolean;
+  showShare?:boolean;
+  isLiked?:boolean; 
+  showCommentMenu?:boolean;
 }

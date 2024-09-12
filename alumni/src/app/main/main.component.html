@@ -3,7 +3,7 @@
     <div class="flex">
         <app-side-bar class="fixed hidden md:block top-16 left-0 w-64 z-10"></app-side-bar>
         <div class=" flex justify-center items-center">
-            <div *ngIf="isLoggedIn; else login" class="md:w-[80vw] h-[80vh] mt-20 md:ml-64">
+            <div *ngIf="isLoggedIn; else login" class="md:w-[80vw] h-[80vh] mt-16 md:ml-64">
                 <router-outlet></router-outlet>
             </div>
             <ng-template #login>
