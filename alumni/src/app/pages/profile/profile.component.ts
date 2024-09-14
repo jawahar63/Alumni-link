@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PostTempComponent } from '../../components/post-temp/post-temp.component';
 import { Post } from '../../models/post.model';
 import { PostService } from '../../servies/post.service';
+import { AuthService } from '../../servies/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,17 +23,27 @@ export class ProfileComponent implements OnInit{
   fullName!:string;
   id!:string;
   userId!:string;
+  checkUserId!:string;
   details!:object;
+  isLoggedIn:boolean=false;
   Editable:boolean=false;
   selectedIndex: number = 0;
+  authService=inject(AuthService);
   profileservice=inject(ProfileService);
   postService = inject(PostService);
   router=inject(Router);
   route=inject(ActivatedRoute)
   
   ngOnInit(): void {
+    this.isLoggedIn=this.authService.isLoggedIn();
+        if(!this.isLoggedIn){
+            this.router.navigate(['login']);
+        }
     this.id=this.route.snapshot.paramMap.get('id')||'';
-    if(this.id===''||this.id!==sessionStorage.getItem('user_id')){
+    this.authService.AuthData.subscribe((data)=>{
+      this.checkUserId=data.get('user_id');
+    })
+    if(this.id===''||this.id!==this.checkUserId){
       this.router.navigate(['home']);
     }
     this.profileservice.viewProfile(this.id).subscribe({
@@ -40,7 +51,7 @@ export class ProfileComponent implements OnInit{
         this.profileDetails=res.message;
         this.fullName=this.profileDetails.firstName+" "+this.profileDetails.lastName;
         this.userId=this.profileDetails._id;
-        if(sessionStorage.getItem('user_id')===this.userId){
+        if(this.checkUserId===this.userId){
           this.Editable=true;
         }
       }
@@ -53,7 +64,7 @@ export class ProfileComponent implements OnInit{
     })
   }
   Editprofile() {
-    if(this.id!== sessionStorage.getItem('user_id'))
+    if(this.id!== this.checkUserId)
       return
     this.router.navigate(['editprofile/'+this.id]);
   }

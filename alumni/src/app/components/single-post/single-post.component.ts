@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../servies/post.service';
 import { Post } from '../../models/post.model';
 import { PostTempComponent } from '../post-temp/post-temp.component';
+import { AuthService } from '../../servies/auth.service';
 
 @Component({
   selector: 'app-single-post',
@@ -15,13 +16,21 @@ export class SinglePostComponent implements OnInit {
   postId:string='';
   post:Post[]=[];
   user!:string;
+  isLoggedIn:boolean=false;
+  authService=inject(AuthService);
   route=inject(ActivatedRoute);
   postService =inject(PostService);
   router=inject(Router);
 
 
   ngOnInit(): void {
-    this.user=sessionStorage.getItem('user_id')||''; 
+    // this.isLoggedIn=this.authService.isLoggedIn();
+    //     if(!this.isLoggedIn){
+    //         this.router.navigate(['login']);
+    // }
+    this.authService.AuthData.subscribe((data)=>{
+      this.user=data.get('user_id');
+    })
     this.postId=this.route.snapshot.paramMap.get('id')||'';
     this.postService.getPostById(this.postId).subscribe({
       next:(value)=> {

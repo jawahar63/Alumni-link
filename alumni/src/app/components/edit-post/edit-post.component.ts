@@ -38,6 +38,7 @@ export class EditPostComponent implements OnInit {
   ngOnInit(): void {
     // Get post data from route params
     this.postId = this.route.snapshot.paramMap.get('id')!;
+    
     this.fetchPostData(this.postId);
 
     // Set up form
@@ -46,16 +47,13 @@ export class EditPostComponent implements OnInit {
       tags: ['', Validators.required],
       location: ['', Validators.required]
     });
-
-    this.loadUserProfile();
-  }
-
-  loadUserProfile() {
-    this.profileImage = sessionStorage.getItem('photo') || '';
-    this.name = sessionStorage.getItem('username') || '';
-    this.batch = sessionStorage.getItem('batch') || '';
-    this.domain = sessionStorage.getItem('domain') || '';
-    this.company = sessionStorage.getItem('company') || '';
+    this.authService.AuthData.subscribe((data)=>{
+      this.profileImage = data.get('photo')||'';
+      this.name = data.get('username')||'';
+      this.batch = data.get('batch')||'';
+      this.domain = data.get('domain')||'';
+      this.company = data.get('company')||'';
+    })
   }
 
   fetchPostData(postId: string) {

@@ -6,6 +6,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { AuthService } from '../../servies/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { GoogleSigninButtonDirective, GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
+import { JwtdecodeService } from '../../servies/jwtdecode.service';
 
 @Component({
   selector: 'app-login',
@@ -17,22 +18,23 @@ import { GoogleSigninButtonDirective, GoogleSigninButtonModule, SocialAuthServic
 export class LoginComponent implements OnInit{
   fb=inject(FormBuilder);
   loginForm!:FormGroup;
-  authServie=inject(AuthService);
+  authservice=inject(AuthService);
   router =inject(Router);
+  jwtDecode=inject(JwtdecodeService);
   isLoggedIn:boolean=false;
   socialAuthServie=inject(SocialAuthService);
   googleEmail!:any;
+  decodedtoken!:any;
   loginErr!:String;
 
   ngOnInit(): void {
 
     this.socialAuthServie.authState.subscribe((result)=>{
       this.googleEmail=result;
-      localStorage.setItem("photo",result.photoUrl);
       this.googleLogin();
     });
 
-    this.isLoggedIn=this.authServie.isLoggedIn();
+    this.isLoggedIn=this.authservice.isLoggedIn();
     if(this.isLoggedIn){
       this.router.navigate(['home']);
     }
@@ -41,36 +43,68 @@ export class LoginComponent implements OnInit{
       password:['',Validators.required],
     });
   }
-  login(){
-    this.authServie.loginServie(this.loginForm.value).subscribe({
-      next:(res)=>{
-        localStorage.setItem("token",res.access_token);
-        // localStorage.setItem("user_id",res.data._id);
-        // localStorage.setItem("role",res.data.roles[0].role);
-        // localStorage.setItem("username",res.data.username);
-        // localStorage.setItem("photo",res.data.profileImage);
-        this.authServie.isLoggedIn$.next(true); 
-        this.loginForm.reset;
-        this.router.navigate(['home']);
-      },
-      error:(err)=> {
-        this.loginErr=err.error.message;
-      },
-    })
-  }
-  googleLogin(){
-    this.authServie.googleLoginServie(this.googleEmail).subscribe({
-        next:(res)=>{
-          localStorage.setItem("user_id",res.data._id);
-          localStorage.setItem('role',res.data.roles[0].role);
-          localStorage.setItem("username",res.data.username);
-          this.authServie.isLoggedIn$.next(true);
-          this.router.navigate(['home']);
-        },
-        error:(err)=> {
-          this.loginErr=err.error.message;
-        },
+  login() {
+  this.authservice.loginServie(this.loginForm.value).subscribe({
+    next: (res) => {
+      localStorage.setItem("token", res.access_token);
+      this.authservice.updateAuthData("token", res.access_token);
+      
+      const token = localStorage.getItem("token") || '';
+      this.decodedtoken = this.jwtDecode.decodetoken(token);
+      
+      if (this.decodedtoken) {
+        this.authservice.updateAuthData("user_id", this.decodedtoken.id);
+        this.authservice.updateAuthData("role", this.decodedtoken.roles[0].role);
+        
+        if (this.decodedtoken.roles[0].role === "alumni") {
+          this.authservice.updateAuthData("batch", this.decodedtoken.batch);
+          this.authservice.updateAuthData("domain", this.decodedtoken.domain);
+          this.authservice.updateAuthData("company", this.decodedtoken.company);
+        }
+        
+        this.authservice.updateAuthData("username", this.decodedtoken.username);
+        this.authservice.updateAuthData("photo", this.decodedtoken.profileImage);
 
-      })
-  }
+        this.authservice.isLoggedIn$.next(true);
+        this.router.navigate(['home']);
+      }
+    },
+    error: (err) => {
+      this.loginErr = err.error.message;
+    }
+  });
+}
+
+googleLogin() {
+  this.authservice.googleLoginServie(this.googleEmail).subscribe({
+    next: (res) => {
+      localStorage.setItem("token", res.access_token);
+      this.authservice.updateAuthData("token", res.access_token);
+      
+      const token = localStorage.getItem("token") || '';
+      this.decodedtoken = this.jwtDecode.decodetoken(token);
+      
+      if (this.decodedtoken) {
+        this.authservice.updateAuthData("user_id", this.decodedtoken.id);
+        this.authservice.updateAuthData("role", this.decodedtoken.roles[0].role);
+        
+        if (this.decodedtoken.roles[0].role === "alumni") {
+          this.authservice.updateAuthData("batch", this.decodedtoken.batch);
+          this.authservice.updateAuthData("domain", this.decodedtoken.domain);
+          this.authservice.updateAuthData("company", this.decodedtoken.company);
+        }
+        
+        this.authservice.updateAuthData("username", this.decodedtoken.username);
+        this.authservice.updateAuthData("photo", this.decodedtoken.profileImage);
+        
+        this.authservice.isLoggedIn$.next(true);
+        this.router.navigate(['home']);
+      }
+    },
+    error: (err) => {
+      this.loginErr = err.error.message;
+    }
+  });
+}
+
 }

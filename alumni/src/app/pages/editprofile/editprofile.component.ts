@@ -7,6 +7,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileService } from '../../servies/profile.service';
+import { AuthService } from '../../servies/auth.service';
 
 @Component({
   selector: 'app-editprofile',
@@ -17,6 +18,7 @@ import { ProfileService } from '../../servies/profile.service';
 })
 export class EditprofileComponent implements OnInit {
   id = '';
+  isLoggedIn=false;
   skills: string[] = [];
   skilldata!: string;
   fullName!: string;
@@ -25,6 +27,7 @@ export class EditprofileComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   sanitizer = inject(DomSanitizer);
+  authService=inject(AuthService);
   profileDetailform!: FormGroup;
   skillControl!: FormControl;
   fb = inject(FormBuilder);
@@ -34,6 +37,10 @@ export class EditprofileComponent implements OnInit {
   originalProfileImage: SafeUrl = '';
 
   ngOnInit(): void {
+    this.isLoggedIn=this.authService.isLoggedIn();
+        if(!this.isLoggedIn){
+            this.router.navigate(['login']);
+        }
     this.profileDetailform = this.fb.group({
       profileImage: ['',],
       domain: ['', Validators.required],
@@ -49,9 +56,11 @@ export class EditprofileComponent implements OnInit {
     });
     this.skillControl = this.profileDetailform.get('skill') as FormControl;
     this.id = this.route.snapshot.paramMap.get('id') || '';
-    if (this.id !== sessionStorage.getItem('user_id')) {
-      this.router.navigate(['profile/' + this.id]);
-    }
+    this.authService.AuthData.subscribe((data)=>{
+      if (this.id !== data.get('user_id')) {
+        this.router.navigate(['profile/' + this.id]);
+      }
+    })
     this.profileService.viewProfile(this.id).subscribe({
       next: (res) => {
         this.profileDetails = res.message;

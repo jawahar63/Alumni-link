@@ -27,7 +27,7 @@ export class PostComponent implements OnInit {
   batch!: string;
   company!: string;
   domain!: string;
-  authorId: string = sessionStorage.getItem('user_id') || '';
+  authorId!: string;
   postimages: any[] = [];
   showimg: boolean = false;
   modalImage: any;
@@ -39,11 +39,14 @@ export class PostComponent implements OnInit {
     if (!this.isLoggedIn) {
       this.router.navigate(['login']);
     }
-    this.profileImage = sessionStorage.getItem('photo') || '';
-    this.name = sessionStorage.getItem('username') || '';
-    this.batch = sessionStorage.getItem('batch') || '';
-    this.domain = sessionStorage.getItem('domain') || '';
-    this.company = sessionStorage.getItem('company') || '';
+    this.authService.AuthData.subscribe((data)=>{
+      this.profileImage = data.get('photo')||'';
+      this.name = data.get('username')||'';
+      this.batch = data.get('batch')||'';
+      this.domain = data.get('domain')||'';
+      this.company = data.get('company')||'';
+      this.authorId= data.get('user_id');
+    })
 
     this.postForm = this.fb.group({
       caption: ['', [Validators.required, Validators.maxLength(1000)]],

@@ -36,6 +36,8 @@ export class SideBarComponent implements OnInit{
   outsideclick!:boolean;
   
   ngOnInit(): void {
+    this.mentor=false;
+    console.log(this.authservice.AuthData);
 
     this.sidebar.currPage.subscribe((val:string)=>{
       this.activeSection=val;
@@ -43,9 +45,10 @@ export class SideBarComponent implements OnInit{
 
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();
-      if(sessionStorage.getItem("role")==="mentor"){
-      this.mentor=true;
-    }
+    })
+    this.authservice.AuthData.subscribe((data)=>{
+      const role = data.get('role');
+      this.mentor = role === 'mentor';
     })
 
     // if(localStorage.getItem("role")==="mentor"){

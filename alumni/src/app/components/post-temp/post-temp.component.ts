@@ -6,6 +6,7 @@ import { PostService } from '../../servies/post.service';
 import { formatDistanceToNow } from 'date-fns';
 import { Router } from '@angular/router';
 import { ShareButtonsComponent } from '../share-buttons/share-buttons.component';
+import { AuthService } from '../../servies/auth.service';
 
 @Component({
   selector: 'app-post-temp',
@@ -23,9 +24,12 @@ export class PostTempComponent implements OnInit,OnChanges {
   newComment: string = '';
   modalImage: any = null;
   user:string='';
+  authService=inject(AuthService);
 
   ngOnInit(): void {
-    this.user=sessionStorage.getItem('user_id')||'';
+    this.authService.AuthData.subscribe((data)=>{
+      this.user=data.get('user_id');
+    })
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['posts'] && this.posts.length > 0) {
