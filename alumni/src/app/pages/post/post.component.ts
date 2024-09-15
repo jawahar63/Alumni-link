@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../../servies/post.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-post',
@@ -19,6 +20,7 @@ export class PostComponent implements OnInit {
   postService = inject(PostService);
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
+  toasterService=inject(ToasterService);
 
   postForm!: FormGroup;
   isLoggedIn: boolean = false;
@@ -108,13 +110,12 @@ export class PostComponent implements OnInit {
     });
 
     this.postService.createPost(formData).subscribe({
-      next: (res) => {
-        alert("Posted Successfully");
+      next: (value) => {
+        this.toasterService.addToast('success','Success!',value.message,5000);
         this.navigate();
       },
       error: (err) => {
-        console.log(err);
-        alert(err);
+        this.toasterService.addToast('error','error!',err.message,5000);
       }
     });
   }

@@ -26,4 +26,5 @@ export const routes: Routes = [
     {path:'editposts/:id',component:EditPostComponent},
     {path:'profile/:id',component:ProfileComponent},
     {path:'editprofile/:id',component:EditprofileComponent},
+    { path: '**', redirectTo: 'home' },
 ];

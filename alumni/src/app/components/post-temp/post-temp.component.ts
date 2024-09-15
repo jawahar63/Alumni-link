@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Router } from '@angular/router';
 import { ShareButtonsComponent } from '../share-buttons/share-buttons.component';
 import { AuthService } from '../../servies/auth.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-post-temp',
@@ -25,6 +26,7 @@ export class PostTempComponent implements OnInit,OnChanges {
   modalImage: any = null;
   user:string='';
   authService=inject(AuthService);
+  toasterService=inject(ToasterService);
 
   ngOnInit(): void {
     this.authService.AuthData.subscribe((data)=>{
@@ -77,6 +79,11 @@ export class PostTempComponent implements OnInit,OnChanges {
     });
   }
 
+  goToProfile(post:Post){
+    const aid =post.author._id;
+    this.router.navigate(['profile/'+aid]);
+  }
+
   openModal(media: any) {
     this.modalImage = media;
   }
@@ -93,10 +100,10 @@ export class PostTempComponent implements OnInit,OnChanges {
   }
 
   likePost(post: Post) {
-    const user={
-      userid:sessionStorage.getItem("user_id")||''
+    const userdata={
+      userid:this.user
     }
-    this.postService.AddLike(post._id,user).subscribe({
+    this.postService.AddLike(post._id,userdata).subscribe({
       next:(value)=> {
           console.log(value.message);
           post.isLiked=!post.isLiked;
@@ -119,15 +126,15 @@ export class PostTempComponent implements OnInit,OnChanges {
   addComment(post: Post) {
     if (this.newComment.trim()) {
       const comment={
-        userid:sessionStorage.getItem("user_id")||'',
+        userid:this.user,
         text: this.newComment
       }
       this.postService.Addcomment(post._id,comment).subscribe({
         next:(value)=> {
-          alert(value.message);
+          this.toasterService.addToast('success','Success!',value.message,5000);
         },
         error:(err)=> {
-          console.log(err);
+          this.toasterService.addToast('error','error!','Internal server Error',5000);
         },
       });
       this.newComment = '';
@@ -155,7 +162,7 @@ export class PostTempComponent implements OnInit,OnChanges {
   saveComment(post:Post, comment:Comment) {
     // Perform validation
     if (!comment.editedText.trim()) {
-      alert('Comment cannot be empty.');
+      this.toasterService.addToast("error","Error!",'Comment cannot be empty.',5000)
       return;
     }
     const tempcomment={
@@ -164,12 +171,12 @@ export class PostTempComponent implements OnInit,OnChanges {
     }
     this.postService.editComment(post._id,comment._id,tempcomment).subscribe({
       next:(value) =>{
-        alert("successfully");
+        this.toasterService.addToast('success','Success!',value.message,5000);
         comment.isEditing = false;
         comment.editedText = '';
       },
       error:(err)=> {
-        alert("Something when Wrong, try sometimes later");
+        this.toasterService.addToast('error','error!','Internal server Error',5000);
       },
     })
 
@@ -187,10 +194,10 @@ export class PostTempComponent implements OnInit,OnChanges {
     }
     this.postService.deleteComment(post._id,comment._id,user).subscribe({
       next:(value)=> {
-        alert("Delete successfully");
+        this.toasterService.addToast('success','Success!',value.message,5000);
       },
       error:(err)=> {
-        alert(err.message);//"Something when Wrong, try sometimes later"
+        this.toasterService.addToast('error','error!','Internal server Error',5000);
       },
 
     })
@@ -224,10 +231,11 @@ export class PostTempComponent implements OnInit,OnChanges {
   deletePost(post: any) {
     this.postService.deletePost(post._id).subscribe({
       next:(value)=> {
-          alert("Delete successfully");
+          this.toasterService.addToast('success','Success!',"Delete successfully",5000);
+          
         },
         error:(err)=> {
-          console.log(err);
+          this.toasterService.addToast('error','error!','Internal server Error',5000);
         },
     })
   }

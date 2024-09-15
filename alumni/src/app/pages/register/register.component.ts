@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { confirmPasswordValidator } from '../../validators/confirmpassword.validator';
 import { AuthService } from '../../servies/auth.service';
 import { Router } from '@angular/router';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-register',
@@ -15,12 +16,17 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
   fb =inject(FormBuilder);
   authService =inject(AuthService);
+  toasterService=inject(ToasterService);
+  isMentor=false;
   router =inject(Router);
   registerForm !:FormGroup;
   firstname: any;
 
   ngOnInit(): void {
-    if(sessionStorage.getItem("role")!=="mentor"){
+    this.authService.AuthData.subscribe((data)=>{
+      this.isMentor="mentor"===data.get('role')
+    })
+    if(!this.isMentor){
       this.router.navigate(['home']);
     }
     this.registerForm=this.fb.group({
@@ -40,12 +46,12 @@ export class RegisterComponent implements OnInit {
   register(){
     this.authService.registerServie(this.registerForm.value).subscribe({
       next:(res)=>{
-        alert("User Created !");
+        this.toasterService.addToast('success','Success!',res.message,5000);
         this.registerForm.reset();
         this.router.navigate(['login']);
       },
       error:(err)=>{
-        console.log(err);
+        this.toasterService.addToast('error','error!',err.error.message,5000);
       }
     })
   }

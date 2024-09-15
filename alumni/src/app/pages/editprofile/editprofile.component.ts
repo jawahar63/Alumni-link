@@ -8,6 +8,7 @@ import { ImageCropperComponent } from 'ngx-image-cropper';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileService } from '../../servies/profile.service';
 import { AuthService } from '../../servies/auth.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-editprofile',
@@ -28,6 +29,7 @@ export class EditprofileComponent implements OnInit {
   route = inject(ActivatedRoute);
   sanitizer = inject(DomSanitizer);
   authService=inject(AuthService);
+  toasterService=inject(ToasterService);
   profileDetailform!: FormGroup;
   skillControl!: FormControl;
   fb = inject(FormBuilder);
@@ -66,7 +68,7 @@ export class EditprofileComponent implements OnInit {
         this.profileDetails = res.message;
         this.skills = this.profileDetails.skill;
         this.fullName = this.profileDetails.firstName + ' ' + this.profileDetails.lastName;
-        this.originalProfileImage = this.profileDetails.profileImage;  // Save the original image URL
+        this.originalProfileImage = this.profileDetails.profileImage;
         this.profileDetailform.patchValue(this.profileDetails);
         this.skillControl.setValue('');
       }
@@ -99,11 +101,11 @@ export class EditprofileComponent implements OnInit {
     delete formData.profileImage;
 
     this.profileService.editProfile(this.id, formData).subscribe({
-      next: (res) => {
-        alert("Update Successfully");
+      next: (value) => {
+        this.toasterService.addToast('success','Success!',value.message,5000);
       },
       error: (err) => {
-        console.log(err);
+        this.toasterService.addToast('error','error!',err.message,5000);
       }
     });
   }

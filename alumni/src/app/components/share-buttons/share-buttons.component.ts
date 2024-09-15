@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Post } from '../../models/post.model';
 import { apiUrls, liveUrl } from '../../api.urls';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-share-buttons',
@@ -11,6 +12,7 @@ import { apiUrls, liveUrl } from '../../api.urls';
 })
 export class ShareButtonsComponent {
   @Input() post!: Post;
+  toasterService=inject(ToasterService);
 
   shareOnWhatsApp(post: Post) {
     const url = liveUrl.PostUrl+post._id;
@@ -33,9 +35,9 @@ export class ShareButtonsComponent {
     const url = liveUrl.PostUrl+post._id;
     console.log("heelo");// Replace with the actual post link
     navigator.clipboard.writeText(url).then(() => {
-      alert('Link copied to clipboard!');
+      this.toasterService.addToast('success','Success!','Link copied to clipboard!',5000);
     }).catch(() => {
-      alert('Failed to copy link.');
+      this.toasterService.addToast('error','error!','Failed to copy link.',5000);
     });
   }
 

@@ -7,6 +7,7 @@ import { AuthService } from '../../servies/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { GoogleSigninButtonDirective, GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
 import { JwtdecodeService } from '../../servies/jwtdecode.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit{
   jwtDecode=inject(JwtdecodeService);
   isLoggedIn:boolean=false;
   socialAuthServie=inject(SocialAuthService);
+  toasterService=inject(ToasterService);
   googleEmail!:any;
   decodedtoken!:any;
   loginErr!:String;
@@ -67,10 +69,12 @@ export class LoginComponent implements OnInit{
 
         this.authservice.isLoggedIn$.next(true);
         this.router.navigate(['home']);
+        this.toasterService.addToast('success','Success!','Login successfully.',5000);
       }
     },
     error: (err) => {
-      this.loginErr = err.error.message;
+      this.toasterService.addToast('error','Error!',err.error.message,5000);
+      // this.loginErr = err.error.message;
     }
   });
 }
@@ -99,10 +103,11 @@ googleLogin() {
         
         this.authservice.isLoggedIn$.next(true);
         this.router.navigate(['home']);
+        this.toasterService.addToast('success','Success!','Login successfully.',5000);
       }
     },
     error: (err) => {
-      this.loginErr = err.error.message;
+      this.toasterService.addToast('error','Error!',err.error.message,5000);
     }
   });
 }

@@ -502,8 +502,6 @@ export const AddLike = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const { userid } = req.body;
-
-        // Find the post and user, and populate the likes.liker field
         const post = await Post.findById(postId).populate({
                 path: 'likes',
                 populate: {

@@ -4,6 +4,7 @@ import { PostService } from '../../servies/post.service';
 import { Post } from '../../models/post.model';
 import { PostTempComponent } from '../post-temp/post-temp.component';
 import { AuthService } from '../../servies/auth.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-single-post',
@@ -21,6 +22,7 @@ export class SinglePostComponent implements OnInit {
   route=inject(ActivatedRoute);
   postService =inject(PostService);
   router=inject(Router);
+  toasterService=inject(ToasterService);
 
 
   ngOnInit(): void {
@@ -59,7 +61,7 @@ export class SinglePostComponent implements OnInit {
         console.log("successfully");
       },
       error:(err)=> {
-        alert("error");
+        this.toasterService.addToast('error','error!',err.message,5000);
         this.router.navigate(['home']);
       },
     })

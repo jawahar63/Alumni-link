@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../servies/auth.service';
 import { PostService } from '../../servies/post.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-editpost',
@@ -20,6 +21,7 @@ export class EditPostComponent implements OnInit {
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
   route = inject(ActivatedRoute);
+  toasterService=inject(ToasterService);
 
   postForm!: FormGroup;
   profileImage!: string;
@@ -129,10 +131,10 @@ export class EditPostComponent implements OnInit {
 
     try {
       const response = await this.postService.updatePost(this.postId, formData).toPromise();
-      alert("Update successfully")
+      this.toasterService.addToast('success','Success!',"Updated successfully",5000);
       this.router.navigate(['/posts', this.postId]);
     } catch (error) {
-      console.error('Error updating post', error);
+      this.toasterService.addToast('error','error!','Error updating post',5000);
     }
   }
 

@@ -36,8 +36,6 @@ export class SideBarComponent implements OnInit{
   outsideclick!:boolean;
   
   ngOnInit(): void {
-    this.mentor=false;
-    console.log(this.authservice.AuthData);
 
     this.sidebar.currPage.subscribe((val:string)=>{
       this.activeSection=val;
@@ -84,14 +82,14 @@ export class SideBarComponent implements OnInit{
   register(){
     this.router.navigate(['register']);
   }
-  toggleSidebar() {
-  if(screen.width<768){
-    this.sidebar.toggleSidebar();
-  }
-  }
 
   setActiveSection(section: string) {
     this.activeSection = section;
     this.router.navigate([section]);
+  }
+  toggleSidebar() {
+  if(screen.width<768){
+    this.sidebar.toggleSidebar();
+  }
   }
 }

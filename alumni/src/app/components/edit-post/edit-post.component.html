@@ -62,7 +62,7 @@
             <div *ngIf="modalImage"
                 class="fixed inset-0 flex items-center w-screen h-screen justify-center bg-dark bg-opacity-70"
                 (click)="closeModal()">
-                <div class="bg-white p-4 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
+                <div class="bg-white p-0.5 rounded-lg pointer-events-auto" (click)="$event.stopPropagation()">
                     <img [src]="modalImage.url" class="object-contain max-h-[70vh] max-w-full" alt="Image">
                 </div>
             </div>

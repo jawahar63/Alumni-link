@@ -1,0 +1,26 @@
+/* Toaster Type Colors */
+.success {
+    background-color: #38a169;
+    /* green */
+}
+
+.error {
+    background-color: #e53e3e;
+    /* red */
+}
+
+.warning {
+    background-color: #dd6b20;
+    /* orange */
+}
+
+/* Toast responsiveness */
+@media (max-width: 768px) {
+    .fixed {
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        top: 4px;
+    }
+}

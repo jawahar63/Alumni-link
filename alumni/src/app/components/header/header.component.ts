@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ProfileService } from '../../servies/profile.service';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
   selector: 'app-header',
@@ -26,6 +27,7 @@ export class HeaderComponent implements OnInit {
   isLoggedIn:boolean=false
   router =inject(Router)
   sidebar =inject(SideBarService);
+  toasterService=inject(ToasterService);
   isProfileDropdownOpen: boolean = false;
   searchbarvisible:boolean=false;
   screenSizeSearchbar:boolean=false;
@@ -34,6 +36,7 @@ export class HeaderComponent implements OnInit {
   profilePhoto!:SafeUrl|null;
   id!:string;
   details!:object;
+  role!:string;
   
 
 
@@ -44,8 +47,8 @@ export class HeaderComponent implements OnInit {
     })
     this.authservice.AuthData.subscribe((data)=>{
       this.username=data.get('username');
-      const role = data.get('role')
-        this.isalumni=role==="alumni";
+      this.role = data.get('role')
+        this.isalumni=this.role==="alumni";
       this.id=data.get('user_id');
     this.username=data.get('username');
     this.profilePhoto = data.get('photo');
@@ -67,6 +70,7 @@ export class HeaderComponent implements OnInit {
     this.authservice.isLoggedIn$.next(false);
     this.router.navigate(['login']);
     this.socialAuthService.signOut();
+    this.toasterService.addToast('success','Success!','Logout successfully.',5000);
  }
 
  toggleSidebar() {
@@ -84,6 +88,7 @@ export class HeaderComponent implements OnInit {
   }
 
   viewProfile():void{
+    if(this.role==='alumni')
     this.router.navigate(['profile/'+this.id]);
   }
   // checkExpiration() {

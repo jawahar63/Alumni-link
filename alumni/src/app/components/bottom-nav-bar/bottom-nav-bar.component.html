@@ -1,0 +1,26 @@
+<div class="w-full py-2 flex flex-row justify-evenly items-center bg-darkgrey">
+    <div (click)="setActiveSection('home')">
+        <mat-icon *ngIf="activeSection==='home'" class="text-yellow">home</mat-icon>
+        <mat-icon *ngIf="activeSection!=='home'" class="text-white">home</mat-icon>
+    </div>
+    <div (click)="setActiveSection('search')">
+        <mat-icon *ngIf="activeSection==='search'" class="text-yellow">search</mat-icon>
+        <mat-icon *ngIf="activeSection!=='search'" class="text-white">search</mat-icon>
+    </div>
+    <div *ngIf="isAlumni" (click)="setActiveSection('post')">
+        <mat-icon *ngIf="activeSection==='post'" class="text-yellow">add_circle</mat-icon>
+        <mat-icon *ngIf="activeSection!=='post'" class="text-white">add_circle_outline</mat-icon>
+    </div>
+    <div *ngIf="isMentor" (click)="setActiveSection('register')">
+        <mat-icon *ngIf="activeSection==='register'" class="text-yellow">edit</mat-icon>
+        <mat-icon *ngIf="activeSection!=='register'" class="text-white">edit</mat-icon>
+    </div>
+    <div (click)="setActiveSection('message')">
+        <mat-icon *ngIf="activeSection==='message'" class="text-yellow">message</mat-icon>
+        <mat-icon *ngIf="activeSection!=='message'" class="text-white">message</mat-icon>
+    </div>
+    <div (click)="setActiveSection('event')">
+        <mat-icon *ngIf="activeSection==='event'" class="text-yellow">event</mat-icon>
+        <mat-icon *ngIf="activeSection!=='event'" class="text-white">event</mat-icon>
+    </div>
+</div>

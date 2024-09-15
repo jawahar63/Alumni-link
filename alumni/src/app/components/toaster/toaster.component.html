@@ -1,0 +1,24 @@
+<div *ngFor="let toast of toasterService.toasts; let i = index" [ngClass]="toast.type" [@slideInOut]
+    class="fixed right-4 top-4 md:right-4 md:top-4 p-4 mb-4 w-full md:max-w-sm max-w-xs z-50 shadow-lg rounded-lg">
+
+    <!-- Notification Content -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <span class="font-semibold text-white">{{ toast.title }}</span>
+            <span class="text-sm text-white">{{ toast.message }}</span>
+        </div>
+        <!-- Cancel Button -->
+        <button (click)="closeToast(i)" class="text-white hover:text-gray-200 ml-4">✖</button>
+    </div>
+
+    <!-- Timing Bar -->
+    <div class="h-1 bg-white mt-2 relative rounded-lg">
+        <div class="absolute h-full rounded-lg transition-all ease-linear" [ngClass]="{
+          'bg-green': toast.type === 'success', 
+          'bg-red': toast.type === 'error', 
+          'bg-yellow': toast.type === 'warning'
+        }" [ngStyle]="{ width: toast.progress + '%' }">
+        </div>
+    </div>
+
+</div>

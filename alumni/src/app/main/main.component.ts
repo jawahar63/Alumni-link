@@ -6,11 +6,14 @@ import { SideBarService } from '../servies/side-bar.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../servies/auth.service';
 import { JwtdecodeService } from '../servies/jwtdecode.service';
+import { ToasterComponent } from '../components/toaster/toaster.component';
+import { ProfileComponent } from "../pages/profile/profile.component";
+import { BottomNavBarComponent } from '../components/bottom-nav-bar/bottom-nav-bar.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule],
+  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule, ToasterComponent, ProfileComponent,BottomNavBarComponent],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'] // Corrected styleUrl to styleUrls
 })
@@ -27,8 +30,6 @@ export class MainComponent implements OnInit {
     if (!this.isLoggedIn) {
       this.router.navigate(['login']);
     }
-
-    // Subscription for login status and sidebar visibility
     this.authservice.isLoggedIn$.subscribe((res) => {
       this.isLoggedIn = this.authservice.isLoggedIn();
     });
@@ -57,29 +58,6 @@ export class MainComponent implements OnInit {
       this.authservice.updateAuthData('photo', this.decodedtoken.profileImage);
       
       }
-      
     })
-
-      // Set AuthData based on decoded token
-
-    // Check for user ID in AuthData and token in local storage
-    // if (!this.authservice.AuthData.get('user_id') && localStorage.getItem('token')) {
-    //   const token = localStorage.getItem('token') || '';
-    //   this.decodedtoken = this.jwtDecode.decodetoken(token);
-
-    //   if (this.decodedtoken !== null) {
-    //     sessionStorage.setItem('user_id', this.decodedtoken.id);
-    //     sessionStorage.setItem('role', this.decodedtoken.roles[0].role);
-
-    //     if (this.decodedtoken.roles[0].role === 'alumni') {
-    //       sessionStorage.setItem('batch', this.decodedtoken.batch);
-    //       sessionStorage.setItem('domain', this.decodedtoken.domain);
-    //       sessionStorage.setItem('company', this.decodedtoken.company);
-    //     }
-
-    //     sessionStorage.setItem('username', this.decodedtoken.username);
-    //     sessionStorage.setItem('photo', this.decodedtoken.profileImage);
-    //   }
-    // }
   }
 }

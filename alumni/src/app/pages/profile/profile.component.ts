@@ -43,9 +43,6 @@ export class ProfileComponent implements OnInit{
     this.authService.AuthData.subscribe((data)=>{
       this.checkUserId=data.get('user_id');
     })
-    if(this.id===''||this.id!==this.checkUserId){
-      this.router.navigate(['home']);
-    }
     this.profileservice.viewProfile(this.id).subscribe({
       next:(res)=>{
         this.profileDetails=res.message;
@@ -73,25 +70,20 @@ export class ProfileComponent implements OnInit{
   }
 
   selectChange(): void {
-    console.log("Selected INDEX: " + this.selectedIndex);
   }
 
   SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
 
   swipe(action = this.SWIPE_ACTION.RIGHT) {
-    console.log("swipe");
-    console.log("action", action);
 
     // Swipe left, next tab
     if (action === this.SWIPE_ACTION.LEFT) {
       this.selectedIndex = (this.selectedIndex + 1) % 2;
-      console.log("Swipe left - INDEX: " + this.selectedIndex);
     }
 
     // Swipe right, previous tab
     if (action === this.SWIPE_ACTION.RIGHT) {
       this.selectedIndex = (this.selectedIndex - 1 + 2) % 2;
-      console.log("Swipe right - INDEX: " + this.selectedIndex);
     }
   }
 }
