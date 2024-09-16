@@ -3,36 +3,7 @@
         <span class="material-icons-round text-yellow"(click)="toggleSidebar()">menu</span>
         <h6 class="hidden text-green text-[20px] ms-5 md:block">Alumni Link</h6>
     </div>
-    <div *ngIf="screenSizeSearchbar">
-        <div *ngIf="!searchbarvisible" class="relative text-yellow search pe-5">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                <button (click)="toggleSearch()" class="p-1">
-                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        viewBox="0 0 24 24" class="w-6 h-6">
-                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </button>
-            </span>
-        </div>
-        <div *ngIf="searchbarvisible" class="flex">
-            <div class="relative text-grey search ms-5">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                    <button type="submit" class="p-1">
-                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            viewBox="0 0 24 24" class="w-6 h-6">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                </span>
-                <input type="search" name="q"
-                    class="py-2 text-sm text-darkgrey font-medium bg-white rounded-s-lg pl-10 w-[250px] md:w-[400px]"
-                    placeholder="Search..." autocomplete="off">
-            </div>
-            <div class="bg-white rounded-e-lg flex items-center" (click)="toggleSearch()">
-                <span class="material-icons-round text-darkgrey">cancel</span>
-            </div>
-        </div>
-    </div>
+
     <div *ngIf="!screenSizeSearchbar">
         <div class="relative text-grey search ms-5">
             <span class="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -47,10 +18,6 @@
                 class="py-2 text-sm text-darkgrey font-medium bg-white rounded-lg pl-10 w-[200px] md:w-[350px]"
                 placeholder="Search..." autocomplete="off">
         </div>
-    </div>
-    <div [routerLink]="['post']" *ngIf="isalumni && screenSizeSearchbar && !searchbarvisible " class="mt-1 ms-1 me-1 w-5 cursor-pointer">
-        <span class="material-icons-round text-yellow">add</span>
-
     </div>
     <div [routerLink]="['post']" *ngIf="isalumni && !screenSizeSearchbar" class="w-[50px] lg:w-[100px] h-[40px] flex items-center bg-yellow text-center rounded-lg cursor-pointer">
         <span class="text-white w-[100px]">Post</span>

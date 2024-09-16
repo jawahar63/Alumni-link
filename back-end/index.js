@@ -9,12 +9,26 @@ import profileRoute from './routes/profile.js';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
 import path from "path";
+import http from 'http';
+import {Server} from 'socket.io';
+
 
 const app=express();
+const server =http.createServer(app);
+const io = new Server(server,{
+    cors:{
+        origin:[
+            'http://localhost:4200',
+        ],
+        credentials: true 
+    }
+
+});
 dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
+    // origin:'**',
     origin: [
         'http://localhost:4200',
         'http://192.168.137.1:4200',
@@ -29,6 +43,8 @@ const mongoDb= async()=>{
         throw error;
     }
 }
+
+
 app.use("/api/role",roleRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);
@@ -49,7 +65,24 @@ app.use((obj,req,res,next)=>{
     })
 });
 
-app.listen(4000,'0.0.0.0',()=>{
+io.on('connection',(socket)=>{
+    console.log('user Connected',socket.id);
+    socket.on('message',(msg)=>{
+        io.emit('message',msg);
+    })
+    socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+})
+
+
+
+// app.listen(4000,'0.0.0.0',()=>{
+//     mongoDb();
+//     console.log("Connected");
+// })
+
+server.listen(4000,'0.0.0.0',()=>{
     mongoDb();
     console.log("Connected");
 })

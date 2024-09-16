@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../servies/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { faHouse, faMagnifyingGlass, faPlus, faPenToSquare, faMessage, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-bottom-nav-bar',
@@ -19,6 +20,14 @@ export class BottomNavBarComponent implements OnInit{
   isMentor:boolean=false;
   isAlumni:boolean=false;
   activeSection: string = 'home';
+
+
+  faHouse = faHouse;
+  faMagnifyingGlass = faMagnifyingGlass;
+  faPlus = faPlus;
+  faPenToSquare = faPenToSquare;
+  faMessage = faMessage;
+  faCalendarDays = faCalendarDays;
 
   ngOnInit(): void {
     this.authservice.AuthData.subscribe((data)=>{

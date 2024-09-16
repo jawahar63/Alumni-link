@@ -1,12 +1,12 @@
 <div class="flex flex-col min-h-screen">
     <app-header class="fixed top-0 left-0 w-full z-50"></app-header>
     <app-toaster></app-toaster>
-    <div class="flex">
-        <app-side-bar class="fixed hidden md:block top-14 left-0 w-64 z-10"></app-side-bar>
+    <div class="flex justify-center items-center">
+        <app-side-bar class="fixed hidden md:block top-14 left-0 md:w-[25vw] lg:w-64 z-10"></app-side-bar>
         <div class=" flex justify-center items-center">
-            <div *ngIf="isLoggedIn; else login" class="md:w-[75vw] h-[80vh] mt-16 md:ml-64">
+            <div *ngIf="isLoggedIn; else login" class="md:px-5 mb-10 md:mb-0 md:w-[75vw] md:h-[80vh] mt-16 md:ml-[25vw] lg:ml-64 flex flex-col">
                 <router-outlet></router-outlet>
-                <app-bottom-nav-bar class="fixed bottom-0 w-full block md:hidden"></app-bottom-nav-bar>
+                <app-bottom-nav-bar class="fixed bottom-0 left-0 w-full block md:hidden z-50"></app-bottom-nav-bar>
             </div>
             <ng-template #login>
                 <router-outlet></router-outlet>

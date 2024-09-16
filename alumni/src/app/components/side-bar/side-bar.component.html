@@ -1,6 +1,6 @@
 
-<div *ngIf="isLoggedIn" class="flex flex-row w-screen sm:w-[250px]"  [ngClass]="{ 'showSidebar': isSidebarVisible, 'hideSidebar': !isSidebarVisible }" [@fadeInOut]>
-    <div class="w-2/3 sm:w-[250px] h-[100vh] bg-darkgrey pt-1 flex-col ">
+<div *ngIf="isLoggedIn" class="flex flex-row w-full"  [ngClass]="{ 'showSidebar': isSidebarVisible, 'hideSidebar': !isSidebarVisible }" [@fadeInOut]>
+    <div class="w-full h-[100vh] bg-darkgrey pt-1 flex-col ">
         <div *ngIf="activeSection==='home'" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-yellow cursor-pointer" (click)="setActiveSection('home')">
             <span class="material-icons-round text-darkgrey pe-10">home</span>
             <span class="text-[16px] text-darkgrey font-medium">Home</span>

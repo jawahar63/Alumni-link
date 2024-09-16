@@ -9,7 +9,18 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:4000'); // Replace with your server URL
+    this.socket = io('http://localhost:4000');
+  }
+
+  public sendMessage(message:string){
+    this.socket.emit('message',message);
+  }
+  public onMessage() {
+    return new Observable(observer => {
+      this.socket.on('message', (message) => {
+        observer.next(message);
+      });
+    });
   }
 
   onNewPost(): Observable<any> {
