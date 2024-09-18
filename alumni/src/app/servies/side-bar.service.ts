@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SideBarService {
+  currpage='home';
 
   constructor() { }
 

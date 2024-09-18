@@ -9,6 +9,8 @@ import Post from "../models/post.js"
 import {PDFDocument} from "pdf-lib"
 import sharp from "sharp"
 import mongoose from "mongoose";
+import {io} from "../index.js"
+import { populate } from "dotenv";
 
 const __dirname = path.resolve();
 const upload = multer({ dest: 'uploads/post/' });
@@ -22,7 +24,7 @@ export const createPost = async (req, res, next) => {
     try {
 
         const { author, caption, tags, location } = req.body;
-        const user = await User.findById(author);
+        const user = await User.findById(author).populate('username email batch domain company profileImage')
         if (!user) {
             return next(CreateError(404, "User not found"));
         }
@@ -70,6 +72,17 @@ export const createPost = async (req, res, next) => {
         });
 
         await newPost.save();
+        const BASE_URL = process.env.BASE_URL;
+
+        const postWithFullUrls = {
+            ...newPost.toObject(),
+            author:user,
+            media: newPost.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        };
+        io.emit('newPost',postWithFullUrls);
         next(CreateSuccess(200, "Post created successfully"));
     } catch (error) {
         console.log(error);
@@ -81,7 +94,7 @@ export const updatePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const { author, caption, tags, location, existingMedia } = req.body;
-        const user = await User.findById(author);
+        const user = await User.findById(author).populate('username email batch domain company profileImage');
         if (!user) {
             return next(CreateError(404, "User not found"));
         }
@@ -132,6 +145,16 @@ export const updatePost = async (req, res, next) => {
 
         // Save updated post
         await post.save();
+        const BASE_URL = process.env.BASE_URL;
+        const postWithFullUrls = {
+            ...post.toObject(),
+            author:user,
+            media: post.media.map(media => ({
+                ...media,
+                url: `${BASE_URL}${media.url}`
+            }))
+        };
+        io.emit('editPost',{postId,post:postWithFullUrls});
         return next(CreateSuccess(200, "Post updated successfully"));
     } catch (error) {
         console.error(error);
@@ -402,17 +425,20 @@ export const AddComment = async (req, res, next) => {
         await post.save();
 
         // Populate the comments with commenter details
-        const populatedPost = await Post.findById(postId)
-            .populate({
-                path: 'comments.commenter',
-                select: 'username profileImage'
-            });
+        const lastComment = post.comments[post.comments.length - 1];
 
-        // Send success response with populated comments
+        // Populate the new comment with commenter details
+        const populatedComment = await Post.populate(lastComment, {
+            path: 'commenter',
+            select: 'username profileImage'
+        });
+
+        // Emit the new comment via socket
+        io.emit("newComment", { postId: post._id, comment: populatedComment });
         return res.status(200).json({
             status: 'success',
             message: 'Comment added successfully',
-            data: populatedPost.comments
+            data: populatedComment
         });
     } catch (error) {
         console.error(error);
@@ -438,7 +464,6 @@ export const deleteComment = async (req, res, next) => {
         // Find the comment to delete
         const commentIndex = post.comments.findIndex(comment => comment._id.toString() === commentId && (comment.commenter.toString() === userid||post._id===userid));
         if (commentIndex === -1) {
-            console.log('s');
             return next(CreateError(404, 'Comment not found or you are not authorized to delete this comment'));
         }
 
@@ -447,6 +472,15 @@ export const deleteComment = async (req, res, next) => {
 
         // Save the updated post
         await post.save();
+
+        const updatedpost = await Post.findById(postId).populate({
+            path:'comments',
+            populate:{
+                path:'commenter',
+                select:'username profileImage'
+            }
+        });
+        io.emit('deleteComment',{postId,comments:updatedpost.comments});
 
         // Send success response
         return res.status(200).json({
@@ -487,7 +521,7 @@ export const editComment = async (req, res, next) => {
         // Save the updated post
         await post.save();
 
-        // Send success response
+        io.emit('editComment',{postId,commentId,comment});
         return res.status(200).json({
             status: 'success',
             message: 'Comment updated successfully',
@@ -506,7 +540,7 @@ export const AddLike = async (req, res, next) => {
                 path: 'likes',
                 populate: {
                     path: 'liker',
-                    select: '_id',
+                    select: 'username profileImage',
                 }
             });
         const user = await User.findById(userid);
@@ -534,6 +568,7 @@ export const AddLike = async (req, res, next) => {
         if (likedIndex !== -1) {
             post.likes.splice(likedIndex, 1);
             await post.save();
+            io.emit('newLike', { postId, likes: post.likes });
             return next(CreateSuccess(200, 'Like removed successfully'));
         } else {
             // User has not liked the post, so add the like
@@ -541,9 +576,14 @@ export const AddLike = async (req, res, next) => {
                 liker: userIdObj, // Use ObjectId directly
                 likedAt: new Date(),
             };
-
             post.likes.push(like);
             await post.save();
+            const lastlike = post.likes[post.likes.length - 1];
+            const updatedLikes=await Post.populate(lastlike,{
+                path:'liker',
+                select:'username profileImage',
+            });
+            io.emit('newLike', { postId, likes: post.likes });
             return next(CreateSuccess(200, 'Liked successfully'));
         }
 
@@ -629,6 +669,8 @@ export const deletePost = async (req, res, next) => {
 
         // Remove the post from the database
         await Post.findByIdAndDelete(postId);
+
+        io.emit('deletePost',postId);
 
         return res.status(200).json({
             success: true,

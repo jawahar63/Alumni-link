@@ -1,2 +1,5 @@
-<app-post-temp [posts]="post" width="lg:w-3/6"></app-post-temp>
+<app-post-temp [posts]="posts" width="lg:w-3/6"></app-post-temp>
 
+<div *ngIf="loading" class="text-center mt-4">
+    <span class="material-icons animate-spin text-white">sync</span> <span class="text-white">Loading more posts...</span>
+</div>

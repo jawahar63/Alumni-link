@@ -9,22 +9,21 @@ import { Post } from '../models/post.model';
 export class PostService {
   http=inject(HttpClient);
   createPost(Post:any){
-    console.log(Post);
     return this.http.post<any>(`${apiUrls.PostService}/create-post`,Post);
   }
   updatePost(postId:string,post:any){
-    console.log(post);
     return this.http.put<any>(`${apiUrls.PostService}/edit/${postId}`,post);
   }
-  getallPost(){
-    return this.http.get<any>(`${apiUrls.PostService}/posts`);
-  }
+  getPosts(page: number, limit: number) {
+    return this.http.get<any>(`${apiUrls.PostService}/posts?page=${page}&limit=${limit}`);
+}
   getComment(postId:string){
     return this.http.get<any>(`${apiUrls.PostService}/${postId}/comments`);
   }
-  getPostByAuthor(authorId:string){
-    return this.http.get<any>(`${apiUrls.PostService}/posts/author/${authorId}`);
+  getPostByAuthor(authorId: string, page: number, limit: number) {
+    return this.http.get<any>(`${apiUrls.PostService}/posts/author/${authorId}?page=${page}&limit=${limit}`);
   }
+
   getPostById(postId:string){
     return this.http.get<any>(`${apiUrls.PostService}/posts/${postId}`);
   }

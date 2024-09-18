@@ -81,6 +81,7 @@ io.on('connection',(socket)=>{
 //     mongoDb();
 //     console.log("Connected");
 // })
+export { io, server };
 
 server.listen(4000,'0.0.0.0',()=>{
     mongoDb();

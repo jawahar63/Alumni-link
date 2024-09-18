@@ -125,5 +125,9 @@
     </div>
     <div class="hidden md:block bg-darkgrey h-[90vh] p-1 rounded-2xl w-full lg:w-3/6  overflow-y-scroll">
         <app-post-temp width="md:w-full" [posts]="posts"></app-post-temp>
+        <div *ngIf="loading" class="text-center mt-4">
+            <span class="material-icons animate-spin text-white">sync</span> <span class="text-white">Loading more
+                posts...</span>
+        </div>
     </div>
 </div>

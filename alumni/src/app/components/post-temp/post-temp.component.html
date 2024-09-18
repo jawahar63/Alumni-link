@@ -72,7 +72,7 @@
             <div class="flex justify-around mt-4">
                     <button (click)="likePost(post)" class="flex items-center gap-1"
                         [ngClass]="{'text-yellow': post.isLiked, 'text-white': !post.isLiked}">
-                        <span class="material-icons transition-all ease-in-out delay-300">thumb_up</span>
+                        <span class="material-icons">thumb_up</span>
                         <span>{{post.likes.length}}</span>
                     </button>
                 <button (click)="toggleComments(post)" class="flex items-center gap-1 text-white">
@@ -118,7 +118,7 @@
                         <ng-template #displayComment>
                             <div>
                                 <div class="text-yellow text-sm">{{ comment.commenter.username }}</div>
-                                <div class="text-white text-sm">{{ comment.text }}</div>
+                                <div class="text-white text-xs md:text-sm">{{ comment.text }}</div>
                             </div>
                         </ng-template>
                         <div class="w-full h-0.5 bg-grey bg-opacity-50 mt-2 rounded-xl"></div>

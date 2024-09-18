@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Post,Comment } from '../../models/post.model';
+import { Post,Comment, like } from '../../models/post.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PostService } from '../../servies/post.service';
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ShareButtonsComponent } from '../share-buttons/share-buttons.component';
 import { AuthService } from '../../servies/auth.service';
 import { ToasterService } from '../../servies/toaster.service';
+import { SocketService } from '../../servies/socket.service';
 
 
 @Component({
@@ -28,10 +29,46 @@ export class PostTempComponent implements OnInit,OnChanges {
   user:string='';
   authService=inject(AuthService);
   toasterService=inject(ToasterService);
+  socketService=inject(SocketService);
 
   ngOnInit(): void {
     this.authService.AuthData.subscribe((data)=>{
       this.user=data.get('user_id');
+    })
+    this.socketService.onNewComment().subscribe({
+            next: (data) => {
+              this.updatePostWithNewComment(data.postId,data.comment);
+              this.updateCommentEditStatus();
+            },
+            error: (err) => {
+              console.error('Error receiving new comment:', err);
+            }
+    });
+    this.socketService.onNewLike().subscribe({
+      next:(data)=> {
+        this.updatePostWithNewLike(data.postId,data.likes);
+        this.updateLikedStatus();
+      },
+      error: (err) => {
+              console.error('Error receiving new comment:', err);
+      }
+    })
+    this.socketService.onDeleteComment().subscribe({
+      next: (data) => {
+        this.updatePostWithDeleteComment(data.postId,data.comments);
+        this.updateCommentEditStatus();
+      },
+      error: (err) => {
+        console.error('Error receiving new comment:', err);
+      }
+    })
+    this.socketService.onEditComment().subscribe({
+      next: (data) => {
+        this.updatePostWithEditComment(data.postId,data.commentId,data.comment);
+      },
+      error: (err) => {
+        console.error('Error receiving new comment:', err);
+      }
     })
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -107,7 +144,6 @@ export class PostTempComponent implements OnInit,OnChanges {
     this.postService.AddLike(post._id,userdata).subscribe({
       next:(value)=> {
           console.log(value.message);
-          post.isLiked=!post.isLiked;
         },
         error:(err)=> {
           console.log(err);
@@ -138,8 +174,44 @@ export class PostTempComponent implements OnInit,OnChanges {
           this.toasterService.addToast('error','error!','Internal server Error',5000);
         },
       });
+      
       this.newComment = '';
     }
+  }
+  updatePostWithNewComment(postId: string, comment: Comment) {
+    const post = this.getPostById(postId);
+    if (post) {
+      post.comments.push(comment); 
+    }
+  }
+  updatePostWithNewLike(postId: string, likes: like[]) {
+    const post = this.getPostById(postId);
+    if (post) {
+      post.likes=likes;
+      post.isLiked = likes.some(like => like.liker._id === this.user);
+    }
+  }
+  updatePostWithDeleteComment(postId: string, comments: Comment[]) {
+    const post = this.getPostById(postId);
+    if (post) {
+      post.comments=comments;
+    }
+  }
+  updatePostWithEditComment(postId: string,commentId:string, newComment: Comment){
+    const post =this.getPostById(postId);
+    if(post){
+      const comment =this.getCommentById(post,commentId)
+      if(comment){
+        comment.text=newComment.text;
+      }
+    }
+  }
+
+  getPostById(postId: string): Post | null {
+    return this.posts.find(post => post._id === postId) || null;
+  }
+  getCommentById(post:Post,commentId:string){
+    return post.comments.find(comment=>comment._id===commentId)||null;
   }
   toggleCommentMenu(post:Post, comment:Comment) {
   if (!comment.showMenu) {

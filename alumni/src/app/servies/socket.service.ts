@@ -30,6 +30,20 @@ export class SocketService {
       });
     });
   }
+  onEditPost():Observable<any>{
+    return new Observable(observer=>{
+      this.socket.on('editPost',(post)=>{
+        observer.next(post);
+      })
+    })
+  }
+  onDeletePost():Observable<any>{
+    return new Observable(observer=>{
+      this.socket.on('deletePost',(post)=>{
+        observer.next(post);
+      })
+    })
+  }
 
   onNewComment(): Observable<any> {
     return new Observable(observer => {
@@ -45,5 +59,19 @@ export class SocketService {
         observer.next(like);
       });
     });
+  }
+  onDeleteComment():Observable<any>{
+    return new Observable(observer=>{
+      this.socket.on('deleteComment',(comment)=>{
+        observer.next(comment);
+      })
+    })
+  }
+  onEditComment():Observable<any>{
+    return new Observable(observer=>{
+      this.socket.on('editComment',(comment)=>{
+        observer.next(comment);
+      })
+    })
   }
 }
