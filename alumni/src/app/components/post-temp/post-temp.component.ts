@@ -27,6 +27,7 @@ export class PostTempComponent implements OnInit,OnChanges {
   newComment: string = '';
   modalImage: any = null;
   user:string='';
+  isMentor:boolean=false;
   authService=inject(AuthService);
   toasterService=inject(ToasterService);
   socketService=inject(SocketService);
@@ -34,6 +35,7 @@ export class PostTempComponent implements OnInit,OnChanges {
   ngOnInit(): void {
     this.authService.AuthData.subscribe((data)=>{
       this.user=data.get('user_id');
+      this.isMentor=data.get('role')==='mentor';
     })
     this.socketService.onNewComment().subscribe({
             next: (data) => {
@@ -94,6 +96,9 @@ export class PostTempComponent implements OnInit,OnChanges {
             comment.isCommentDeleteable = comment.commenter._id === this.user;
             if(post.author._id===this.user){
               comment.isCommentDeleteable = true; 
+            }
+            if(this.isMentor){
+              comment.isCommentDeleteable = true;
             }
           });
         } else {

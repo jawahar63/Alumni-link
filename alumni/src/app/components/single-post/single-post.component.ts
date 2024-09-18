@@ -23,6 +23,7 @@ export class SinglePostComponent implements OnInit {
   postService =inject(PostService);
   router=inject(Router);
   toasterService=inject(ToasterService);
+  isMentor: boolean=false;
 
 
   ngOnInit(): void {
@@ -32,6 +33,7 @@ export class SinglePostComponent implements OnInit {
     // }
     this.authService.AuthData.subscribe((data)=>{
       this.user=data.get('user_id');
+      this.isMentor=data.get('role')==='mentor';
     })
     this.postId=this.route.snapshot.paramMap.get('id')||'';
     this.postService.getPostById(this.postId).subscribe({
@@ -53,6 +55,9 @@ export class SinglePostComponent implements OnInit {
               if(post.author._id===this.user){
                 comment.isCommentDeleteable = true; 
               }
+              if(this.isMentor){
+              comment.isCommentDeleteable = true;
+            }
             });
           } else {
             console.log('No comments available for post:', post);
