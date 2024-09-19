@@ -260,10 +260,11 @@ export class PostTempComponent implements OnInit,OnChanges {
 
   }
   confirmDeleteComment(post:Post,comment:Comment){
-    const confirmed = confirm("Are you sure you want to delete this comment?");
-    if (confirmed) {
-      this.deleteComment(post,comment);
-    }
+    // const confirmed = confirm("Are you sure you want to delete this comment?");
+    comment.isDeleteWindow=true;
+  }
+  deleteCommentCancel(comment:Comment){
+    comment.isDeleteWindow=false;
   }
 
   deleteComment(post:Post,comment:Comment){
@@ -279,7 +280,7 @@ export class PostTempComponent implements OnInit,OnChanges {
       },
 
     })
-    
+    this.deleteCommentCancel(comment);
   }
   sharePost(post: Post) {
     post.showShare=!post.showShare;
@@ -301,11 +302,12 @@ export class PostTempComponent implements OnInit,OnChanges {
   }
 
   confirmDelete(post: any) {
-    const confirmed = confirm("Are you sure you want to delete this post?");
-    if (confirmed) {
-      this.deletePost(post);
-    }
+    post.showDeleteWindow=true;
   }
+  deletePostCancel(post:any){
+    post.showDeleteWindow=false;
+  }
+
   deletePost(post: any) {
     this.postService.deletePost(post._id).subscribe({
       next:(value)=> {
@@ -316,6 +318,7 @@ export class PostTempComponent implements OnInit,OnChanges {
           this.toasterService.addToast('error','error!','Internal server Error',5000);
         },
     })
+    this.deletePostCancel(post);  
   }
 
   viewPost(post:Post):void{

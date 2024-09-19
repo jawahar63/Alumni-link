@@ -9,7 +9,7 @@ import Post from "../models/post.js"
 import {PDFDocument} from "pdf-lib"
 import sharp from "sharp"
 import mongoose from "mongoose";
-import {io} from "../index.js"
+import {io} from "../index.js";
 import { populate } from "dotenv";
 
 const __dirname = path.resolve();

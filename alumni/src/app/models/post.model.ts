@@ -26,6 +26,7 @@ export interface Comment {
   showMenu?:boolean;
   isEditing?:boolean;
   editedText:string;
+  isDeleteWindow?:boolean;
 }
 export interface like {
   liker: {
@@ -53,4 +54,5 @@ export interface Post {
   showShare?:boolean;
   isLiked?:boolean; 
   showCommentMenu?:boolean;
+  showDeleteWindow?:boolean;
 }

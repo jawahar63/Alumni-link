@@ -4,6 +4,7 @@ import { AuthService } from '../../servies/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { faHouse, faMagnifyingGlass, faPlus, faPenToSquare, faMessage, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+import { SideBarService } from '../../servies/side-bar.service';
 
 @Component({
   selector: 'app-bottom-nav-bar',
@@ -15,6 +16,7 @@ import { faHouse, faMagnifyingGlass, faPlus, faPenToSquare, faMessage, faCalenda
 export class BottomNavBarComponent implements OnInit{
   router=inject(Router);
   authservice=inject(AuthService);
+  sidebar=inject(SideBarService);
 
 
   isMentor:boolean=false;
@@ -30,6 +32,10 @@ export class BottomNavBarComponent implements OnInit{
   faCalendarDays = faCalendarDays;
 
   ngOnInit(): void {
+
+    this.sidebar.currPage.subscribe((val:string)=>{
+      this.activeSection=val;
+    })
     this.authservice.AuthData.subscribe((data)=>{
       this.isMentor='mentor'===data.get('role');
       this.isAlumni='alumni'===data.get('role');
@@ -40,6 +46,7 @@ export class BottomNavBarComponent implements OnInit{
   setActiveSection(section: string) {
     this.activeSection = section;
     this.router.navigate([section]);
+    this.sidebar.changePage(section);
   }
 
 }

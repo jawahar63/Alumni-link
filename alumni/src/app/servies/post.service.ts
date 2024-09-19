@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { apiUrls } from '../api.urls';
 import { Post } from '../models/post.model';
@@ -9,7 +9,10 @@ import { Post } from '../models/post.model';
 export class PostService {
   http=inject(HttpClient);
   createPost(Post:any){
-    return this.http.post<any>(`${apiUrls.PostService}/create-post`,Post);
+    const req =new HttpRequest('POST',`${apiUrls.PostService}/create-post`,Post,{
+      reportProgress:true,
+    })
+    return this.http.request(req);
   }
   updatePost(postId:string,post:any){
     return this.http.put<any>(`${apiUrls.PostService}/edit/${postId}`,post);

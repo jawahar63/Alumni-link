@@ -1,8 +1,8 @@
-import { Component, HostListener, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { ProfileService } from '../../servies/profile.service';
 import { profileDetails } from '../../models/Alumniprofile.model';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import {MatTabsModule} from '@angular/material/tabs'
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostTempComponent } from '../../components/post-temp/post-temp.component';
@@ -19,6 +19,11 @@ import { SocketService } from '../../servies/socket.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
+
+  @ViewChild('postsContainer', { static: true }) postsContainer!: ElementRef;
+  private scrollListener!: () => void;
+
+
   posts: Post[] = [];
   profileDetails!: profileDetails;
   fullName!: string;
@@ -40,12 +45,10 @@ export class ProfileComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   socketService=inject(SocketService);
+  ef =inject(ElementRef);
+  viewportScroller =inject(ViewportScroller)
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isLoggedIn();
-    if (!this.isLoggedIn) {
-      this.router.navigate(['login']);
-    }
     this.id = this.route.snapshot.paramMap.get('id') || '';
     this.authService.AuthData.subscribe((data) => {
       this.checkUserId = data.get('user_id');
@@ -64,8 +67,8 @@ export class ProfileComponent implements OnInit {
     // Load the first set of posts
     this.loadPosts();
 
-    // Add scroll event listener
-    window.addEventListener('scroll', this.onScroll.bind(this));
+    this.scrollListener = this.onScroll.bind(this);
+    this.postsContainer.nativeElement.addEventListener('scroll', this.scrollListener);
     this.socketService.onNewPost().subscribe({
           next:(value)=> {
             this.posts.unshift(value);
@@ -127,16 +130,20 @@ export class ProfileComponent implements OnInit {
   }
 
   onScroll(): void {
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const threshold = document.body.offsetHeight - 500; // When user scrolls close to the bottom
+    const div = this.postsContainer.nativeElement;
+    const height = div.scrollHeight;
+    const scrollTop = div.scrollTop + div.clientHeight;
+    console.log(height, scrollTop);
 
-    if (scrollPosition > threshold) {
-      this.loadPosts(); // Load more posts when scrolling near the bottom
+    if (scrollTop >= height) {
+      this.loadPosts();
     }
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('scroll', this.onScroll.bind(this)); // Cleanup event listener
+    if (this.scrollListener) {
+      this.postsContainer.nativeElement.removeEventListener('scroll', this.scrollListener);
+    }
   }
   Editprofile() {
     if(this.id!== this.checkUserId)

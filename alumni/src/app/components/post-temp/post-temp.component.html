@@ -28,6 +28,17 @@
                         <button (click)="confirmDelete(post)"
                             class="block w-full px-4 py-2 text-sm hover:bg-red rounded">Delete</button>
                     </div>
+                    <div *ngIf="post.showDeleteWindow"
+                        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center">
+                        <div class="w-fit h-24 bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2">
+                            <p class="text-white">Are you sure you want to delete this post??</p>
+                            <div class="flex flex-row justify-center items-center gap-5">
+                                <button (click)="deletePostCancel(post)"
+                                    class="bg-yellow rounded-lg text-white px-3 py-1">Cancel</button>
+                                <button (click)="deletePost(post)" class="bg-red rounded-lg text-white px-3 py-1">Delete</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         
@@ -66,6 +77,8 @@
             <div *ngIf="post.showShare">
                 <app-share-buttons [post]="post"></app-share-buttons>
             </div>
+
+            
 
         
             <!-- Actions -->
@@ -141,6 +154,15 @@
                                 class="block w-full px-4 py-2 text-sm hover:bg-red rounded z-50">Delete</button>
                         </div>
                     </div>
+                    <div *ngIf="comment.isDeleteWindow" class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center">
+                        <div class="w-fit h-24 bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2">
+                            <p class="text-white">Are you sure you want to delete this comment?</p>
+                            <div class="flex flex-row justify-center items-center gap-5">
+                                <button (click)="deleteCommentCancel(comment)" class="bg-yellow rounded-lg text-white px-3 py-1">Cancel</button>
+                                <button (click)="deleteComment(post,comment)" class="bg-red rounded-lg text-white px-3 py-1">Delete</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             
                 <!-- Add Comment Input -->
@@ -152,5 +174,55 @@
             </div>
         </div>
     </div>
+    <div *ngIf="posts.length===0"
+        class="bg-darkgrey rounded-lg mt-2 md:w-5/6 sm:w-full shadow-lg md:shadow-none animate-pulse" [ngClass]="width">
+        <div class="flex justify-between items-center">
+            <div class="flex justify-start gap-2 items-center">
+                <!-- Profile Image Skeleton -->
+                <div class="w-[40px] h-[40px] rounded-full bg-dark"></div>
+                <div class="flex flex-col">
+                    <!-- Name/Title Skeleton -->
+                    <span class="w-[100px] h-[20px] rounded-sm bg-dark"></span>
+                    <div class="flex items-center gap-2">
+                        <!-- Meta Info Skeleton -->
+                        <span class="w-[40px] h-[15px] rounded-sm bg-dark"></span>
+                        <span class="w-[40px] h-[15px] rounded-sm bg-dark"></span>
+                        <span class="w-[40px] h-[15px] rounded-sm bg-dark"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <span class="w-[200px] h-[15px] rounded-sm bg-dark"></span>
+            <div class="flex flex-wrap gap-2 mt-2">
+                <span class="w-[150px] h-[15px] rounded-sm bg-dark"></span>
+            </div>
+            <span class="w-[180px] h-[15px] rounded-sm bg-dark"></span>
+        </div>
+        <div class="flex justify-center overflow-x-auto m-0.5 bg-dark rounded-lg">
+            <div class="image-slider flex">
+                <div class="image-slide flex">
+                    <ng-container>
+                        <div class="relative m-2 flex-shrink-0">
+                            <div class="bg-darkgrey object-cover h-80 w-[100px] rounded-md cursor-pointer"></div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>  
+        <div class="flex justify-around mt-4">
+            <button class="flex items-center gap-1 text-dark">
+                <span class="material-icons bg-dark w-6 h-6 rounded-full"></span>
+            </button>
+            <button class="flex items-center gap-1 text-dark">
+                <span class="material-icons bg-dark w-6 h-6 rounded-full"></span>
+            </button>
+            <button class="flex items-center gap-1 text-dark">
+                <span class="material-icons bg-dark w-6 h-6 rounded-full"></span>
+            </button>
+        </div>
+    </div>
+
 </div>
 

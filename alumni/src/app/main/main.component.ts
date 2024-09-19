@@ -27,12 +27,13 @@ export class MainComponent implements OnInit {
   decodedtoken: any;
 
   ngOnInit(): void {
-    if (!this.isLoggedIn) {
-      this.router.navigate(['login']);
-    }
     this.authservice.isLoggedIn$.subscribe((res) => {
       this.isLoggedIn = this.authservice.isLoggedIn();
     });
+    if (!this.isLoggedIn) {
+      this.router.navigate(['login']);
+    }
+    
 
     this.sidebar.sidebarVisibility$.subscribe((isVisible) => {
       this.isSidebarVisible = isVisible;
@@ -46,7 +47,7 @@ export class MainComponent implements OnInit {
           return;
         }
         this.authservice.updateAuthData('user_id', this.decodedtoken.id);
-      this.authservice.updateAuthData('role', this.decodedtoken.roles[0].role);
+        this.authservice.updateAuthData('role', this.decodedtoken.roles[0].role);
 
       if (this.decodedtoken.roles[0].role === 'alumni') {
         this.authservice.updateAuthData('batch', this.decodedtoken.batch);
@@ -56,7 +57,6 @@ export class MainComponent implements OnInit {
 
       this.authservice.updateAuthData('username', this.decodedtoken.username);
       this.authservice.updateAuthData('photo', this.decodedtoken.profileImage);
-      
       }
     })
   }

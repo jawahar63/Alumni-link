@@ -13,7 +13,7 @@ import { SinglePostComponent } from './components/single-post/single-post.compon
 import { EditPostComponent } from './components/edit-post/edit-post.component';
 
 export const routes: Routes = [
-    {path:'',component:HomeComponent},
+    {path:'',component:HomeComponent,pathMatch: 'full'},
     {path:'login',component:LoginComponent},
     {path:'register',component:RegisterComponent},
     {path:'forget-password',component:ForgetPasswordComponent},
@@ -26,5 +26,5 @@ export const routes: Routes = [
     {path:'editposts/:id',component:EditPostComponent},
     {path:'profile/:id',component:ProfileComponent},
     {path:'editprofile/:id',component:EditprofileComponent},
-    { path: '**', redirectTo: 'home' },
+    { path: '**', redirectTo: '' }
 ];

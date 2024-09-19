@@ -5,7 +5,6 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SideBarService {
-  currpage='home';
 
   constructor() { }
 
@@ -21,5 +20,9 @@ export class SideBarService {
   searchbarVisibility$ =this.searchbarVisibility.asObservable();
   toggleSearch(){
     this.searchbarVisibility.next(!this.searchbarVisibility.value);
+  }
+
+  changePage(page:string){
+    this.currPage.next(page);
   }
 }

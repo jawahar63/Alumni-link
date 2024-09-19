@@ -1,4 +1,10 @@
 <div class="flex justify-center items-center">
+    <div *ngIf="uploadProgress > 0" class="mb-4 fixed top-0">
+        <p class="text-sm text-white mb-2">Uploading: {{ uploadProgress }}%</p>
+        <div class="w-full bg-darkgrey rounded-full h-2.5">
+            <div class="bg-yellow h-2.5 rounded-full transition-all" [style.width]="uploadProgress + '%'"></div>
+        </div>
+    </div>
     <div class="bg-darkgrey rounded-lg mt-4 mx-5 lg:w-3/6 sm:w-4/5 shadow-lg">
         <div class="flex justify-between p-2 shadow-lg">
             <span class="text-yellow">Create Post</span>

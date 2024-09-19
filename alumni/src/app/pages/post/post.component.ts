@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../../servies/post.service';
 import { ToasterService } from '../../servies/toaster.service';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-post',
@@ -21,6 +22,7 @@ export class PostComponent implements OnInit {
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
   toasterService=inject(ToasterService);
+  
 
   postForm!: FormGroup;
   isLoggedIn: boolean = false;
@@ -33,6 +35,7 @@ export class PostComponent implements OnInit {
   postimages: any[] = [];
   showimg: boolean = false;
   modalImage: any;
+  uploadProgress: number = 0;
 
   constructor(private fb: FormBuilder) {}
 
@@ -110,9 +113,16 @@ export class PostComponent implements OnInit {
     });
 
     this.postService.createPost(formData).subscribe({
-      next: (value) => {
-        this.toasterService.addToast('success','Success!',value.message,5000);
-        this.navigate();
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          if (event.total) {
+            this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+          }
+        } else if (event.type === HttpEventType.Response) {
+          this.toasterService.addToast('success', 'Success!', 'Successfully Uploaded', 5000);
+          this.uploadProgress = 0;
+          this.navigate();
+        }
       },
       error: (err) => {
         this.toasterService.addToast('error','error!',err.message,5000);

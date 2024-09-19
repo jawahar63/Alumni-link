@@ -1,27 +1,21 @@
 <div class="w-full py-1 flex flex-row justify-evenly items-center bg-darkgrey">
-    <!-- Home Icon -->
     <div (click)="setActiveSection('home')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='home'" class="fa-solid fa-house text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='home'"
             class="fa-solid fa-house text-white hover:text-yellow transition-colors duration-300"></i>
     </div>
-
-    <!-- Search Icon -->
     <div (click)="setActiveSection('search')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='search'"
             class="fa-solid fa-magnifying-glass text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='search'"
             class="fa-solid fa-magnifying-glass text-white hover:text-yellow transition-colors duration-300"></i>
     </div>
-
-    <!-- Post Icon (Visible if Alumni) -->
     <div *ngIf="isAlumni" (click)="setActiveSection('post')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='post'" class="fa-solid fa-plus text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='post'"
             class="fa-solid fa-plus text-white hover:text-yellow transition-colors duration-300"></i>
     </div>
 
-    <!-- Register Icon (Visible if Mentor) -->
     <div *ngIf="isMentor" (click)="setActiveSection('register')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='register'"
             class="fa-solid fa-pen-to-square text-yellow transition-colors duration-300"></i>
@@ -29,7 +23,6 @@
             class="fa-regular fa-pen-to-square text-white hover:text-yellow transition-colors duration-300"></i>
     </div>
 
-    <!-- Message Icon -->
     <div (click)="setActiveSection('message')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='message'" class="fa-solid fa-message text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='message'"

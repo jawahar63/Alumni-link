@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import { HeaderComponent } from "../../components/header/header.component";
 import { AuthService } from '../../servies/auth.service';
 import { Router } from '@angular/router';
@@ -22,12 +22,13 @@ export class HomeComponent implements OnInit {
     limit: number = 10;
     isLoggedIn: boolean = false;
     loading: boolean = false;
-    isAllPostsLoaded: boolean = false; // To track if all posts are loaded
+    isAllPostsLoaded: boolean = false;
 
     router = inject(Router);
     authService = inject(AuthService);
     postService = inject(PostService);
     socketService=inject(SocketService);
+    ef =inject(ElementRef);
 
     ngOnInit(): void {
         this.isLoggedIn = this.authService.isLoggedIn();
@@ -98,11 +99,12 @@ export class HomeComponent implements OnInit {
     }
 
     onScroll(): void {
+      const div =this.ef.nativeElement.querySelector('app-post-temp');
+      const height =div.offsetHeight;
         const scrollPosition = window.innerHeight + window.scrollY;
-        const threshold = document.body.offsetHeight - 500; // When user scrolls close to the bottom
-
-        if (scrollPosition > threshold) {
-            this.loadPosts(); // Load more posts when scrolling near the bottom
+        const threshold = document.body.offsetHeight;
+        if (scrollPosition > height) {
+            this.loadPosts(); 
         }
     }
 

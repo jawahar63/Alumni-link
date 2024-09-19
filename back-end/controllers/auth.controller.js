@@ -181,7 +181,7 @@ export const googleLogin = async(req,res,next)=>{
         const {roles}=user;
         const token =jwt.sign(
             {id:user._id,isAdmin:user.isAdmin,roles:roles},
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET,{expiresIn:'1d'}
         )
         res.cookie("access_token",token,{httpOnly:true}).status(200)
         .json({
