@@ -25,6 +25,7 @@ const io = new Server(server,{
 
 });
 dotenv.config();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({

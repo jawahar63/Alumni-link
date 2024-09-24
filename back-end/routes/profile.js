@@ -2,6 +2,7 @@ import express, { request } from 'express';
 import uploads from '../middleware/upload.js'
 import { updateProfile, updateProfileImg, viewprofile } from '../controllers/profile.controller.js';
 import multer from 'multer';
+import verifyToken from '../middleware/verifyToken.js';
 
 
 // const MIME_TYPE_MAP ={
@@ -27,6 +28,7 @@ import multer from 'multer';
 // })
 
 const router =express.Router();
+router.use(verifyToken)
 router.get("/:id",viewprofile);
 router.put("/edit/:id",updateProfile);
 router.post('/edit/:id/upload-image', uploads.single('profileImage'),updateProfileImg);

@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit {
         this.isalumni=this.role==="alumni";
       this.id=data.get('user_id');
     this.username=data.get('username');
-    this.profilePhoto = data.get('photo');
+    this.profilePhoto = `/profile/${this.id}/${data.get('photo').split('/').pop()}`;
     })
 
     this.sidebar.searchbarVisibility$.subscribe((visible)=>{
