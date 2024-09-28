@@ -9,11 +9,12 @@ import { JwtdecodeService } from '../servies/jwtdecode.service';
 import { ToasterComponent } from '../components/toaster/toaster.component';
 import { ProfileComponent } from "../pages/profile/profile.component";
 import { BottomNavBarComponent } from '../components/bottom-nav-bar/bottom-nav-bar.component';
+import { TableComponent } from '../components/table/table.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule, ToasterComponent, ProfileComponent,BottomNavBarComponent],
+  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule, ToasterComponent, ProfileComponent,BottomNavBarComponent,TableComponent],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'] // Corrected styleUrl to styleUrls
 })
@@ -27,6 +28,7 @@ export class MainComponent implements OnInit {
   decodedtoken: any;
 
   ngOnInit(): void {
+    this.sidebar.startRouteMonitoring();
     this.authservice.isLoggedIn$.subscribe((res) => {
       this.isLoggedIn = this.authservice.isLoggedIn();
     });

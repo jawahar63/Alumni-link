@@ -13,7 +13,6 @@ export const viewprofile =async (req,res,next)=>{
             return next(CreateError(404,"user not found"));
         return next(CreateSuccess(200,user));
     } catch (error) {
-        console.log(error);
         return next(CreateError(500, "Something went wrong"));
     }
 }
@@ -52,29 +51,25 @@ export const updateProfileImg = async (req, res, next) => {
     if (!user) {
       return next(CreateError(404, "User not found"));
     }
-
-    // Remove old profile image if it exists
     if (user.profileImage) {
       const oldImagePath = path.join(__dirname, 'uploads', 'dp', path.basename(user.profileImage));
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath);
       }
     }
-
-    // Define the path for the new image
-    const filePath = `uploads/dp/${req.params.id}${path.extname(req.file.originalname)}`;
+    const filePath = `uploads/dp/${req.params.id}.jpg`;
     const fullPath = path.join(__dirname, filePath);
     const BASE_URL = process.env.BASE_URL;
     const imageUrl = `${BASE_URL}${filePath}`;
 
-    // Crop the image to 1:1 aspect ratio and save it
-    await sharp(req.file.buffer)
-      .resize({ width: 500, height: 500, fit: sharp.fit.cover }) // Resize to 500x500 or any size you want
+    await sharp(req.file.path)
+      .resize({ width: 300, height: 300, fit: sharp.fit.cover }) 
+      .jpeg({ quality: 90 })
       .toFile(fullPath);
 
-    // Update the user profile image URL
     user.profileImage = imageUrl;
     await user.save();
+    
 
     res.status(200).json({ imageUrl });
   } catch (error) {

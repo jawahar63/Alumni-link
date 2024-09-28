@@ -81,12 +81,12 @@ export class EditprofileComponent implements OnInit {
       const formData = new FormData();
       formData.append('profileImage', file);
 
-      // Send the file to the server
       this.profileService.uploadImage(this.id, formData).subscribe({
         next: (res) => {
-          this.profileDetails.profileImage = res.imageUrl;  // Update the image URL in profileDetails
-          this.originalProfileImage = res.imageUrl;  // Update the original image URL
-          localStorage.setItem("photo",res.imageUrl);
+          this.profileDetails.profileImage = res.imageUrl;
+          this.originalProfileImage = res.imageUrl;
+          console.log(res.imageUrl);
+          this.authService.updateAuthData("photo",res.imageUrl);
         },
         error: (err) => {
           console.log(err);

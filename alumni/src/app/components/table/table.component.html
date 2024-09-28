@@ -1,0 +1,80 @@
+<div class="relative overflow-x-auto p-2 w-[100vw] md:w-full shadow-sm rounded-lg mt-4 bg-darkgrey">
+    <div class="p-2 bg-darkgrey rounded-lg shadow-lg flex items-center w-full">
+        <h2 class="absolute text-xl text-yellow font-medium">Registered Events</h2>
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative mt-1 ms-48">
+            <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-grey" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                </svg>
+            </div>
+            <input type="text" [(ngModel)]="filter"
+                class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-80 bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
+                [placeholder]="filter === 'All' ? 'Showing all events' : 'Search for events'">
+        </div>
+        <div class="ml-10 flex flex-row items-center gap-10">
+            <label for="items-per-page" class="text-white text-opacity-60">Items per page:</label>
+            <select id="items-per-page" [(ngModel)]="itemsPerPage" (change)="changePage(1)"
+                class="block p-2 text-sm text-black rounded-lg bg-dark text-white text-opacity-75 focus:outline-none">
+                <option class="text-white" *ngFor="let limit of [5, 10, 15, 20]" [value]="limit">{{ limit }}</option>
+            </select>
+        </div>
+    </div>
+    <table class="min-w-full text-white text-sm text-left rtl:text-right">
+        <thead class="text-xs text-gray-700 uppercase shadow-lg rounded-lg">
+            <tr>
+                <th scope="col" class="font-medium px-6 py-5">Mentor</th>
+                <th scope="col" class="font-medium px-6 py-5">Event</th>
+                <th scope="col" class="font-medium px-6 py-5">Alumni</th>
+                <th scope="col" class="font-medium px-6 py-5">Event Type</th>
+                <th scope="col" class="font-medium px-6 py-5">From Date</th>
+                <th scope="col" class="font-medium px-6 py-5">To Date</th>
+                <th scope="col" class="font-medium px-6 py-5">Mode</th>
+                <th scope="col" class="font-medium px-6 py-5">Venue</th>
+                <th scope="col" class="font-medium px-6 py-5">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let data of paginatedData">
+                <tr *ngIf="(data.mentor.toLowerCase().includes(filter.toLowerCase()) || 
+                                     data.AlumniName.toLowerCase().includes(filter.toLowerCase()) || 
+                                     data.eventName.toLowerCase().includes(filter.toLowerCase()) || 
+                                     filter === 'All')" class="border-b border-yellow border-opacity-55 hover:bg-dark">
+                    <td class="px-6 py-4">{{data.mentor}}</td>
+                    <td class="px-6 py-4">{{data.eventName}}</td>
+                    <td class="px-6 py-4">{{data.AlumniName}}</td>
+                    <td class="px-6 py-4">{{data.typeofEvent}}</td>
+                    <td class="px-6 py-4">{{data.fromDate}}</td>
+                    <td class="px-6 py-4">{{data.toDate}}</td>
+                    <td class="px-6 py-4">{{data.mode}}</td>
+                    <td class="px-6 py-4">{{data.venue}}</td>
+                    <td class="py-2 flex flex-row items-center justify-center gap-3">
+                        <div class="p-2 rounded-lg bg-green cursor-pointer">Approve</div>
+                        <div class="p-2 rounded-lg bg-red cursor-pointer">Reject</div>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+    <div class="flex justify-center gap-1 mt-4">
+        <button (click)="changePage(1)" [disabled]="currentPage === 1" class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
+            &lt;&lt; </button>
+                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+                    class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
+                    &lt; </button>
+    
+                <ng-container *ngFor="let page of pageNumbers">
+                    <button *ngIf="page===currentPage" class="p-2 rounded-lg bg-yellow text-dark mx-1">{{page}}</button>
+                    <button *ngIf="page!==currentPage" (click)="changePage(page)" [class.active]="page === currentPage"
+                                class="p-2 rounded-lg bg-dark text-white text-opacity-60 mx-1 hover:bg-yellow" [disabled]="page === currentPage">{{ page
+                    }}</button>
+                </ng-container>
+    
+                <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                            class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">></button>
+                <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages"
+                            class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">>></button>
+    </div>
+</div>

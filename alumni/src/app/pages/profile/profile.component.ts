@@ -133,7 +133,6 @@ export class ProfileComponent implements OnInit {
     const div = this.postsContainer.nativeElement;
     const height = div.scrollHeight;
     const scrollTop = div.scrollTop + div.clientHeight;
-    console.log(height, scrollTop);
 
     if (scrollTop >= height) {
       this.loadPosts();

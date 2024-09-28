@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { CreateError } from '../utils/error.js';
+import { PDFArrayIsNotRectangleError } from 'pdf-lib';
 
 export const verifyToken =(req,res,next)=>{
     const token =req.cookies.access_token||req.headers['authorization']?.split(' ')[1];
     if(!token)
         return next(CreateError(401,"You are not authenicated"));
-    jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
+        jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
         if(err)
             return next(CreateError(403,"Token is not Valid"));
         req.user=user;
@@ -23,6 +24,24 @@ export const verifyUser =(req,res,next)=>{
 export const verifyAdmin =(req,res,next)=>{
     verifyToken(req,res,()=>{
         if(req.user.isAdmin){
+            next();
+        }
+        return next(CreateError(403,"you are not authorized!"))
+    })
+}
+export const verifyMentor =(req,res,next)=>{
+    verifyToken(req,res,()=>{
+        console.log(req.user.roles[0].role==='mentor');
+        if(req.user.roles[0].role==='mentor'){
+            next();
+        }else{
+        return next(CreateError(403,"you are not authorized!"))
+        }
+    })
+}
+export const verifyAlumni =(req,res,next)=>{
+    verifyToken(req,res,()=>{
+        if(req.user.roles[0].role=='alumni'){
             next();
         }
         return next(CreateError(403,"you are not authorized!"))

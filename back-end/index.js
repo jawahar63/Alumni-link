@@ -4,13 +4,15 @@ import dotenv from 'dotenv';
 import roleRoute from './routes/role.js';
 import authRoute from './routes/auth.js';
 import userRoute from './routes/user.js';
-import postRoute from './routes/post.js'
+import postRoute from './routes/post.js';
+import eventRoute from './routes/event.js';
 import profileRoute from './routes/profile.js';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
 import path from "path";
 import http from 'http';
 import {Server} from 'socket.io';
+import event from './models/event.js';
 
 
 const app=express();
@@ -52,6 +54,7 @@ app.use("/api/user",userRoute);
 app.use("/api/profile",profileRoute);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/post',postRoute);
+app.use('/api/event',eventRoute);
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working!' });
 });
