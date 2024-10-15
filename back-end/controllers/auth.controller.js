@@ -9,10 +9,10 @@ import nodemailer from "nodemailer";
 import { json } from "express";
 
 export const register = async (req,res,next)=>{
-   
     try {
         const receicedRole=req.body.role;
         const role = await Role.find({role:receicedRole});
+        console.log(receicedRole);
         const salt = await bcrypt.genSalt(8);
         const hasPassword = await bcrypt.hash(req.body.password,salt);
         const newUser = new User({

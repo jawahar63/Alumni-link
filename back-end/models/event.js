@@ -17,16 +17,7 @@ const eventSchema = new Schema({
     required: true,
     ref: "User",
   },
-  // batch: {
-  //   type: String,
-  //   required: true,
-  //   validate: {
-  //     validator: function (v) {
-  //       return /^\d{4}-\d{4}$/.test(v); // Example: "2020-2024"
-  //     },
-  //     message: (props) => `${props.value} is not a valid batch format!`,
-  //   },
-  // },
+
   typeofEvent: {
     type: String,
     required: true,

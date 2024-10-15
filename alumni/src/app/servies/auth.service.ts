@@ -25,7 +25,9 @@ export class AuthService {
     this.AuthData.next(data);
   }
   registerServie(registerObj:any){
-    return this.http.post<any>(`${apiUrls.authServiceApi}register`,registerObj);
+    return this.http.post<any>(`${apiUrls.authServiceApi}register`,registerObj,{
+      headers:this.header
+    });
   }
   loginServie(loginObj:any){
     return this.http.post<any>(`${apiUrls.authServiceApi}login`,loginObj);

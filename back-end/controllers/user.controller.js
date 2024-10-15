@@ -17,6 +17,16 @@ export const getById= async(req,res,next)=>{
             return next(CreateError(404,"user not found"));
         return next(CreateSuccess(200,"User is",user));
     } catch (error) {
+        console.log(error);
+        return next(CreateError(500,"Internal server error"));
+    }
+}
+export const getAllAlumni=async(req,res,next)=>{
+    try {
+        const alumniRoleId = '663c71fda7179036de1d8dd5';
+        const alumnis=await User.find({ roles: { $in: [alumniRoleId] } }, 'username _id').exec();
+        return next(CreateSuccess(200,"all Alumni",alumnis));
+    } catch (error) {
         return next(CreateError(500,"Internal server error"));
     }
 }

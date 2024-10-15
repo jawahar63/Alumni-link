@@ -19,8 +19,17 @@ export class EventService {
     });
   }
   changeStatus(id:String,alumniId:String,Update:any){
-    console.log(Update)
     return this.http.put<any>(`${apiUrls.EventService}/changeEventStatus/${id}/${alumniId}`,Update,{
+      headers:this.header
+    })
+  }
+  getAlumni(){
+    return this.http.get<any>(`${apiUrls.userService}/alumni`,{
+      headers:this.header
+    })
+  }
+  createEvent(event:Event){
+    return this.http.post<any>(`${apiUrls.EventService}/createEvent`,event,{
       headers:this.header
     })
   }

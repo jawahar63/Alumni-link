@@ -44,11 +44,11 @@ export class RegisterComponent implements OnInit {
   }
 
   register(){
+    console.log(this.registerForm.value)
     this.authService.registerServie(this.registerForm.value).subscribe({
       next:(res)=>{
         this.toasterService.addToast('success','Success!',res.message,5000);
         this.registerForm.reset();
-        this.router.navigate(['login']);
       },
       error:(err)=>{
         this.toasterService.addToast('error','error!',err.error.message,5000);

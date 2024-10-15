@@ -4,6 +4,7 @@ import Event from "../models/event.js";
 import User from "../models/user.js";
 import { CreateError } from "../utils/error.js"
 import { CreateSuccess } from "../utils/success.js";
+import {io} from "../index.js";
 
 
 
@@ -20,7 +21,6 @@ export const createEvent = async (req, res, next) => {
                 resolve();
             });
         });
-
         const newEvent = new Event({
             createdBy: req.body.createdBy,
             eventName: req.body.eventName,
@@ -29,11 +29,10 @@ export const createEvent = async (req, res, next) => {
             fromDate: req.body.fromDate,
             toDate: req.body.toDate,
             mode: req.body.mode,
-            venue: req.body.venue
+            venue: req.body.mode === 'offline' ? req.body.venue : undefined
         });
 
         await newEvent.save();
-        // Emit event (uncomment if necessary)
         io.emit('newEvent', newEvent);
         
         return next(CreateSuccess(200, "Event Created Successfully", newEvent));
@@ -243,3 +242,4 @@ export const getAllRegisteredStudent=async (req,res,next)=>{
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
 }
+

@@ -8,7 +8,7 @@ export enum Status{
     Rejected='rejected',
     Completed='completed'
 }
-interface user{
+export interface eventuser{
     _id:String;
     username:String;
 }
@@ -19,9 +19,9 @@ export interface registerStudents{
 }
 export interface Event{
     _id:String;
-    createdBy:user;
+    createdBy:eventuser;
     eventName:String;
-    alumniId:user;
+    alumniId:eventuser;
     typeofEvent:String;
     fromDate:Date;
     toDate:Date;

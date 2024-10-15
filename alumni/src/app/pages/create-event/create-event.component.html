@@ -1,4 +1,114 @@
-<div class="w-4/5 h-full rounded-lg bg-darkgrey p-2">
+<div class="w-screen md:w-4/5 h-full rounded-lg bg-darkgrey p-2">
+        <form class="w-full flex flex-col gap-4 p-5" [formGroup]="eventForm" (ngSubmit)="submitEventForm()">
+            <div class="w-full flex flex-col justify-center lg:flex-row gap-6">
+                <!-- Event Name -->
+                <div class="flex flex-col w-full lg:gap-2">
+                    <div class="flex lg:flex-col lg:gap-2 items-center">
+                        <label class="text-white text-sm md:text-base w-2/5 lg:w-full">Event Name:</label>
+                        <input type="text" formControlName="eventName" class="w-3/5 lg:w-full rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                    </div>
+                    <span
+                        *ngIf="eventForm.controls['eventName'].hasError('required') && eventForm.controls['eventName'].touched"
+                        class="text-red w-full">Event name is required</span>
+                </div>
     
+                <!-- Alumni ID -->
+                <div class="flex flex-col w-full lg:gap-2">
+                    <div class="flex lg:flex-col lg:gap-2 items-center relative">
+                        <label class="text-white text-sm md:text-base w-2/5 lg:w-full">Alumni ID:</label>
+                        <input type="text" id="alumni" placeholder="Select the alumni" formControlName="alumniId"
+                            (input)="onAlumniInput()" (focus)="showAlumniSuggestions = true" (blur)="hideAlumniSuggestions()"
+                            class="w-3/5 lg:w-full rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                
+                        <!-- Suggestions Dropdown -->
+                        <ul *ngIf="showAlumniSuggestions && filteredAlumni.length"
+                            class="absolute ms-[40%] lg:ms-0 w-3/5 lg:w-full bg-dark border border-gray-300 rounded-md max-h-40 overflow-y-auto mt-1 top-full z-10">
+                            <li *ngFor="let option of filteredAlumni" (mousedown)="selectAlumni(option._id)"
+                                class="p-2 cursor-pointer text-white text-opacity-70 hover:bg-darkgrey">
+                                {{ option.username }}
+                            </li>
+                        </ul>
+                    </div>
+                
+                    <span *ngIf="eventForm.controls['alumniId'].hasError('required') && eventForm.controls['alumniId'].touched"
+                        class="text-red w-full">Alumni ID is required</span>
+                </div>
+
+            </div>
+    
+            <div class="w-full flex flex-col lg:flex-row gap-6">
+                <!-- Type of Event -->
+                <div class="flex flex-col w-full lg:w-2/4 lg:gap-2">
+                    <div class="flex lg:flex-col lg:gap-2 items-center">
+                        <label class="text-white text-sm md:text-base w-2/5 lg:w-full">Type of Event:</label>
+                        <input type="text" formControlName="typeofEvent" class="w-3/5 lg:w-full rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                    </div>
+                    <span
+                        *ngIf="eventForm.controls['typeofEvent'].hasError('required') && eventForm.controls['typeofEvent'].touched"
+                        class="text-red w-full">Type of event is required</span>
+                </div>
+
+                <div class="flex flex-row w-full lg:w-2/4 justify-between gap-2">
+                    <!-- From Date -->
+                    <div class="flex flex-col w-2/4 lg:gap-2">
+                        <label class="text-white text-sm md:text-base w-full">From Date:</label>
+                        <input type="date" formControlName="fromDate" class="rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                        <span *ngIf="eventForm.controls['fromDate'].hasError('required') && eventForm.controls['fromDate'].touched"
+                            class="text-red w-full">From date is required</span>
+                    </div>
+                    
+                    <!-- To Date -->
+                    <div class="flex flex-col w-2/4 lg:gap-2">
+                        <label class="text-white text-sm md:text-base w-full">To Date:</label>
+                        <input type="date" formControlName="toDate" class="rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                        <span *ngIf="eventForm.controls['toDate'].hasError('required') && eventForm.controls['toDate'].touched"
+                            class="text-red w-full">To date is required</span>
+                    </div>
+                </div>
+                
+            </div>
+    
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Mode -->
+                <div class="flex flex-col w-full lg:w-2/4 lg:gap-2">
+                    <div class="flex lg:flex-col lg:gap-2 items-center">
+                        <label class="text-white text-sm md:text-base w-2/5 lg:w-full">Mode:</label>
+                        <select formControlName="mode" class="w-3/5 lg:w-full rounded-lg p-2 text-white text-opacity-70 bg-dark">
+                            <option *ngFor="let mode of modeEnum | keyvalue" [value]="mode.value">{{ mode.key }}</option>
+                        </select>
+                    </div>
+                    <span *ngIf="eventForm.controls['mode'].hasError('required') && eventForm.controls['mode'].touched"
+                        class="text-red w-full">Mode is required</span>
+                </div>
+    
+                <!-- Venue -->
+                <div class="flex flex-col w-full lg:w-2/4 lg:gap-2 items-start relative">
+                    <div class="flex w-full lg:flex-col lg:gap-2 items-center">
+                        <label class="text-white text-sm md:text-base w-2/5 lg:w-full" for="venue">Venue:</label>
+                        <input type="text" id="venue" placeholder="Select or enter venue" formControlName="venue" (input)="onVenueInput()"
+                            (focus)="showSuggestions = true" (blur)="hideSuggestions()"
+                            class=" w-3/5 lg:w-full p-2 text-white text-opacity-70 bg-dark border-gray-300 rounded-md" />
+                    
+                        <!-- Suggestions Dropdown -->
+                        <ul *ngIf="showSuggestions && filteredVenues.length"
+                            class="absolute ms-[40%] lg:ms-0 w-3/5 lg:w-full bg-dark border border-gray-300 rounded-md max-h-40 overflow-y-auto mt-1 top-full z-10">
+                            <li *ngFor="let option of filteredVenues" (mousedown)="selectVenue(option)"
+                                class="w-3/5 lg:w-full p-2 cursor-pointer text-white text-opacity-70 hover:bg-darkgrey">
+                                {{ option }}
+                            </li>
+                        </ul>
+                    </div>
+                
+                    <span *ngIf="eventForm.hasError('required', 'venue') && eventForm.controls['venue'].dirty"
+                        class="text-red w-full ms-[3%] ">Venue is required</span>
+                </div>
+
+            </div>
+    
+            <!-- Submit Button -->
+            <button type="submit" class="p-2 text-white bg-green rounded-lg mt-4"
+                [disabled]="!eventForm.valid">Submit</button>
+        </form>
+
 
 </div>
