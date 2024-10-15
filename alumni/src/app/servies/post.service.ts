@@ -20,7 +20,9 @@ export class PostService {
     return this.http.request(req);
   }
   updatePost(postId:string,post:any){
-    return this.http.put<any>(`${apiUrls.PostService}/edit/${postId}`,post);
+    return this.http.put<any>(`${apiUrls.PostService}/edit/${postId}`,post,{
+      headers:this.header
+    });
   }
   getPosts(page: number, limit: number) {
     return this.http.get<any>(`${apiUrls.PostService}/posts?page=${page}&limit=${limit}`,{

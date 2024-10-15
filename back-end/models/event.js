@@ -61,6 +61,9 @@ const eventSchema = new Schema({
     enum: ["pending", "approved", "rejected", "completed"],
     default: "pending",
   },
+  description:{
+    type: String,
+  },
   registerStudents: {
     type: [Schema.Types.ObjectId],
     ref: "User",

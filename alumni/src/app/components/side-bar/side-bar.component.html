@@ -1,36 +1,36 @@
 
 <div *ngIf="isLoggedIn" class="flex flex-row w-full"  [ngClass]="{ 'showSidebar': isSidebarVisible, 'hideSidebar': !isSidebarVisible }" [@fadeInOut]>
-    <div class="w-full h-[100vh] bg-darkgrey pt-1 flex-col ">
-        <div *ngIf="activeSection==='home'" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-yellow cursor-pointer" (click)="setActiveSection('home')">
+    <div class="w-full h-[100vh] bg-darkgrey pt-1 flex-col p-2">
+        <div *ngIf="activeSection==='home'" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-yellow rounded-lg cursor-pointer" (click)="setActiveSection('home')">
             <span class="material-icons-round text-darkgrey pe-10">home</span>
             <span class="text-[16px] text-darkgrey font-medium">Home</span>
         </div>
-        <div *ngIf="activeSection!=='home'" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-darkgrey hover:bg-dark cursor-pointer" (click)="setActiveSection('home')">
+        <div *ngIf="activeSection!=='home'" class="flex justify-start items-center px-10 py-[10px] mt-5 bg-darkgrey rounded-lg hover:bg-dark cursor-pointer" (click)="setActiveSection('home')">
             <span class="material-icons-round pe-10 text-white">home</span>
             <span class="text-[16px] font-medium text-white">Home</span>
         </div>
-        <div *ngIf="activeSection==='message'" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer" (click)="setActiveSection('message')">
+        <div *ngIf="activeSection==='message'" class="flex justify-start items-center px-10 py-[10px] bg-yellow rounded-lg cursor-pointer" (click)="setActiveSection('message')">
             <span class="material-icons-round text-darkgrey pe-10">message</span>
             <span class="text-[16px] text-darkgrey font-medium">message</span>
         </div>
-        <div *ngIf="activeSection!=='message'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer" (click)="setActiveSection('message')">
+        <div *ngIf="activeSection!=='message'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey rounded-lg hover:bg-dark cursor-pointer" (click)="setActiveSection('message')">
             <span class="material-icons-round pe-10 text-white">message</span>
             <span class="text-[16px] font-medium text-white">Message</span>
         </div>
-        <div *ngIf="activeSection==='event'" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer" (click)="setActiveSection('event')">
+        <div *ngIf="activeSection==='event'" class="flex justify-start items-center px-10 py-[10px] bg-yellow rounded-lg cursor-pointer" (click)="setActiveSection('event')">
             <span class="material-icons-round text-darkgrey pe-10">event</span>
-            <span class="text-[16px] text-darkgrey font-medium">event</span>
+            <span class="text-[16px] text-darkgrey font-medium">Event</span>
         </div>
-        <div *ngIf="activeSection!=='event'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer" (click)="setActiveSection('event')">
+        <div *ngIf="activeSection!=='event'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey rounded-lg hover:bg-dark cursor-pointer" (click)="setActiveSection('event')">
             <span class="material-icons-round pe-10 text-white">event</span>
             <span class="text-[16px] font-medium text-white">Event</span>
         </div>
         <div *ngIf="mentor">
-            <div *ngIf="activeSection==='register'" class="flex justify-start items-center px-10 py-[10px] bg-yellow cursor-pointer" (click)="setActiveSection('register')">
+            <div *ngIf="activeSection==='register'" class="flex justify-start items-center px-10 py-[10px] bg-yellow rounded-lg cursor-pointer" (click)="setActiveSection('register')">
                 <span class="material-icons-round text-darkgrey pe-10">create</span>
                 <span class="text-[16px] text-darkgrey font-medium">Register</span>
             </div>
-            <div *ngIf="activeSection!=='register'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey hover:bg-dark cursor-pointer"
+            <div *ngIf="activeSection!=='register'" class="flex justify-start items-center px-10 py-[10px] bg-darkgrey rounded-lg hover:bg-dark cursor-pointer"
                 (click)="setActiveSection('register')">
                 <span class="material-icons-round pe-10 text-white">create</span>
                 <span class="text-[16px] font-medium text-white">Register</span>

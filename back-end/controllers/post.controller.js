@@ -105,7 +105,6 @@ export const updatePost = async (req, res, next) => {
             return next(CreateError(404, "Post not found"));
         }
 
-        // Ensure the user has authorization to edit the post
         if (!post.author.equals(new mongoose.Types.ObjectId(author))) {
             return next(CreateError(403, "Unauthorized to update this post"));
         }

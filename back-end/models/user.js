@@ -22,6 +22,9 @@ const UserSchema = new Schema(
             required:true,
             unique:true
         },
+        rollNo:{
+            type: String
+        },
         password:{
             type:String,
             required:true,
@@ -79,7 +82,7 @@ const UserSchema = new Schema(
         skill:{
             type:[String],
             require:false
-        }
+        },
     },
     {
         timestamps:true // Corrected typo: 'timesStamps' -> 'timestamps'

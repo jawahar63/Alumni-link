@@ -33,7 +33,6 @@ export const login = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.body.email }).populate("roles", "role");
         
-        // Check if user exists
         if (!user) {
             return next(CreateError(404, "User not found"));
         }
@@ -48,13 +47,13 @@ export const login = async (req, res, next) => {
         if(user.roles[0].role!=='alumni'){
             token = jwt.sign(
                 { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage},
-                process.env.JWT_SECRET
+                process.env.JWT_SECRET,{expiresIn:'1d'}
             );
         }else{
             // console.log(user.batch+" "+user.domain+" "+user.company);
             token = jwt.sign(
                 { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,batch:user.batch,domain:user.domain,company:user.company},
-                process.env.JWT_SECRET
+                process.env.JWT_SECRET,{expiresIn:'1d'}
             );
         }
 

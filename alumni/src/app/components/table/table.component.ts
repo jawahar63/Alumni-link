@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, Input, input, OnInit, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Event } from '../../models/event.model';
+import { AuthService } from '../../servies/auth.service';
 
 @Component({
   selector: 'app-table',
@@ -10,155 +12,166 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './table.component.css'
 })
 export class TableComponent implements OnInit {
-  filter='';
-  datas =[
-    {
-      mentor: "Kabi",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "ragul",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "jeeva",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
-    {
-      mentor: "dharani",
-      eventName: "Alumni meet",
-      AlumniName: "Sanjay S",
-      typeofEvent: "seminar",
-      fromDate: "20.10.24",
-      toDate: "21.10.24",
-      mode: "offline",
-      venue: "SF1"
-    },
 
-  ]
+  authService=inject(AuthService);
+  filter='';
+  @Input() datas:Event[]=[]
+  @Input() extraHeaderTemplate?: TemplateRef<any>;
+  @Input() extraRowTemplate?: TemplateRef<any>; 
+  @Input() create?:TemplateRef<any>;
+  // datas =[
+  //   {
+  //     mentor: "Kabi",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "ragul",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "jeeva",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+  //   {
+  //     mentor: "dharani",
+  //     eventName: "Alumni meet",
+  //     AlumniName: "Sanjay S",
+  //     typeofEvent: "seminar",
+  //     fromDate: "20.10.24",
+  //     toDate: "21.10.24",
+  //     mode: "offline",
+  //     venue: "SF1"
+  //   },
+
+  // ]
+  isMentor:boolean=false;
+  isAlumni:boolean=false;
   currentPage=1;
   itemsPerPage: number = 5;
   totalItems: number = this.datas.length;
   ngOnInit(): void {
-
+    this.authService.AuthData.subscribe((data)=>{
+      this.isMentor=data.get('role')==='mentor';
+      this.isAlumni=data.get('role')==='alumni';
+    })
   }
   get paginatedData() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
@@ -176,5 +189,7 @@ export class TableComponent implements OnInit {
   }
    get totalPages() {
     return Math.ceil(this.totalItems / this.itemsPerPage);
+  }
+  ChangeStatus(Status:String){
   }
 }

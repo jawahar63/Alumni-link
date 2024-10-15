@@ -1,8 +1,8 @@
-<div class="relative overflow-x-auto p-2 w-[100vw] md:w-full shadow-sm rounded-lg mt-4 bg-darkgrey">
-    <div class="p-2 bg-darkgrey rounded-lg shadow-lg flex items-center w-full">
-        <h2 class="absolute text-xl text-yellow font-medium">Registered Events</h2>
+<div class="relative p-2 w-screen md:w-full shadow-sm rounded-lg bg-darkgrey">
+    <div class="p-2 lg:px-5 bg-darkgrey rounded-lg shadow-lg flex justify-between items-center">
+        <h2 class="absolute text-sm md:text-base lg:text-xl  text-yellow font-medium">Registered Events</h2>
         <label for="table-search" class="sr-only">Search</label>
-        <div class="relative mt-1 ms-48">
+        <div class="relative mt-1 ms-32 md:ms-36 lg:ms-48">
             <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-grey" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 20 20">
@@ -11,70 +11,87 @@
                 </svg>
             </div>
             <input type="text" [(ngModel)]="filter"
-                class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-80 bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
+                class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-32 md:w-40 lg:w-80 bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
                 [placeholder]="filter === 'All' ? 'Showing all events' : 'Search for events'">
         </div>
-        <div class="ml-10 flex flex-row items-center gap-10">
-            <label for="items-per-page" class="text-white text-opacity-60">Items per page:</label>
+        <ng-container *ngIf="create">
+            <div>
+                <ng-container *ngTemplateOutlet="create"></ng-container>
+            </div>
+        </ng-container>
+    </div>
+    <div class="overflow-x-auto w-full">
+        <table class=" text-white text-sm text-left rtl:text-right">
+            <thead class="text-xs text-gray-700 uppercase shadow-lg rounded-lg">
+                <tr>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Mentor</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Event</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Alumni</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Event Type</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">From Date</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">To Date</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Mode</th>
+                    <th scope="col" class="font-medium px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">Venue</th>
+                    <ng-container *ngIf="extraHeaderTemplate">
+                        <th scope="col" class="font-medium px-2 py-3 md:px-4 md:py-3 lg:px-6 lg:py-5">
+                            <ng-container *ngTemplateOutlet="extraHeaderTemplate"></ng-container>
+                        </th>
+                    </ng-container>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let data of paginatedData">
+                    <tr *ngIf="(data.createdBy.username.includes(filter.toLowerCase()) || 
+                                             data.alumniId.username.toLowerCase().includes(filter.toLowerCase()) || 
+                                             data.eventName.toLowerCase().includes(filter.toLowerCase()) || 
+                                             filter === 'All')" class="border-b border-yellow border-opacity-55 hover:bg-dark">
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.createdBy.username}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.eventName}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.alumniId.username}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.typeofEvent}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.fromDate}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.toDate}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.mode}}</td>
+                        <td class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">{{data.venue}}</td>
+                        <ng-container *ngIf="extraRowTemplate">
+                            <td>
+                                <ng-container *ngTemplateOutlet="extraRowTemplate; context: { $implicit: data }"></ng-container>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="flex justify-between items-center px-5 lg:px-28">
+        <div class=" flex flex-row items-center mt-4 md:gap-2 lg:gap-10">
+            <label for="items-per-page" class="text-white text-xs md:text-sm lg:text-base text-opacity-60">Items per page:</label>
             <select id="items-per-page" [(ngModel)]="itemsPerPage" (change)="changePage(1)"
                 class="block p-2 text-sm text-black rounded-lg bg-dark text-white text-opacity-75 focus:outline-none">
                 <option class="text-white" *ngFor="let limit of [5, 10, 15, 20]" [value]="limit">{{ limit }}</option>
             </select>
         </div>
-    </div>
-    <table class="min-w-full text-white text-sm text-left rtl:text-right">
-        <thead class="text-xs text-gray-700 uppercase shadow-lg rounded-lg">
-            <tr>
-                <th scope="col" class="font-medium px-6 py-5">Mentor</th>
-                <th scope="col" class="font-medium px-6 py-5">Event</th>
-                <th scope="col" class="font-medium px-6 py-5">Alumni</th>
-                <th scope="col" class="font-medium px-6 py-5">Event Type</th>
-                <th scope="col" class="font-medium px-6 py-5">From Date</th>
-                <th scope="col" class="font-medium px-6 py-5">To Date</th>
-                <th scope="col" class="font-medium px-6 py-5">Mode</th>
-                <th scope="col" class="font-medium px-6 py-5">Venue</th>
-                <th scope="col" class="font-medium px-6 py-5">State</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let data of paginatedData">
-                <tr *ngIf="(data.mentor.toLowerCase().includes(filter.toLowerCase()) || 
-                                     data.AlumniName.toLowerCase().includes(filter.toLowerCase()) || 
-                                     data.eventName.toLowerCase().includes(filter.toLowerCase()) || 
-                                     filter === 'All')" class="border-b border-yellow border-opacity-55 hover:bg-dark">
-                    <td class="px-6 py-4">{{data.mentor}}</td>
-                    <td class="px-6 py-4">{{data.eventName}}</td>
-                    <td class="px-6 py-4">{{data.AlumniName}}</td>
-                    <td class="px-6 py-4">{{data.typeofEvent}}</td>
-                    <td class="px-6 py-4">{{data.fromDate}}</td>
-                    <td class="px-6 py-4">{{data.toDate}}</td>
-                    <td class="px-6 py-4">{{data.mode}}</td>
-                    <td class="px-6 py-4">{{data.venue}}</td>
-                    <td class="py-2 flex flex-row items-center justify-center gap-3">
-                        <div class="p-2 rounded-lg bg-green cursor-pointer">Approve</div>
-                        <div class="p-2 rounded-lg bg-red cursor-pointer">Reject</div>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
-    <div class="flex justify-center gap-1 mt-4">
-        <button (click)="changePage(1)" [disabled]="currentPage === 1" class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
-            &lt;&lt; </button>
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
-                    class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
-                    &lt; </button>
-    
-                <ng-container *ngFor="let page of pageNumbers">
-                    <button *ngIf="page===currentPage" class="p-2 rounded-lg bg-yellow text-dark mx-1">{{page}}</button>
-                    <button *ngIf="page!==currentPage" (click)="changePage(page)" [class.active]="page === currentPage"
-                                class="p-2 rounded-lg bg-dark text-white text-opacity-60 mx-1 hover:bg-yellow" [disabled]="page === currentPage">{{ page
+        <div class="flex justify-center gap-1 mt-4">
+            <button (click)="changePage(1)" [disabled]="currentPage === 1"
+                class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
+                &lt;&lt; </button>
+            <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+                class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">
+                &lt; </button>
+        
+            <ng-container *ngFor="let page of pageNumbers">
+                <button *ngIf="page===currentPage" class="p-2 rounded-lg bg-yellow text-dark mx-1">{{page}}</button>
+                <button *ngIf="page!==currentPage" (click)="changePage(page)" [class.active]="page === currentPage"
+                    class="p-2 rounded-lg bg-dark text-white text-opacity-60 mx-1 hover:bg-yellow"
+                    [disabled]="page === currentPage">{{ page
                     }}</button>
-                </ng-container>
-    
-                <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
-                            class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">></button>
-                <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages"
-                            class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">>></button>
+            </ng-container>
+        
+            <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">></button>
+            <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages"
+                class="p-2 rounded-lg bg-dark text-white text-opacity-60 hover:bg-yellow">>></button>
+        </div>
     </div>
+    
 </div>

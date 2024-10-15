@@ -10,6 +10,8 @@ import { ToasterComponent } from '../components/toaster/toaster.component';
 import { ProfileComponent } from "../pages/profile/profile.component";
 import { BottomNavBarComponent } from '../components/bottom-nav-bar/bottom-nav-bar.component';
 import { TableComponent } from '../components/table/table.component';
+import { ToasterService } from '../servies/toaster.service';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-main',
@@ -24,6 +26,8 @@ export class MainComponent implements OnInit {
   isSidebarVisible = true;
   authservice = inject(AuthService);
   jwtDecode = inject(JwtdecodeService);
+  toasterService=inject(ToasterService);
+  socialAuthService=inject(SocialAuthService);
   isLoggedIn: boolean = false;
   decodedtoken: any;
 

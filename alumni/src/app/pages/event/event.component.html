@@ -1,1 +1,59 @@
-<app-table></app-table>
+<app-table [datas]="event"
+[extraHeaderTemplate]="stateHeaderTemplate"
+[extraRowTemplate]="stateRowTemplate"
+[create]="createIcon"
+></app-table>
+
+<ng-template #stateHeaderTemplate>
+    <ng-container *ngIf="isMentor||isAlumni">
+        <th scope="col">State</th>
+    </ng-container>
+</ng-template>
+
+<ng-template #stateRowTemplate let-data>
+    <ng-container *ngIf="isMentor">
+        <div class="py-3.5 flex flex-row items-center justify-center gap-3">
+            <div class="p-2 rounded-lg cursor-pointer" [ngClass]="{
+              'bg-red': data.status === 'rejected',
+              'bg-yellow': data.status === 'pending',
+              'bg-green': data.status === 'approved'
+            }">
+                {{ data.status }}
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isAlumni">
+        <div *ngIf="!(data.status==='pending')">
+            <div class="py-3.5 flex flex-row items-center justify-center gap-3">
+                <div class="p-2 rounded-lg cursor-pointer" [ngClass]="{
+                          'bg-red': data.status === 'rejected',
+                          'bg-yellow': data.status === 'pending',
+                          'bg-green': data.status === 'approved'
+                        }">
+                    {{ data.status }}
+                </div>
+            </div>
+        </div>
+        <div *ngIf="data.status==='pending'" class="py-3.5 px-1 flex flex-row items-center justify-center gap-3">
+            <div (click)="ChangeStatus('approved',data.alumniId._id,data._id)" class="p-2 rounded-lg bg-green cursor-pointer">Approve</div>
+            <div (click)="openRejectPopup(data)" class="p-2 rounded-lg bg-red cursor-pointer">Reject</div>
+        </div>
+    </ng-container>
+    <div *ngIf="data.Shopdescription"
+        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2">
+            <p class="text-white">description?</p>
+            <textarea [(ngModel)]="data.description" rows="4" class="bg-darkgrey w-full p-2 border border-gray-300 rounded-lg" placeholder="Enter rejection reason..."></textarea>
+            <div class="flex flex-row justify-center items-center gap-5">
+                <button (click)="closeRejectPopup(data)" class="bg-yellow rounded-lg text-white px-3 py-1">Cancel</button>
+                <button (click)="RejectEvent(data)" class="bg-red rounded-lg text-white px-3 py-1">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #createIcon>
+    <div *ngIf="!isAlumni">
+        <span (click)="navigate()" class="text-3xl text-yellow cursor-pointer">+</span>
+    </div>
+</ng-template>
