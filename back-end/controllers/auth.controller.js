@@ -46,13 +46,13 @@ export const login = async (req, res, next) => {
         // Generate JWT token
         if(user.roles[0].role!=='alumni'){
             token = jwt.sign(
-                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage},
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,email:user.email},
                 process.env.JWT_SECRET,{expiresIn:'1d'}
             );
         }else{
             // console.log(user.batch+" "+user.domain+" "+user.company);
             token = jwt.sign(
-                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,batch:user.batch,domain:user.domain,company:user.company},
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,batch:user.batch,domain:user.domain,company:user.company,email:user.email},
                 process.env.JWT_SECRET,{expiresIn:'1d'}
             );
         }
@@ -178,10 +178,17 @@ export const googleLogin = async(req,res,next)=>{
             return next(CreateError(404,"user not found"));
         }
         const {roles}=user;
-        const token =jwt.sign(
-            {id:user._id,isAdmin:user.isAdmin,roles:roles},
-            process.env.JWT_SECRET,{expiresIn:'1d'}
-        )
+        if(user.roles[0].role!=='alumni'){
+            token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,email:user.email},
+                process.env.JWT_SECRET,{expiresIn:'1d'}
+            );
+        }else{
+            token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,batch:user.batch,domain:user.domain,company:user.company,email:user.email},
+                process.env.JWT_SECRET,{expiresIn:'1d'}
+            );
+        }
         res.cookie("access_token",token,{httpOnly:true}).status(200)
         .json({
             status:200,

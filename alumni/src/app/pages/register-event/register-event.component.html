@@ -1,1 +1,24 @@
-<p>register-event works!</p>
+<app-table [datas]="event" [extraHeaderTemplate]="stateHeaderTemplate" [extraRowTemplate]="stateRowTemplate"></app-table>
+
+<ng-template #stateHeaderTemplate>
+    <ng-container *ngIf="isStudent">
+        <th scope="col">Register</th>
+    </ng-container>
+</ng-template>
+
+<ng-template #stateRowTemplate let-data>
+    <ng-container>
+        <span class="material-symbols-outlined text-white hover:text-grey p-2 cursor-pointer" (click)="Register(data)">
+            create
+        </span>
+    </ng-container>
+    <div *ngIf="data.showRegister" class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-5">
+            <p class="text-white">Confirm?</p>
+            <div class="flex flex-row justify-center items-center gap-5">
+                <button (click)="closeRegisterPopup(data)" class="bg-yellow rounded-lg text-white px-3 py-2">Cancel</button>
+                <button (click)="RegisterEvent(data)" class="bg-green rounded-lg text-white px-3 py-2">Register</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

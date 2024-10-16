@@ -33,4 +33,14 @@ export class EventService {
       headers:this.header
     })
   }
+  getApprovedEvent(id:String){
+    return this.http.get<any>(`${apiUrls.EventService}/getAllAprovedEvent/${id}`,{
+      headers:this.header
+    })
+  }
+  RegisterEvent(eventId:String,studentId:String){
+    return this.http.put<any>(`${apiUrls.EventService}/registerStudents/${eventId}/${studentId}`,{},{
+      headers:this.header
+    })
+  }
 }

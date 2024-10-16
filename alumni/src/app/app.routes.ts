@@ -12,6 +12,7 @@ import { EditprofileComponent } from './pages/editprofile/editprofile.component'
 import { SinglePostComponent } from './components/single-post/single-post.component';
 import { EditPostComponent } from './components/edit-post/edit-post.component';
 import { CreateEventComponent } from './pages/create-event/create-event.component';
+import { RegisterEventComponent } from './pages/register-event/register-event.component';
 
 export const routes: Routes = [
     {path:'',component:HomeComponent,pathMatch: 'full'},
@@ -28,5 +29,6 @@ export const routes: Routes = [
     {path:'profile/:id',component:ProfileComponent},
     {path:'editprofile/:id',component:EditprofileComponent},
     {path:'event/create',component:CreateEventComponent},
+    {path:'event/register',component:RegisterEventComponent},
     { path: '**', redirectTo: '' }
 ];

@@ -63,6 +63,7 @@ export class MainComponent implements OnInit {
 
       this.authservice.updateAuthData('username', this.decodedtoken.username);
       this.authservice.updateAuthData('photo', this.decodedtoken.profileImage);
+      this.authservice.updateAuthData('email',this.decodedtoken.email);
       }
     })
   }

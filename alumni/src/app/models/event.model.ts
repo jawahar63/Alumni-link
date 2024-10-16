@@ -16,6 +16,7 @@ export interface registerStudents{
     _id:String;
     username:String;
     email:String;
+    rollno:String
 }
 export interface Event{
     _id:String;
@@ -29,8 +30,8 @@ export interface Event{
     venue?:String;
     status:Status;
     ShowStatus?:boolean;
-    Shopdescription?:boolean;
+    Showdescription?:boolean;
     description?:String;
     registerStudents?:registerStudents[]
-
+    showRegister?:boolean
 }

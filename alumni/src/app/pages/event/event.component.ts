@@ -45,15 +45,15 @@ export class EventComponent implements OnInit {
     })
   }
   openRejectPopup(data:Event){
-    data.Shopdescription=true;
+    data.Showdescription=true;
     // this.ChangeStatus('rejected',data.alumniId._id,data._id)
   }
   RejectEvent(data:Event){
     this.ChangeStatus('rejected',data.alumniId._id,data._id,data.description)
-    data.Shopdescription=false;
+    data.Showdescription=false;
   }
   closeRejectPopup(data:Event){
-    data.Shopdescription=false;
+    data.Showdescription=false;
     data.description='';
   }
   ChangeStatus(Status:String,alumniId:String,eventId: String,description: String = ''){
@@ -63,7 +63,7 @@ export class EventComponent implements OnInit {
     }
     this.eventService.changeStatus(eventId,alumniId,Update).subscribe({
       next:(value)=> {
-        this.toasterService.addToast('success','Success!','Status successfully.',5000);
+        this.toasterService.addToast('success','Success!','Status changed successfully.',5000);
       },
       error:(err)=> {
         this.toasterService.addToast('error','Error1',err.message,5000);
@@ -75,6 +75,6 @@ export class EventComponent implements OnInit {
     if(this.isMentor)
       this.router.navigate(['event/create']);
     else
-     console.log("hio");
+      this.router.navigate(['event/register']);
   }
 }

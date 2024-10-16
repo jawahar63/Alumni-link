@@ -11,6 +11,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toasterService = inject(ToasterService);
   const socialAuthService = inject(SocialAuthService);
+  
+  if (req.url.includes('/login')) {
+    return next(req);
+  }
+
   return next(req).pipe(
     catchError((error) => {
       if (error.status === 401 || error.status === 403) {

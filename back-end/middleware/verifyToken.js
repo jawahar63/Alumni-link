@@ -4,6 +4,7 @@ import { PDFArrayIsNotRectangleError } from 'pdf-lib';
 
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.access_token || req.headers['authorization']?.split(' ')[1];
+    console.log(token);
     if (!token) {
         return next(CreateError(401, "You are not authenticated"));
     }  

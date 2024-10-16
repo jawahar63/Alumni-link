@@ -130,7 +130,8 @@ export const getAllEventByAlumni =async (req,res,next)=>{
 }
 export const getAllApprovedEvent =async (req,res,next)=>{
     try {
-        const events = (await Event.find({status:'approved'}))
+        const {studentId}=req.params
+        const events = await Event.find({status:'approved',registerStudents: { $nin: [studentId] }})
         .populate({
                 path: 'createdBy',
                 select: 'username'
@@ -202,11 +203,9 @@ export const ChangeEventStatus =async (req,res,next)=>{
 }
 export const registerStudents=async(req,res,next)=>{
     try {
-        console.log(req.params)
-        const {eventId}= req.params;
-        const { studentId } = req.body;
-        const Event=await Event.findById(eventId)
-        if(!Event.status.equals("approved")){
+        const {eventId,studentId}= req.params;
+        const event=await Event.findById(eventId)
+        if(event.status!=="approved"){
             return next(CreateError(403, "Unauthorized to register this Event"));
         }
         const updatedEvent = await Event.findByIdAndUpdate(
@@ -219,6 +218,7 @@ export const registerStudents=async(req,res,next)=>{
         }
         return next(next(CreateSuccess(200, "Register Successfully", updatedEvent)))
     } catch (error) {
+        console.log(error)
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
 }
