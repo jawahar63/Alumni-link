@@ -33,7 +33,7 @@
                     <span *ngIf="profileDetailform.hasError('required','batch') && profileDetailform.controls['batch'].dirty" class="text-red ms-[3%] w-[50%]">Batch is required</span>
                 </div>
                 <div class="flex flex-row items-center justify-start">
-                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">Campany:</span>
+                    <span class="text-white hidden sm:block text-[18px] w-[50px] ">C0mpany:</span>
                     <input type="text" class="ms-[20%] rounded-lg text-dark px-[2%] h-[40px] w-[200px]" formControlName="company" [ngModel]="profileDetails.company">
                     <span *ngIf="profileDetailform.hasError('required','company') && profileDetailform.controls['company'].dirty" class="text-red ms-[3%] w-[50%]">Campany is required</span>
                 </div>

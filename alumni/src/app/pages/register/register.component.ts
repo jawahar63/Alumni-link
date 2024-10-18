@@ -34,6 +34,7 @@ export class RegisterComponent implements OnInit {
       lastname:['',Validators.required],
       email:['',Validators.compose([Validators.required,Validators.email])],
       username:['',Validators.required],
+      rollno:['',Validators.required],
       password:['',Validators.required],
       confirmpassword:['',Validators.required],
       role:['',Validators.required],
@@ -44,7 +45,6 @@ export class RegisterComponent implements OnInit {
   }
 
   register(){
-    console.log(this.registerForm.value)
     this.authService.registerServie(this.registerForm.value).subscribe({
       next:(res)=>{
         this.toasterService.addToast('success','Success!',res.message,5000);

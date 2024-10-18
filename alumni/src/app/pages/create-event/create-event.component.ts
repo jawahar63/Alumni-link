@@ -108,6 +108,7 @@ export class CreateEventComponent implements OnInit {
     if (this.eventForm.valid) {
       this.eventService.createEvent(this.eventForm.value).subscribe({
         next:(value)=> {
+          this.router.navigate(['event']);
           this.toasterService.addToast("success","Success!","Event Add Successfully",5000);
         },
         error:(err)=> {

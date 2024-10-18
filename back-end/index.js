@@ -6,6 +6,7 @@ import authRoute from './routes/auth.js';
 import userRoute from './routes/user.js';
 import postRoute from './routes/post.js';
 import eventRoute from './routes/event.js';
+import searchRoute from './routes/search.js';
 import profileRoute from './routes/profile.js';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
@@ -55,6 +56,7 @@ app.use("/api/profile",profileRoute);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/post',postRoute);
 app.use('/api/event',eventRoute);
+app.use('/api/search',searchRoute);
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working!' });
 });

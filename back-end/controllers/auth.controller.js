@@ -19,6 +19,7 @@ export const register = async (req,res,next)=>{
             firstName:req.body.firstname,
             lastName:req.body.lastname,
             username:req.body.username,
+            rollno:req.body.rollno,
             email:req.body.email,
             password:hasPassword,
             roles:role

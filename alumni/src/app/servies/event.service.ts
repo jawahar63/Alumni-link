@@ -43,4 +43,9 @@ export class EventService {
       headers:this.header
     })
   }
+  getAllReRegisteredStudents(eventId:String){
+    return this.http.get<any>(`${apiUrls.EventService}/getAllRegisteredStudent/${eventId}`,{
+      headers:this.header
+    })
+  }
 }

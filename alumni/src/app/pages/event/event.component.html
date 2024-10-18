@@ -1,6 +1,10 @@
-<app-table [datas]="event"
+<app-table
+[title]="title"
+[datas]="event"
 [extraHeaderTemplate]="stateHeaderTemplate"
 [extraRowTemplate]="stateRowTemplate"
+[extraHeaderTemplate2]="stateHeaderTemplate2"
+[extraRowTemplate2]="stateRowTemplate2"
 [create]="createIcon"
 ></app-table>
 
@@ -9,10 +13,15 @@
         <th scope="col">State</th>
     </ng-container>
 </ng-template>
+<ng-template #stateHeaderTemplate2>
+    <ng-container *ngIf="isMentor||isAlumni">
+        <th scope="col">Register Student</th>
+    </ng-container>
+</ng-template>
 
 <ng-template #stateRowTemplate let-data>
     <ng-container *ngIf="isMentor">
-        <div class="py-3.5 flex flex-row items-center justify-center gap-3">
+        <div class="py-3.5 flex flex-row items-center justify-center gap-3" (click)="openRejectdescription(data)">
             <div class="p-2 rounded-lg cursor-pointer" [ngClass]="{
               'bg-red': data.status === 'rejected',
               'bg-yellow': data.status === 'pending',
@@ -22,6 +31,15 @@
             </div>
         </div>
     </ng-container>
+    <div *ngIf="data.showRejectdescription" 
+        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center" (click)="closeRejectdescription(data)">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2" (click)="$event.stopPropagation()">
+            <p class="text-white">description</p>
+            <p rows="4"
+                class="bg-darkgrey w-full p-2 border border-gray-300 rounded-lg"
+                >{{data.description}}</p>
+        </div>
+    </div>
     <ng-container *ngIf="isAlumni">
         <div *ngIf="!(data.status==='pending')">
             <div class="py-3.5 flex flex-row items-center justify-center gap-3">
@@ -48,6 +66,21 @@
                 <button (click)="closeRejectPopup(data)" class="bg-yellow rounded-lg text-white px-3 py-1">Cancel</button>
                 <button (click)="RejectEvent(data)" class="bg-red rounded-lg text-white px-3 py-1">Save</button>
             </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #stateRowTemplate2 let-data>
+    <ng-container *ngIf="isMentor||isAlumni">
+        <div class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">
+            <span class="material-symbols-outlined text-white hover:text-grey p-2 cursor-pointer" (click)="RegisteredStudent(data)">
+            visibility
+            </span>
+        </div>
+    </ng-container>
+    <div *ngIf="data.showRegisterStudent"
+        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center" (click)="closeRegisteredStudent(data)">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2" (click)="$event.stopPropagation()">
+            <app-simple-table title="RegisteredStudent" [data]="RegisterStudents"></app-simple-table>
         </div>
     </div>
 </ng-template>

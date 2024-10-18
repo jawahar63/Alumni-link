@@ -4,12 +4,12 @@
         <i *ngIf="activeSection!=='home'"
             class="fa-solid fa-house text-white hover:text-yellow transition-colors duration-300"></i>
     </div>
-    <div (click)="setActiveSection('search')" class="cursor-pointer p-2">
+    <!-- <div (click)="setActiveSection('search')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='search'"
             class="fa-solid fa-magnifying-glass text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='search'"
             class="fa-solid fa-magnifying-glass text-white hover:text-yellow transition-colors duration-300"></i>
-    </div>
+    </div> -->
     <div *ngIf="isAlumni" (click)="setActiveSection('post')" class="cursor-pointer p-2">
         <i *ngIf="activeSection==='post'" class="fa-solid fa-plus text-yellow transition-colors duration-300"></i>
         <i *ngIf="activeSection!=='post'"

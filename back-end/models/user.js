@@ -22,7 +22,7 @@ const UserSchema = new Schema(
             required:true,
             unique:true
         },
-        rollNo:{
+        rollno:{
             type: String
         },
         password:{

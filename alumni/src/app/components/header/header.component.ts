@@ -10,11 +10,14 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ProfileService } from '../../servies/profile.service';
 import { ToasterService } from '../../servies/toaster.service';
+import { SearchService } from '../../servies/search.service';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [SideBarComponent,MatIconModule,CommonModule,RouterModule],
+  imports: [SideBarComponent,MatIconModule,CommonModule,RouterModule,FormsModule,ReactiveFormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -28,6 +31,7 @@ export class HeaderComponent implements OnInit {
   router =inject(Router)
   sidebar =inject(SideBarService);
   toasterService=inject(ToasterService);
+  searchService=inject(SearchService);
   isProfileDropdownOpen: boolean = false;
   searchbarvisible:boolean=false;
   screenSizeSearchbar:boolean=false;
@@ -37,11 +41,12 @@ export class HeaderComponent implements OnInit {
   id!:string;
   details!:object;
   role!:string;
+  searchTermControl = new FormControl();
+  suggestions: any[] = [];
   
 
 
   ngOnInit(): void {
-    // this.checkExpiration();
     this.authservice.isLoggedIn$.subscribe(res=>{
       this.isLoggedIn=this.authservice.isLoggedIn();
     })
@@ -62,6 +67,24 @@ export class HeaderComponent implements OnInit {
     window.addEventListener('resize',()=>{
       this.checkScreenWidth();
     })
+
+    this.searchTermControl.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(searchTerm => {
+        if (searchTerm) {
+          return this.searchService.autoSuggest(searchTerm); 
+        } else {
+          return [];
+        }
+      })
+    ).subscribe(
+      data => {
+        this.suggestions = data;
+      },
+      error => {
+        console.error('Error fetching suggestions', error);
+      }
+    );
 
   }
 
@@ -99,4 +122,21 @@ export class HeaderComponent implements OnInit {
   //     this.logout();
   //   }
   // }
+
+
+  selectSuggestion(suggestion: any) {
+    this.searchTermControl.setValue('');
+    this.suggestions = [];
+  }
+  openPost(id:String){
+    this.router.navigate(['posts/'+id]);
+    this.searchTermControl.setValue('');
+    this.suggestions = [];
+
+  }
+  openProfile(id:String){
+    this.router.navigate(['profile/'+id]);
+    this.searchTermControl.setValue('');
+    this.suggestions = [];
+  }
 }

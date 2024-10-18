@@ -33,7 +33,7 @@ export const createEvent = async (req, res, next) => {
         });
 
         await newEvent.save();
-        io.emit('newEvent', newEvent);
+        // io.emit('newEvent', newEvent);
         
         return next(CreateSuccess(200, "Event Created Successfully", newEvent));
     } catch (error) {
@@ -229,14 +229,14 @@ export const getAllRegisteredStudent=async (req,res,next)=>{
                 if (err) {
                     return reject(err);
                 }
-                if (req.user.roles[0].role !== 'mentor') {
+                if (req.user.roles[0].role === 'User') {
                     return reject(CreateError(403, "You are not authorized!"));
                 }
                 resolve();
             });
         });
         const {eventId}= req.params;
-        const studentIdList=await Event.findById(eventId).select('registerStudents').populate('registerStudents',"username email");
+        const studentIdList=await Event.findById(eventId).select('registerStudents').populate('registerStudents',"username email rollno");
         return next(CreateSuccess(200, "Status Changed", studentIdList));
     } catch (error) {
         return next(CreateError(500, error.message || "Internal Server Error"));

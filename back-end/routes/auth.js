@@ -5,8 +5,8 @@ import verifyToken, { verifyMentor } from '../middleware/verifyToken.js';
 
 const router =express.Router();
 
-router.post("/register",verifyMentor,register);
 router.post("/login",login);
+router.post("/register",verifyMentor,register);
 router.post("/google-login",googleLogin);
 router.post("/register-admin",registerAdmin);
 router.post("/send-email",sendEmail);

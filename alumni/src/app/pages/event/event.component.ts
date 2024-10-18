@@ -3,17 +3,18 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { TableComponent } from '../../components/table/table.component';
 import { EventService } from '../../servies/event.service';
 import { AuthService } from '../../servies/auth.service';
-import { Event } from '../../models/event.model';
+import { Event, registerStudents } from '../../models/event.model';
 import { CommonModule } from '@angular/common';
 import { ToasterService } from '../../servies/toaster.service';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SimpleTableComponent } from '../../components/simple-table/simple-table.component';
 
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [HeaderComponent,TableComponent,CommonModule,FormsModule],
+  imports: [HeaderComponent,TableComponent,CommonModule,FormsModule,SimpleTableComponent],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
@@ -27,7 +28,9 @@ export class EventComponent implements OnInit {
   id:String='';
   isMentor:boolean=false;
   isAlumni:boolean=false;
+  title='';
   event:Event[]=[]
+  RegisterStudents:registerStudents[]=[]
 
   ngOnInit(): void {
     this.authService.AuthData.subscribe((data)=>{
@@ -43,10 +46,18 @@ export class EventComponent implements OnInit {
         console.log(err);
       },
     })
+    if(this.isAlumni){
+      this.title='Event'
+    }
+    else if(this.isMentor){
+      this.title='Event'
+    }
+    else{
+      this.title='Registered Event'
+    }
   }
   openRejectPopup(data:Event){
     data.Showdescription=true;
-    // this.ChangeStatus('rejected',data.alumniId._id,data._id)
   }
   RejectEvent(data:Event){
     this.ChangeStatus('rejected',data.alumniId._id,data._id,data.description)
@@ -76,5 +87,27 @@ export class EventComponent implements OnInit {
       this.router.navigate(['event/create']);
     else
       this.router.navigate(['event/register']);
+  }
+  RegisteredStudent(data:Event){
+    this.eventService.getAllReRegisteredStudents(data._id).subscribe({
+      next:(value)=> {
+        this.RegisterStudents=value.data.registerStudents
+        data.showRegisterStudent=true;
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',err.message,5000);
+      },
+    })
+    
+  }
+  closeRegisteredStudent(data:Event){
+    data.showRegisterStudent=false;
+  }
+  openRejectdescription(data:Event){
+    if(this.isMentor)
+      data.showRejectdescription=true;
+  }
+  closeRejectdescription(data:Event){
+    data.showRejectdescription=false;
   }
 }

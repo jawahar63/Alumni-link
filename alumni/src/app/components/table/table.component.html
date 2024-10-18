@@ -1,6 +1,6 @@
 <div class="relative p-2 w-screen md:w-full  shadow-sm rounded-lg bg-darkgrey">
     <div class="p-2 lg:px-5 bg-darkgrey rounded-lg shadow-lg flex justify-between items-center">
-        <h2 class="absolute text-sm md:text-base lg:text-xl  text-yellow font-medium">Registered Events</h2>
+        <h2 class="absolute text-sm md:text-base lg:text-xl  text-yellow font-medium">{{title}}</h2>
         <label for="table-search" class="sr-only">Search</label>
         <div class="relative mt-1 ms-32 md:ms-36 lg:ms-48">
             <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -37,6 +37,11 @@
                             <ng-container *ngTemplateOutlet="extraHeaderTemplate"></ng-container>
                         </th>
                     </ng-container>
+                    <ng-container *ngIf="extraHeaderTemplate2">
+                        <th scope="col" class="font-medium px-2 py-3 md:px-4 md:py-3 lg:px-6 lg:py-5">
+                            <ng-container *ngTemplateOutlet="extraHeaderTemplate2"></ng-container>
+                        </th>
+                    </ng-container>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +61,11 @@
                         <ng-container *ngIf="extraRowTemplate">
                             <td>
                                 <ng-container *ngTemplateOutlet="extraRowTemplate; context: { $implicit: data }"></ng-container>
+                            </td>
+                        </ng-container>
+                        <ng-container *ngIf="extraRowTemplate2">
+                            <td>
+                                <ng-container *ngTemplateOutlet="extraRowTemplate2; context: { $implicit: data }"></ng-container>
                             </td>
                         </ng-container>
                     </tr>

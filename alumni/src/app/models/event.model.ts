@@ -34,4 +34,6 @@ export interface Event{
     description?:String;
     registerStudents?:registerStudents[]
     showRegister?:boolean
+    showRegisterStudent?:boolean;
+    showRejectdescription?:boolean;
 }

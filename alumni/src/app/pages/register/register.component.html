@@ -19,6 +19,12 @@
             <span *ngIf="registerForm.hasError('required','username')&& registerForm.controls['username'].dirty" class="text-red">*Username is required</span>
         </div>
         <div class="flex flex-col mt-4 mb-1">
+            <input formControlName="rollno" class="p-2 rounded-lg text-darkgrey ps-3 font-roboto" type="text" name="rollno"
+                placeholder="rollno">
+            <span *ngIf="registerForm.hasError('required','rollno')&& registerForm.controls['rollno'].dirty"
+                class="text-red">*rollno is required</span>
+        </div>
+        <div class="flex flex-col mt-4 mb-1">
             <div class="flex flex-row justify-between text-white ">
                 <div>
                     <input formControlName="role" class="m-2" type="radio" name="role" value="User">student

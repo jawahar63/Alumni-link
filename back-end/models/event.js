@@ -31,7 +31,7 @@ const eventSchema = new Schema({
     required: true,
     validate: {
       validator: function (v) {
-        return v > this.fromDate;
+        return v >= this.fromDate;
       },
       message: "toDate must be after fromDate",
     },

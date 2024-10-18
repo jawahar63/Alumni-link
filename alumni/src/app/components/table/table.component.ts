@@ -15,9 +15,12 @@ export class TableComponent implements OnInit {
 
   authService=inject(AuthService);
   filter='';
+  @Input() title='';
   @Input() datas:Event[]=[]
   @Input() extraHeaderTemplate?: TemplateRef<any>;
   @Input() extraRowTemplate?: TemplateRef<any>; 
+  @Input() extraHeaderTemplate2?: TemplateRef<any>;
+  @Input() extraRowTemplate2?: TemplateRef<any>; 
   @Input() create?:TemplateRef<any>;
   // datas =[
   //   {

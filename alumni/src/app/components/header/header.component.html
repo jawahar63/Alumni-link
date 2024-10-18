@@ -1,34 +1,67 @@
 <div *ngIf="isLoggedIn" class="flex justify-between py-2 bg-darkgrey items-center ">
     <div *ngIf="!searchbarvisible || !screenSizeSearchbar" class="flex ms-5">
-        <span class="material-icons-round text-yellow"(click)="toggleSidebar()">menu</span>
+        <span class="material-icons-round text-yellow" (click)="toggleSidebar()">menu</span>
         <h6 class="hidden text-green text-[20px] ms-5 md:block">Alumni Link</h6>
     </div>
+    <div *ngIf="!searchbarvisible || !screenSizeSearchbar" class="block md:hidden mt-1 me-1 w-5 " (click)="toggleSearch()">
+        <span class="material-icons-round text-yellow">search</span>
+    </div>
+    <div *ngIf="!screenSizeSearchbar||searchbarvisible">
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-grey" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                </svg>
+            </div>
+            <input type="text" [formControl]="searchTermControl"
+                class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-80 bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
+                placeholder="Search...">
 
-    <div *ngIf="!screenSizeSearchbar">
-        <div class="relative text-grey search ms-5">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                <button type="submit" class="p-1">
-                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        viewBox="0 0 24 24" class="w-6 h-6">
-                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </button>
-            </span>
-            <input type="search" name="q"
-                class="py-2 text-sm text-darkgrey font-medium bg-white rounded-lg pl-10 w-[200px] md:w-[350px]"
-                placeholder="Search..." autocomplete="off">
+            <div *ngIf="suggestions.length > 0" class="absolute z-10 w-full bg-dark rounded-lg mt-1 shadow-lg">
+                <ul class="max-h-60 overflow-auto">
+                    <li *ngFor="let suggestion of suggestions"
+                        class="cursor-pointer p-3 px-5 text-white hover:bg-darkgrey rounded-xl border-b border-yellow border-opacity-55">
+                        <div *ngIf="suggestion.type === 'post'" class="w-full flex flex-row justify-start gap-10 items-center" (click)="openPost(suggestion.id)">
+                            <span class="text-yellow text-lg">Post</span>
+                            <span class="text-lg">{{ suggestion.caption }}</span>
+                            <span class="text-xs">{{ suggestion.author }}</span>
+                        </div>
+                        <div class="flex justify-start gap-2 items-center px-1" *ngIf="suggestion.type === 'user'" (click)="openProfile(suggestion.id)">
+                            <img class="w-[40px] h-[40px] rounded-full" [src]="suggestion.profileImage" alt="Profile">
+                            <div class="flex flex-col md:flex-row justify-start p-1">
+                                <div>
+                                    <span class="text-[18px] text-yellow">{{suggestion.username}}</span>
+                                </div>
+                                <div class="flex justify-start items-center gap-2 md:ps-5 md:gap-5">
+                                    <span class="text-white text-[12px]">{{suggestion.batch}}</span>
+                                    <span class="text-white text-[12px]">{{suggestion.domain}}</span>
+                                    <span class="text-white text-[12px]">{{suggestion.company}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    <div [routerLink]="['post']" *ngIf="isalumni && !screenSizeSearchbar" class="w-[50px] lg:w-[100px] h-[40px] flex items-center bg-yellow text-center rounded-lg cursor-pointer">
+
+    <div [routerLink]="['post']" *ngIf="isalumni && !screenSizeSearchbar"
+        class="w-[50px] lg:w-[100px] h-[40px] flex items-center bg-yellow text-center rounded-lg cursor-pointer">
         <span class="text-white w-[100px]">Post</span>
     </div>
+
     <div *ngIf="!searchbarvisible || !screenSizeSearchbar" class="mt-1 me-1 w-5 ">
         <span class="material-icons-round text-yellow">notifications</span>
     </div>
-    <div *ngIf="!searchbarvisible || !screenSizeSearchbar" class="bg-yellow w-fit flex flex-row px-[8.5px] py-[5px] rounded-[10px] items-center">
+
+    <div *ngIf="!searchbarvisible || !screenSizeSearchbar"
+        class="bg-yellow w-fit flex flex-row px-[8.5px] py-[5px] rounded-[10px] items-center">
         <div class="flex flex-row cursor-pointer" (click)="viewProfile()">
             <div>
-                <div class=" bg-dark w-[30px] h-[30px] rounded-full">
+                <div class="bg-dark w-[30px] h-[30px] rounded-full">
                     <img class="w-[30px] h-[30px] rounded-full" [src]="profilePhoto" alt="">
                 </div>
             </div>
@@ -37,9 +70,7 @@
             </div>
         </div>
         <div (click)="logout()" class="cursor-pointer ms-1">
-            <span class="material-symbols-outlined text-darkgrey hover:text-dark pt-2">
-                logout
-            </span>
+            <span class="material-symbols-outlined text-darkgrey hover:text-dark pt-2">logout</span>
         </div>
     </div>
 </div>
