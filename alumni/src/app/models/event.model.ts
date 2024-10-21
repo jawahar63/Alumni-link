@@ -36,4 +36,5 @@ export interface Event{
     showRegister?:boolean
     showRegisterStudent?:boolean;
     showRejectdescription?:boolean;
+    editEvent?:boolean;
 }

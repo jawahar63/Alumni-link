@@ -48,4 +48,9 @@ export class EventService {
       headers:this.header
     })
   }
+  updateEvent(eventId:String,event:Event){
+    return this.http.put<any>(`${apiUrls.EventService}/updateEvent/${eventId}`,event,{
+      headers:this.header
+    })
+  }
 }

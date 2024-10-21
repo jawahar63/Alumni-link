@@ -38,7 +38,6 @@ export const verifyAdmin =(req,res,next)=>{
 }
 export const verifyMentor =(req,res,next)=>{
     verifyToken(req,res,()=>{
-        console.log(req.user.roles[0].role==='mentor');
         if(req.user.roles[0].role==='mentor'){
             next();
         }else{

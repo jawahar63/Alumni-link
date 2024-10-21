@@ -5,6 +5,8 @@
 [extraRowTemplate]="stateRowTemplate"
 [extraHeaderTemplate2]="stateHeaderTemplate2"
 [extraRowTemplate2]="stateRowTemplate2"
+[extraHeaderTemplate3]="stateHeaderTemplate3"
+[extraRowTemplate3]="stateRowTemplate3"
 [create]="createIcon"
 ></app-table>
 
@@ -16,6 +18,11 @@
 <ng-template #stateHeaderTemplate2>
     <ng-container *ngIf="isMentor||isAlumni">
         <th scope="col">Register Student</th>
+    </ng-container>
+</ng-template>
+<ng-template #stateHeaderTemplate3>
+    <ng-container *ngIf="isMentor">
+        <th scope="col">Edit Event</th>
     </ng-container>
 </ng-template>
 
@@ -81,6 +88,24 @@
         class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center" (click)="closeRegisteredStudent(data)">
         <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2" (click)="$event.stopPropagation()">
             <app-simple-table title="RegisteredStudent" [data]="RegisterStudents"></app-simple-table>
+        </div>
+    </div>
+</ng-template>
+<ng-template #stateRowTemplate3 let-data>
+    <ng-container *ngIf="isMentor && data.status==='rejected'">
+        <div class="px-2 py-4 md:px-4 md:py-4 lg:px-6 lg:py-5">
+            <span class="material-symbols-outlined text-white hover:text-grey p-2 cursor-pointer"
+                (click)="ShowUpdateEvent(data)">
+                create
+            </span>
+        </div>
+    </ng-container>
+    <div *ngIf="data.editEvent"
+        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center"
+        (click)="closeUpdateEvent(data)">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2"
+            (click)="$event.stopPropagation()">
+            <app-edit-event  [event]="data"></app-edit-event>
         </div>
     </div>
 </ng-template>

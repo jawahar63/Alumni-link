@@ -10,17 +10,6 @@ import {io} from "../index.js";
 
 export const createEvent = async (req, res, next) => {
     try {
-        await new Promise((resolve, reject) => {
-            verifyToken(req, res, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (req.user.roles[0].role !== 'mentor') {
-                    return reject(CreateError(403, "You are not authorized!"));
-                }
-                resolve();
-            });
-        });
         const newEvent = new Event({
             createdBy: req.body.createdBy,
             eventName: req.body.eventName,
@@ -32,8 +21,15 @@ export const createEvent = async (req, res, next) => {
             venue: req.body.mode === 'offline' ? req.body.venue : undefined
         });
 
-        await newEvent.save();
-        // io.emit('newEvent', newEvent);
+        await newEvent.save().populate({
+                path: 'createdBy',
+                select: 'username'
+            })
+            .populate({
+                path: 'alumniId',
+                select: 'username _id'
+            }).sort({ createdAt: -1 });;
+        io.emit('newEvent', newEvent);
         
         return next(CreateSuccess(200, "Event Created Successfully", newEvent));
     } catch (error) {
@@ -42,34 +38,45 @@ export const createEvent = async (req, res, next) => {
 };
 export const updateEvent= async (req,res,next)=>{
     try {
-        await new Promise((resolve, reject) => {
-            verifyToken(req, res, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (req.user.roles[0].role !== 'mentor') {
-                    return reject(CreateError(403, "You are not authorized!"));
-                }
-                resolve();
-            });
-        });
-        const {id,mentorId}=req.params;
+        const id=req.params.eventId;
+        const mentorId=req.body.createdBy;
         const user =await User.findById(mentorId);
-        if(!user)
+        if(!user){
             return next(CreateError(404, "User not found"));
-
-        const Event=await Event.findById(id)
-
-        if(!Event)
+        }
+        const event=await Event.findById(id)
+        if(!event)
             return next(CreateError(404, "event not found"));
 
-        if(!Event.createdBy.equals(new mongoose.Types.ObjectId(mentorId)))
+        if(!event.createdBy.equals(new mongoose.Types.ObjectId(mentorId)))
             return next(CreateError(403, "Unauthorized to update this Event"));
 
-        const updatedEvent = await Event.findByIdAndUpdate(id, req.body, {
+        if(req.body.fromDate>req.body.toDate){
+            return next(CreateError(500, "to Date want to be greater than or equal to from Date"));
+        }
+        const updatedEvent = await Event.findByIdAndUpdate(id,{
+            eventName: req.body.eventName,
+            alumniId: req.body.alumniId,
+            typeofEvent: req.body.typeofEvent,
+            fromDate: req.body.fromDate,
+            toDate: req.body.toDate,
+            mode: req.body.mode,
+            status:'pending',
+            venue: req.body.mode === 'offline' ? req.body.venue : undefined
+        }, {
             new: true,
             runValidators: true,
-        });
+        }).populate({
+                path: 'createdBy',
+                select: 'username'
+            })
+            .populate({
+                path: 'alumniId',
+                select: 'username _id'
+            }).sort({ createdAt: -1 });
+
+
+        io.emit('updateEvent', updatedEvent);
         return next(CreateSuccess(200, "Event updated successfully", updatedEvent));
 
     } catch (error) {
@@ -166,17 +173,6 @@ export const getAllEventRegisterByStudent =async (req,res,next)=>{
 }
 export const ChangeEventStatus =async (req,res,next)=>{
     try {
-        await new Promise((resolve, reject) => {
-            verifyToken(req, res, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (req.user.roles[0].role !== 'alumni') {
-                    return reject(CreateError(403, "You are not authorized!"));
-                }
-                resolve();
-            });
-        });
         const {eventId,alumniId}= req.params;
         const {status,description} =req.body;
         console.log(eventId,alumniId,status,description)
@@ -195,7 +191,16 @@ export const ChangeEventStatus =async (req,res,next)=>{
         const updatedEvent = await Event.findByIdAndUpdate(
             eventId,
             { status, description },
-            { new: true, runValidators: true })
+            { new: true, runValidators: true }).populate({
+                path: 'createdBy',
+                select: 'username'
+            })
+            .populate({
+                path: 'alumniId',
+                select: 'username _id'
+            }).sort({ createdAt: -1 });
+            
+        io.emit('statusEventChange', updatedEvent);
         return next(CreateSuccess(200, "Status Changed", updatedEvent));
     } catch (error) {
         return next(CreateError(500, error.message || "Internal Server Error"));

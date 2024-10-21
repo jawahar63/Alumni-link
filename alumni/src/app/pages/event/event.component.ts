@@ -10,11 +10,12 @@ import { faL } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SimpleTableComponent } from '../../components/simple-table/simple-table.component';
+import { EditEventComponent } from "../edit-event/edit-event.component";
 
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [HeaderComponent,TableComponent,CommonModule,FormsModule,SimpleTableComponent],
+  imports: [HeaderComponent, TableComponent, CommonModule, FormsModule, SimpleTableComponent, EditEventComponent],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
@@ -109,5 +110,11 @@ export class EventComponent implements OnInit {
   }
   closeRejectdescription(data:Event){
     data.showRejectdescription=false;
+  }
+  ShowUpdateEvent(data:Event){
+    data.editEvent=true;
+  }
+  closeUpdateEvent(data:Event){
+    data.editEvent=false;
   }
 }

@@ -42,6 +42,11 @@
                             <ng-container *ngTemplateOutlet="extraHeaderTemplate2"></ng-container>
                         </th>
                     </ng-container>
+                    <ng-container *ngIf="extraHeaderTemplate3">
+                        <th scope="col" class="font-medium px-2 py-3 md:px-4 md:py-3 lg:px-6 lg:py-5">
+                            <ng-container *ngTemplateOutlet="extraHeaderTemplate3"></ng-container>
+                        </th>
+                    </ng-container>
                 </tr>
             </thead>
             <tbody>
@@ -66,6 +71,11 @@
                         <ng-container *ngIf="extraRowTemplate2">
                             <td>
                                 <ng-container *ngTemplateOutlet="extraRowTemplate2; context: { $implicit: data }"></ng-container>
+                            </td>
+                        </ng-container>
+                        <ng-container *ngIf="extraRowTemplate3">
+                            <td>
+                                <ng-container *ngTemplateOutlet="extraRowTemplate3; context: { $implicit: data }"></ng-container>
                             </td>
                         </ng-container>
                     </tr>

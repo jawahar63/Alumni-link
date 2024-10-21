@@ -29,12 +29,6 @@ const eventSchema = new Schema({
   toDate: {
     type: Date,
     required: true,
-    validate: {
-      validator: function (v) {
-        return v >= this.fromDate;
-      },
-      message: "toDate must be after fromDate",
-    },
   },
   mode: {
     type: String,
