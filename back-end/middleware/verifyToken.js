@@ -3,7 +3,6 @@ import { CreateError } from '../utils/error.js';
 import { PDFArrayIsNotRectangleError } from 'pdf-lib';
 
 export const verifyToken = (req, res, next) => {
-
     const token = req.cookies.access_token || req.headers['authorization']?.split(' ')[1];
     if (!token) {
         return next(CreateError(401, "You are not authenticated"));
@@ -47,10 +46,11 @@ export const verifyMentor =(req,res,next)=>{
 }
 export const verifyAlumni =(req,res,next)=>{
     verifyToken(req,res,()=>{
-        if(req.user.roles[0].role=='alumni'){
+        if(req.user.roles[0].role==='alumni'){
             next();
+        }else{
+            return next(CreateError(403,"you are not authorized "))
         }
-        return next(CreateError(403,"you are not authorized!"))
     })
 }
 export default verifyToken;

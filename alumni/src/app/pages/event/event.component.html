@@ -7,6 +7,8 @@
 [extraRowTemplate2]="stateRowTemplate2"
 [extraHeaderTemplate3]="stateHeaderTemplate3"
 [extraRowTemplate3]="stateRowTemplate3"
+[extraHeaderTemplate4]="stateHeaderTemplate4"
+[extraRowTemplate4]="stateRowTemplate4"
 [create]="createIcon"
 ></app-table>
 
@@ -23,6 +25,11 @@
 <ng-template #stateHeaderTemplate3>
     <ng-container *ngIf="isMentor">
         <th scope="col">Edit Event</th>
+    </ng-container>
+</ng-template>
+<ng-template #stateHeaderTemplate4>
+    <ng-container *ngIf="isMentor">
+        <th scope="col">Delete Event</th>
     </ng-container>
 </ng-template>
 
@@ -106,6 +113,25 @@
         <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2"
             (click)="$event.stopPropagation()">
             <app-edit-event  [event]="data"></app-edit-event>
+        </div>
+    </div>
+</ng-template>
+<ng-template #stateRowTemplate4 let-data>
+    <ng-container *ngIf="isMentor">
+        <div class="py-3.5 flex flex-row items-center justify-center gap-3">
+            <div class="p-2 rounded-lg cursor-pointer bg-red" (click)="openDelete(data)">
+                Delete
+            </div>
+        </div>
+    </ng-container>
+    <div *ngIf="data.showDelete"
+        class="fixed inset-0 z-50 w-screen h-screen bg-dark bg-opacity-80 flex justify-center items-center">
+        <div class="w-fit h-fit bg-darkgrey flex flex-col justify-center items-center gap-5 rounded-lg p-2">
+            <p class="text-white">Confirm</p>
+            <div class="flex flex-row justify-center items-center gap-5">
+                <button (click)="closeDelete(data)" class="bg-yellow rounded-lg text-white px-3 py-1">Cancel</button>
+                <button (click)="DeleteEvent(data)" class="bg-red rounded-lg text-white px-3 py-1">Delete</button>
+            </div>
         </div>
     </div>
 </ng-template>

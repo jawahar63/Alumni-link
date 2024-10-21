@@ -42,6 +42,28 @@ export class RegisterEventComponent implements OnInit {
         this.toasterService.addToast('error','Error1',err.message,5000);
       },
     })
+    this.eventService.onChangeStatus().subscribe({
+      next:(value)=> {
+        if(this.isStudent&&value.status==='approved'){
+          this.event.unshift(value);
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',"Reload the page",5000);
+      },
+    })
+    this.eventService.onDelete().subscribe({
+      next:(value)=> {
+          const oldEvent=this.getEventById(value);
+          if(oldEvent){
+            const index =this.event.indexOf(oldEvent);
+            this.event.splice(index,1);
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',"Reload the page",5000);
+      },
+    })
   }
   Register(data:Event){
     data.showRegister=true;
@@ -60,5 +82,9 @@ export class RegisterEventComponent implements OnInit {
       },
     })
     data.showRegister=false;
+  }
+
+  getEventById(eventId:String):Event|null{
+      return this.event.find(event => event._id === eventId) || null;
   }
 }

@@ -13,7 +13,6 @@ export class PostService {
     'authorization': `Bearer ${this.token}`
   });
   createPost(Post:any){
-    console.log(this.token);
     const req =new HttpRequest('POST',`${apiUrls.PostService}/create-post`,Post,{
       reportProgress:true,
       headers: this.header,

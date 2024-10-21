@@ -8,6 +8,7 @@ import { Post } from '../../models/post.model';
 import { PostService } from '../../servies/post.service';
 import { SocketService } from '../../servies/socket.service';
 import { CommonModule } from '@angular/common';
+import { ToasterService } from '../../servies/toaster.service';
 
 @Component({
     selector: 'app-home',
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit {
     authService = inject(AuthService);
     postService = inject(PostService);
     socketService=inject(SocketService);
+    toasterService=inject(ToasterService);
     ef =inject(ElementRef);
 
     ngOnInit(): void {
@@ -42,7 +44,7 @@ export class HomeComponent implements OnInit {
             this.posts.unshift(value);
           },
           error:(err)=> {
-            console.log(err);
+             this.toasterService.addToast('error','Error1',"Reload the page",5000);
           },
         })
         this.socketService.onEditPost().subscribe({
@@ -54,7 +56,7 @@ export class HomeComponent implements OnInit {
             }
           },
           error:(err)=> {
-            console.log(err);
+             this.toasterService.addToast('error','Error1',"Reload the page",5000);
           },
         })
         this.socketService.onDeletePost().subscribe({
@@ -68,7 +70,7 @@ export class HomeComponent implements OnInit {
             }
           },
           error:(err)=> {
-            console.log(err);
+             this.toasterService.addToast('error','Error1',"Reload the page",5000);
           },
         })
 

@@ -23,6 +23,8 @@ export class TableComponent implements OnInit {
   @Input() extraRowTemplate2?: TemplateRef<any>; 
   @Input() extraHeaderTemplate3?: TemplateRef<any>;
   @Input() extraRowTemplate3?: TemplateRef<any>; 
+  @Input() extraHeaderTemplate4?: TemplateRef<any>;
+  @Input() extraRowTemplate4?: TemplateRef<any>; 
   @Input() create?:TemplateRef<any>;
   // datas =[
   //   {

@@ -56,6 +56,76 @@ export class EventComponent implements OnInit {
     else{
       this.title='Registered Event'
     }
+
+    this.eventService.onCreate().subscribe({
+      next:(value)=> {
+        if((this.isMentor&& this.id===value.createdBy._id)||(this.isAlumni &&this.id===value.alumniId._id)){
+          this.event.unshift(value);
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',"Reload the page",5000);
+      },
+    })
+    this.eventService.onChangeStatus().subscribe({
+      next:(value)=> {
+        if((this.isMentor&& this.id===value.createdBy._id)||(this.isAlumni &&this.id===value.alumniId._id)){
+          const oldEvent=this.getEventById(value._id);
+          if(oldEvent){
+              const index =this.event.indexOf(oldEvent);
+              this.event[index]=value;
+          }
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',"Reload the page",5000);
+      },
+    })
+    this.eventService.onUpdate().subscribe({
+      next:(value)=> {
+        if((this.isMentor&& this.id===value.createdBy._id)||(this.isAlumni &&this.id===value.alumniId._id)){
+          const oldEvent=this.getEventById(value._id);
+          if(oldEvent){
+              const index =this.event.indexOf(oldEvent);
+              this.event[index]=value;
+          }
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',"Reload the page",5000);
+      },
+    })
+    this.eventService.onRegister().subscribe({
+      next:(value)=> {
+        if((this.isMentor&& this.id===value.createdBy._id)||(this.isAlumni &&this.id===value.alumniId._id)){
+          const oldEvent=this.getEventById(value._id);
+          if(oldEvent){
+              const index =this.event.indexOf(oldEvent);
+              this.event[index]=value;
+          }
+        }
+      },
+    })
+    this.eventService.onDelete().subscribe({
+      next: (value) => {
+        const oldEvent = this.getEventById(value);
+        console.log(value);
+        if (oldEvent) {
+          const index = this.event.indexOf(oldEvent);
+          if (index !== -1) {
+            this.event.splice(index, 1);
+          } else {
+            console.warn('Event not found in the array');
+          }
+        } else {
+          console.warn('Event not found'); 
+        }
+      },
+      error: (err) => {
+        this.toasterService.addToast('error', 'Error', 'Reload the page', 5000);
+      },
+    });
+
   }
   openRejectPopup(data:Event){
     data.Showdescription=true;
@@ -101,6 +171,10 @@ export class EventComponent implements OnInit {
     })
     
   }
+
+  getEventById(eventId:String):Event|null{
+      return this.event.find(event => event._id === eventId) || null;
+  }
   closeRegisteredStudent(data:Event){
     data.showRegisterStudent=false;
   }
@@ -116,5 +190,23 @@ export class EventComponent implements OnInit {
   }
   closeUpdateEvent(data:Event){
     data.editEvent=false;
+  }
+
+  openDelete(data:Event){
+    data.showDelete=true;
+  }
+  closeDelete(data:Event){
+    data.showDelete=false;
+  }
+  DeleteEvent(data:Event){
+    this.eventService.deleteEvent(data._id,this.id).subscribe({
+      next:(value)=> {
+        this.toasterService.addToast('success','Success!','Event Deleted successfully.',5000);
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',err.message,5000);
+      },
+    })
+    data.showDelete=false;
   }
 }

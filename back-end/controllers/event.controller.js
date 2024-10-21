@@ -21,14 +21,18 @@ export const createEvent = async (req, res, next) => {
             venue: req.body.mode === 'offline' ? req.body.venue : undefined
         });
 
-        await newEvent.save().populate({
-                path: 'createdBy',
-                select: 'username'
-            })
-            .populate({
-                path: 'alumniId',
-                select: 'username _id'
-            }).sort({ createdAt: -1 });;
+        await newEvent.save()
+        await newEvent.populate({
+            path: 'createdBy',
+            select: 'username'
+        });
+
+        // Populate 'alumniId' field
+        await newEvent.populate({
+            path: 'alumniId',
+            select: 'username _id'
+        });
+
         io.emit('newEvent', newEvent);
         
         return next(CreateSuccess(200, "Event Created Successfully", newEvent));
@@ -175,7 +179,6 @@ export const ChangeEventStatus =async (req,res,next)=>{
     try {
         const {eventId,alumniId}= req.params;
         const {status,description} =req.body;
-        console.log(eventId,alumniId,status,description)
 
         const user =await User.findById(alumniId);
         if(!user)
@@ -188,19 +191,20 @@ export const ChangeEventStatus =async (req,res,next)=>{
 
         if(!event.alumniId.equals(new mongoose.Types.ObjectId(alumniId)))
             return next(CreateError(403, "Unauthorized to update this Event"));
+        
         const updatedEvent = await Event.findByIdAndUpdate(
             eventId,
             { status, description },
             { new: true, runValidators: true }).populate({
                 path: 'createdBy',
                 select: 'username'
-            })
-            .populate({
+            }).populate({
                 path: 'alumniId',
                 select: 'username _id'
             }).sort({ createdAt: -1 });
             
         io.emit('statusEventChange', updatedEvent);
+
         return next(CreateSuccess(200, "Status Changed", updatedEvent));
     } catch (error) {
         return next(CreateError(500, error.message || "Internal Server Error"));
@@ -210,20 +214,30 @@ export const registerStudents=async(req,res,next)=>{
     try {
         const {eventId,studentId}= req.params;
         const event=await Event.findById(eventId)
+
+        if (!event) {
+            return next(CreateError(404, "Event not found"));
+        }
         if(event.status!=="approved"){
             return next(CreateError(403, "Unauthorized to register this Event"));
         }
+
         const updatedEvent = await Event.findByIdAndUpdate(
             eventId,
             { $addToSet: { registerStudents: studentId } },
             { new: true, runValidators: true }
-        );
-        if (!updatedEvent) {
-            return next(CreateError(404, "Event not found"));
-        }
+        ).populate({
+                path: 'createdBy',
+                select: 'username'
+            })
+            .populate({
+                path: 'alumniId',
+                select: 'username _id'
+            }).sort({ createdAt: -1 });
+
+        io.emit('RegisterEvent', updatedEvent);
         return next(next(CreateSuccess(200, "Register Successfully", updatedEvent)))
     } catch (error) {
-        console.log(error)
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
 }
@@ -248,3 +262,23 @@ export const getAllRegisteredStudent=async (req,res,next)=>{
     }
 }
 
+export const deleteEvent=async(req,res,next)=>{
+    try {
+        const {eventId,mentorId}= req.params;
+        const user =await User.findById(mentorId);
+        if(!user)
+            return next(CreateError(404, "User not found"));
+
+        const event=await Event.findById(eventId)
+        if(!event)
+            return next(CreateError(404, "event not found"));
+
+        await Event.findByIdAndDelete(eventId);
+
+        io.emit('deleteEvent',eventId);
+        return next(CreateSuccess(200, "Event delete Successfully", eventId));
+
+    } catch (error) {
+        return next(CreateError(500, error.message || "Internal Server Error"));
+    }
+}

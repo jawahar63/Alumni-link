@@ -23,10 +23,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(clonedRequest).pipe(
     catchError((error) => {
       if (error.status === 401 || error.status === 403) {
-        localStorage.removeItem('token');
-        authService.isLoggedIn$.next(false);
-        router.navigate(['login']); 
-        socialAuthService.signOut(); 
+        // localStorage.removeItem('token');
+        // authService.isLoggedIn$.next(false);
+        // router.navigate(['login']); 
+        // socialAuthService.signOut(); 
         toasterService.addToast('warning', 'Warning!', 'Token expired', 5000);
       }
       return throwError(() => error);

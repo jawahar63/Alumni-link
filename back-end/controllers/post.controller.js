@@ -656,17 +656,12 @@ const deleteMediaFiles = async (mediaFiles) => {
 export const deletePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
-
-        // Find and delete the post
         const post = await Post.findById(postId);
         if (!post) {
             return next(CreateError(404, "Post not found"));
         }
 
-        // Delete associated media files
         await deleteMediaFiles(post.media);
-
-        // Remove the post from the database
         await Post.findByIdAndDelete(postId);
 
         io.emit('deletePost',postId);
@@ -676,7 +671,6 @@ export const deletePost = async (req, res, next) => {
             message: "Post deleted successfully"
         });
     } catch (error) {
-        console.error(error);
         return next(CreateError(500, "Something went wrong"));
     }
 };
