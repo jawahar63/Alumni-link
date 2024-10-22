@@ -28,6 +28,7 @@ export class SocketService {
     return new Observable(observer => {
       this.socket.on('newPost', (post) => {
         observer.next(post);
+        this.showPushNotification(`${post.caption} by ${post.author.username} received`, 'You have a new post.');
       });
     });
   }
@@ -74,5 +75,17 @@ export class SocketService {
         observer.next(comment);
       })
     })
+  }
+
+  private showPushNotification(title: string, body: string): void {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body });
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification(title, { body });
+        }
+      });
+    }
   }
 }

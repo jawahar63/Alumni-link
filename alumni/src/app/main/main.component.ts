@@ -32,6 +32,14 @@ export class MainComponent implements OnInit {
   decodedtoken: any;
 
   ngOnInit(): void {
+
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Push notifications enabled!');
+        }
+      });
+    }
     this.sidebar.startRouteMonitoring();
     this.authservice.isLoggedIn$.subscribe((res) => {
       this.isLoggedIn = this.authservice.isLoggedIn();

@@ -11,24 +11,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toasterService = inject(ToasterService);
   const socialAuthService = inject(SocialAuthService);
-
-  if (req.url.includes('/login')) {
+  if (req.url.includes('/login') || req.url.startsWith('/api/auth/login')) {
     return next(req);
   }
-  if (req.url.startsWith('/api/auth/login')) {
-  return next(req);
-}
-  const clonedRequest = req.clone();
+  const token = localStorage.getItem('token');
 
+  let clonedRequest = req;
+  if (token) {
+    clonedRequest = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` },
+    });
+  }
   return next(clonedRequest).pipe(
     catchError((error) => {
       if (error.status === 401 || error.status === 403) {
-        // localStorage.removeItem('token');
-        // authService.isLoggedIn$.next(false);
-        // router.navigate(['login']); 
-        // socialAuthService.signOut(); 
-        toasterService.addToast('warning', 'Warning!', 'Token expired', 5000);
+        toasterService.addToast('warning', 'Warning!', 'Token expired or invalid. Please log in again.', 5000);
+        
+        socialAuthService.signOut();
+        localStorage.removeItem('token');
+        authService.isLoggedIn$.next(false);
+        
+        router.navigate(['login']);
       }
+
       return throwError(() => error);
     })
   );

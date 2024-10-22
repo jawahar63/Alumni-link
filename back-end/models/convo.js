@@ -18,7 +18,7 @@ const conversationSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  startedAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   }
