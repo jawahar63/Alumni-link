@@ -393,47 +393,37 @@ export const AddComment = async (req, res, next) => {
         const { postId } = req.params;
         const { userid, text } = req.body;
 
-        // Ensure userId and text are provided
         if (!userid || !text) {
             return next(CreateError(400, 'User ID and comment text are required'));
         }
 
-        // Find the user who is commenting
         const user = await User.findById(userid);
         if (!user) {
             return next(CreateError(404, 'User not found'));
         }
 
-        // Find the post where the comment will be added
         const post = await Post.findById(postId);
         if (!post) {
             return next(CreateError(404, 'Post not found'));
         }
-
-        // Create a new comment
         const newComment = {
             commenter: userid,
             text,
             createdAt: new Date()
         };
-
-        // Add the new comment to the post's comments array
         post.comments.push(newComment);
 
-        // Save the updated post
         await post.save();
 
-        // Populate the comments with commenter details
         const lastComment = post.comments[post.comments.length - 1];
 
-        // Populate the new comment with commenter details
         const populatedComment = await Post.populate(lastComment, {
             path: 'commenter',
             select: 'username profileImage'
         });
 
-        // Emit the new comment via socket
-        io.emit("newComment", { postId: post._id, comment: populatedComment });
+
+        io.emit("newComment", { postId: post._id, comment: populatedComment,authorId: post.author,postId:post._id  });
         return res.status(200).json({
             status: 'success',
             message: 'Comment added successfully',
@@ -582,7 +572,7 @@ export const AddLike = async (req, res, next) => {
                 path:'liker',
                 select:'username profileImage',
             });
-            io.emit('newLike', { postId, likes: post.likes });
+            io.emit('newLike', { postId, likes: post.likes,authorId:post.author,like:lastlike,postId:post._id });
             return next(CreateSuccess(200, 'Liked successfully'));
         }
 

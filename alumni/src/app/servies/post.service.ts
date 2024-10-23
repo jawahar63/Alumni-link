@@ -40,7 +40,6 @@ export class PostService {
       headers:this.header
     });
   }
-
   getPostById(postId:string){
     return this.http.get<any>(`${apiUrls.PostService}/posts/${postId}`,{
       headers:this.header

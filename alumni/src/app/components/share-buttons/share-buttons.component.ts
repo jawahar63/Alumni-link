@@ -33,7 +33,6 @@ export class ShareButtonsComponent {
   }
   copyLink(post: Post) {
     const url = liveUrl.PostUrl+post._id;
-    console.log("heelo");// Replace with the actual post link
     navigator.clipboard.writeText(url).then(() => {
       this.toasterService.addToast('success','Success!','Link copied to clipboard!',5000);
     }).catch(() => {

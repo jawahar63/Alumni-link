@@ -19,12 +19,12 @@ export class MessageComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.socketService.onMessage().subscribe((message) => {
-      this.messages.push(message);
-    });
+    // this.socketService.onMessage().subscribe((message) => {
+    //   this.messages.push(message);
+    // });
   }
-  sendMessage(){
-    this.socketService.sendMessage(this.message);
-    this.message='';
-  }
+  // sendMessage(){
+  //   this.socketService.sendMessage(this.message);
+  //   this.message='';
+  // }
 }
