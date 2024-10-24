@@ -6,7 +6,7 @@ const conversationSchema = new Schema({
   participants: [
     {
       type: Schema.Types.ObjectId,
-      ref: "User", // Refers to both Student and Alumni in the User model
+      ref: "User",
       required: true,
     }
   ],
