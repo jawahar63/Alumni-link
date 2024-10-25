@@ -6,6 +6,8 @@ export const apiUrls = {
     EventService:"http://localhost:4000/api/event",
     userService:"http://localhost:4000/api/user",
     searchservice:'http://localhost:4000/api/search',
+    convoservice:'http://localhost:4000/api/convo',
+    messageService:'http://localhost:4000/api/message',
     io:'http://localhost:4000/'
 }
 export const liveUrl={

@@ -632,7 +632,7 @@ export const getLikes = async (req, res, next) => {
         return next(CreateError(500, 'Something went wrong while retrieving likes'));
     }
 };
-// Utility function to delete media files from the filesystem
+
 const deleteMediaFiles = async (mediaFiles) => {
     const uploadsDir = path.join(__dirname, '../uploads/post'); // Adjust path as needed
     for (const media of mediaFiles) {
