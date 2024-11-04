@@ -1,3 +1,64 @@
-<div class="bg-darkgrey w-full h-full md:rounded-lg p-2 border-dark md:border-s-2">
-chat
+<div class="bg-darkgrey w-full h-full md:rounded-lg border-dark md:border-s-2">
+    <div *ngIf="Convo.participant.username===''" class="h-full w-full flex justify-center items-center text-white text-xl text-opacity-50">
+        Click any Convo to Chat
+    </div>
+    <div *ngIf="Convo.participant.username!==''" class="w-full h-full">
+        <div class="w-full h-[12%] px-4 py-2 flex flex-row justify-between items-center shadow-lg">
+            <div class="w-full h-full flex flex-row gap-5 items-center ">
+                <img class="rounded-full w-[50px] h-[50px] border-[1px] border-yellow" [src]="Convo.participant.profileImage"
+                    [alt]="Convo.participant.username">
+                <div>
+                    <span class="text-base text-yellow">{{Convo.participant.username}}</span>
+                    <div class="w-full flex flex-row justify-start gap-2 lg:gap-5 items-center">
+                        <span *ngIf="Convo.participant.batch" class=" text-xs text-white">{{Convo.participant.batch}}</span>
+                        <span *ngIf="Convo.participant.domain" class=" text-xs text-white">{{Convo.participant.domain}}</span>
+                        <span *ngIf="Convo.participant.company" class=" text-xs text-white">{{Convo.participant.company}}</span>
+                    </div>
+                </div>
+            </div>
+            <span class="w-20 text-xs text-yellow">{{ getDisplayDate(Convo.lastMessageAt) }}</span>
+        </div>
+        <div class="w-full h-[88%] flex flex-col">
+            <div #scrollContainer class="w-full h-[92%] p-2 overflow-y-scroll">
+                <ng-container *ngFor="let message of messages; let i = index">
+                    <div *ngIf="isDateChanged(i)" class="flex justify-center items-center  text-center  my-2">
+                        <span class="w-fit text-[8px] text-white text-opacity-40 rounded-lg p-1  bg-dark">{{ getDisplayDate(message.sentAt) }}</span>
+                    </div>
+                
+                    <div *ngIf="message.sender._id !== id" class="flex justify-start mb-2">
+                        <div class="flex flex-col gap-[-3px]">
+                            <div class="w-fit rounded-xl px-2 py-1 bg-dark text-base text-white text-opacity-75">
+                                {{ message.content }}
+                            </div>
+                            <div class="flex flex-row justify-center items-center">
+                                <span class="text-[8px] text-white text-opacity-40">{{ getDisplaytime(message.sentAt) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div *ngIf="message.sender._id === id" class="flex justify-end mb-2" >
+                        <div>
+                            <div class="w-fit px-2 py-1 rounded-xl bg-dark">
+                                <span class=" text-base text-white text-opacity-75">{{ message.content }}</span>
+                            </div>
+                            <div class="flex h-fit flex-row justify-center items-center">
+                                <span class="text-[8px] text-white text-opacity-40" >{{ getDisplaytime(message.sentAt) }}</span>
+                                <span *ngIf="message.isReceive" [ngClass]="{
+                                            'text-yellow': message.isRead,
+                                            'text-white': message.sended
+                                }" class="material-symbols-outlined text-xs md:text-sm">done_all</span>
+                                <span *ngIf="!message.isReceive" class="material-symbols-outlined text-xs md:text-sm">check</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </ng-container>
+
+            </div>
+            <div class="w-full h-fit flex flex-row p-1 gap-2">
+                <input [(ngModel)]="message" class="w-full p-2 text-white text-opacity-75 bg-dark rounded-lg" placeholder="message...." (keydown)="onKeydown($event)">
+                <span class="material-symbols-outlined h-full p-2 rounded-lg bg-green text-white cursor-pointer" (click)="SendMessage()">send</span>
+            </div>
+        </div>
+    </div>
 </div>

@@ -17,12 +17,11 @@ export class ConvoService {
   constructor() { }
 
   createConvo(participants:String[]){
-    return this.http.post<any>(`${apiUrls.convoservice}/createConvo`,participants,{
+    return this.http.post<any>(`${apiUrls.convoservice}/createConvo`,{participants},{
       headers:this.header
     });
   }
   getConvo(userId:String){
-    console.log(userId)
     return this.http.get<any>(`${apiUrls.convoservice}/getConvo/${userId}`,{
       headers:this.header
     })

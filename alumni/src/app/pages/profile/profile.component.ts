@@ -63,8 +63,6 @@ export class ProfileComponent implements OnInit {
         }
       },
     });
-
-    // Load the first set of posts
     this.loadPosts();
 
     this.scrollListener = this.onScroll.bind(this);

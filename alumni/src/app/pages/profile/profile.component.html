@@ -124,9 +124,9 @@
         </div>
     </div>
     <div #postsContainer class="hidden md:block bg-darkgrey h-[90vh] p-1 rounded-2xl w-full lg:w-3/6  overflow-y-scroll">
-        <app-post-temp class="posts" width="md:w-full" [posts]="posts"></app-post-temp>
+        <app-post-temp class="posts" width="md:w-full" [posts]="posts" [loadingNeed]="false"></app-post-temp>
         <div *ngIf="loading" class="text-center mt-4">
-            <app-post-temp [posts]="[]" width="lg:w-3/6"></app-post-temp>
+            <app-post-temp [posts]="[]" [loadingNeed]="false" width="lg:w-3/6"></app-post-temp>
             <!-- <span class="material-icons animate-spin text-white">sync</span> <span class="text-white">Loading more
                 posts...</span> -->
         </div>

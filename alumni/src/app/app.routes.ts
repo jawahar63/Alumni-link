@@ -13,6 +13,7 @@ import { SinglePostComponent } from './components/single-post/single-post.compon
 import { EditPostComponent } from './components/edit-post/edit-post.component';
 import { CreateEventComponent } from './pages/create-event/create-event.component';
 import { RegisterEventComponent } from './pages/register-event/register-event.component';
+import { ChatpageComponent } from './pages/chatpage/chatpage.component';
 
 export const routes: Routes = [
     {path:'',component:HomeComponent,pathMatch: 'full'},
@@ -22,6 +23,7 @@ export const routes: Routes = [
     {path:'home',component:HomeComponent},
     {path:'reset/:token',component:ResetComponent},
     {path:'message',component:MessageComponent},
+    {path:'message/chat',component:ChatpageComponent},
     {path:'event',component:EventComponent},
     {path:'post',component:PostComponent},
     {path:'posts/:id',component:SinglePostComponent},

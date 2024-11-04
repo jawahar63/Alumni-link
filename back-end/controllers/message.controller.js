@@ -23,9 +23,12 @@ export const sendMessage=async(req,res,next)=>{
             content,
         });
         await Message.save();
+
+        await Message.populate('sender','username email profileImage');
         conversation.lastMessage = content;
         conversation.lastMessageAt = Date.now();
         await conversation.save();
+
 
         return next(CreateSuccess(201, "Message Created Successfully",Message));
     } catch (error) {
@@ -34,13 +37,33 @@ export const sendMessage=async(req,res,next)=>{
 }
 export const getMessage=async(req,res,next)=>{
     try {
-        const { conversationId } = req.params;
+        const { conversationId,userId } = req.params;
         const messages = await message.find({ conversationId }).populate('sender', 'username email profileImage');
+        
 
         if (!messages) {
             return next(CreateError(404,'No messages found for this conversation'));
         }
+        await message.updateMany(
+            { conversationId, sender: { $ne: userId } },
+            { $set: { isRead: true } }
+        );
         return next(CreateSuccess(200, "Message getted Successfully",messages));
+    } catch (error) {
+        return next(CreateError(500, error.message || "Internal Server Error"));
+    }
+}
+export const ReceiveMessage=async(req,res,next)=>{
+    try {
+        const { messageId } = req.params;
+
+        const Message = await message.findByIdAndUpdate(messageId, { isReceive: true }, { new: true });
+
+        if (!Message) {
+            return next(CreateError(404,'Message not found'));
+        }
+
+        return next(CreateSuccess(200, 'Message marked as read',Message));
     } catch (error) {
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
@@ -60,7 +83,6 @@ export const ReadMessage=async(req,res,next)=>{
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
 }
-
 export const deleteMessage=async(req,res,next)=>{
     try {
         

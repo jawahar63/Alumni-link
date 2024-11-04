@@ -24,6 +24,10 @@ const messageSchema = new Schema({
   isRead: {
     type: Boolean,
     default: false,
+  },
+  isReceive:{
+    type: Boolean,
+    default: false,
   }
 });
 

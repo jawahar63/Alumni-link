@@ -9,6 +9,7 @@ import { ConvoComponent } from "../../components/convo/convo.component";
 import { ConvoService } from '../../servies/convo.service';
 import { AuthService } from '../../servies/auth.service';
 import { ToasterService } from '../../servies/toaster.service';
+import { Convo } from '../../models/convo.model';
 
 @Component({
   selector: 'app-message',
@@ -19,7 +20,7 @@ import { ToasterService } from '../../servies/toaster.service';
 })
 export class MessageComponent implements OnInit{
   id='';
-  convos=[];
+  convos:Convo[]=[];
   socketService=inject(SocketService);
   authService=inject(AuthService);
   convoService=inject(ConvoService);
@@ -31,7 +32,7 @@ export class MessageComponent implements OnInit{
     })
     this.convoService.getConvo(this.id).subscribe({
       next:(value)=> {
-        this.convos=value.data
+        this.convos=value.data;
       },
       error:(err)=> {
         this.toasterService.addToast('error','Error1',err.message,5000);

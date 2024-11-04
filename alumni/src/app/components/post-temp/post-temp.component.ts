@@ -20,6 +20,7 @@ import { SocketService } from '../../servies/socket.service';
 })
 export class PostTempComponent implements OnInit,OnChanges {
   @Input() posts: Post[] = [];
+  @Input() loadingNeed=true;
   @Input() width:string=''; // An array of posts to be passed to this component
 
   postService = inject(PostService);

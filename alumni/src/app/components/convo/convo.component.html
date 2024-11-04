@@ -1,36 +1,38 @@
 <div class="bg-darkgrey w-full h-full md:rounded-lg border-dark md:border-e-2">
     <div class="w-full py-3 px-4 flex flex-row justify-between items-center shadow-lg">
         <span *ngIf="!showSearch" class="text-yellow text-xl">Message</span>
-        <span *ngIf="!showSearch" class="material-symbols-outlined text-yellow hover:text-dark" (click)="searchbar()">create</span>
-        <div *ngIf="showSearch" class="w-full">
-            <label for="table-search" class="sr-only">Search</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-grey" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                <input type="text" [formControl]="searchTermControl"
-                    class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-full bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
-                    placeholder="New Convo">
-        
-                <div *ngIf="suggestions.length > 0" class="absolute z-10 w-full bg-dark rounded-lg mt-1 shadow-lg">
-                    <ul class="max-h-60 overflow-auto">
-                        <li *ngFor="let suggestion of suggestions"
-                            class="cursor-pointer p-2 px-5 text-white hover:bg-darkgrey rounded-xl border-b border-yellow border-opacity-55">
-                            <div class="flex flex-row items-center gap-5">
-                                <img class="rounded-full w-[30px] h-[30px] border-[1px] border-yellow" [src]="suggestion.profileImage"
-                                    [alt]="suggestion.username">
-                                <div class="flex flex-col">
-                                    <span class="text-base text-yellow">{{suggestion.username}}</span>
+        <span *ngIf="!showSearch" class="material-symbols-outlined text-yellow hover:text-dark cursor-pointer" (click)="searchbar()">create</span>
+        <div *ngIf="showSearch" class="w-full flex flex-row">
+            <div class="w-full">
+                <label for="table-search" class="sr-only">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-grey" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                    </div>
+                    <input type="text" [formControl]="searchTermControl"
+                        class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-s-lg w-full bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
+                        placeholder="New Convo">
+                    <div *ngIf="suggestions.length > 0" class="absolute z-10 w-full bg-dark rounded-lg mt-1 shadow-lg">
+                        <ul class="max-h-60 overflow-auto">
+                            <li *ngFor="let suggestion of suggestions"
+                                class="cursor-pointer p-2 px-5 text-white hover:bg-darkgrey rounded-xl border-b border-yellow border-opacity-55">
+                                <div class="flex flex-row items-center gap-5" (click)="newConvo(suggestion)">
+                                    <img class="rounded-full w-[30px] h-[30px] border-[1px] border-yellow"
+                                        [src]="suggestion.profileImage" [alt]="suggestion.username">
+                                    <div class="flex flex-col">
+                                        <span class="text-base text-yellow">{{suggestion.username}}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+            <div class="p-1 px-2 flex justify-center items-center bg-dark text-white text-opacity-60 rounded-e-lg cursor-pointer" (click)="searchbar()">X</div>
         </div>
     </div>
     <div class="p-2">
@@ -50,20 +52,29 @@
         
     </div>
     <div>
-        <ng-container *ngFor="let data of data" >
-            <div *ngIf="data.participants[0].username.toLowerCase().includes(filter.toLowerCase())||filter==='All'">
-                <div class="border-b-[1px] border-yellow w-full px-6 py-1 flex justify-between items-center flex-row cursor-pointer">
+        <ng-container *ngFor="let data of datas" class="overflow-y-scroll" >
+            <div *ngIf="data.participant.username.toLowerCase().includes(filter.toLowerCase())||filter==='All'">
+                <div class="border-b-[1px] border-yellow border-opacity-50 w-full px-6 py-1.5 flex justify-between items-center flex-row cursor-pointer" (click)="openConvo(data)">
                     <div class="flex items-center flex-row gap-5">
-                        <img class="rounded-full w-[40px] h-[40px] border-[1px] border-yellow" [src]="data.participants[0].profileImage"
-                            [alt]="data.participants[0].username">
+                        <img class="rounded-full w-[40px] h-[40px] border-[1px] border-yellow" [src]="data.participant.profileImage"
+                            [alt]="data.participant.username">
                         <div class="flex flex-col">
-                            <span class="text-base text-yellow">{{data.participants[0].username}}</span>
+                            <span class="text-base text-yellow">{{data.participant.username}}</span>
                             <span class="text-sm text-white">{{data.lastMessage}}</span>
                         </div>
                     </div>
-                    <span *ngIf="data.unreadMessageCount>0" class="bg-yellow text-sm text-dark rounded-full w-[20px] h-[20px] flex justify-center items-center">{{data.unreadMessageCount}}</span>
+                    <div class="flex flex-col justify-center items-center">
+                        <span *ngIf="data.unreadMessageCount>0" class="bg-yellow text-sm text-dark rounded-full w-[20px] h-[20px] flex justify-center items-center">{{data.unreadMessageCount}}</span>
+                        <span *ngIf="data.lastMessageAt" class="text-white text-opacity-75 text-xs">
+                            {{ getDisplayDate(data.lastMessageAt) }}
+                        </span>
+                    </div>
+
                 </div>
             </div>
         </ng-container>
+        <div *ngIf="datas.length==0" class="w-full h-full flex justify-center items-center text-xl text-white text-opacity-50 p-5">
+            Click Create icon at the top to start new Convo
+        </div>
     </div>
 </div>
