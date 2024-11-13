@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { apiUrls } from '../api.urls';
-import { BehaviorSubject } from 'rxjs';
-import { Convo } from '../models/convo.model';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Convo, Message } from '../models/convo.model';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,13 @@ export class MessageService {
     unreadMessageCount: 0
 });
   ConvoDetail$=this.Convodetail.asObservable();
-  constructor() { }
+
+
+  socket: Socket;
+
+  constructor() {
+    this.socket = io(apiUrls.io);
+  }
 
   getConvoDetail(convo:Convo){
     this.Convodetail.next(convo);
@@ -65,5 +72,55 @@ export class MessageService {
     return this.http.get<any>(`${apiUrls.messageService}/last/${userId}`,{
       headers:this.header
     })
+  }
+  joinChat(roomId: string) {
+    this.socket.emit('joinChat', roomId);
+  }
+  sendMessageSocket(room: string, message: string) {
+    this.socket.emit('sendMessage', { room, message });
+  }
+  changeIsRecieve(message:Message){
+    const room=message.conversationId
+    this.socket.emit('changeIsRecieve',{room ,message});
+  }
+  changeIsRead(message:Message){
+    const room=message.conversationId
+    this.socket.emit('changeIsRead',{room ,message});
+  }
+  receiveMessage(): Observable<Message> {
+    return new Observable((observer) => {
+      this.socket.on('receiveMessage', (message) => {
+        observer.next(message);
+      });
+    });
+  }
+  messageIsReceive():Observable<Message>{
+    return new Observable((observer) => {
+      this.socket.on('isReceive', (message) => {
+        observer.next(message);
+      });
+    });
+  }
+  messageIsReceiveArray():Observable<Message[]>{
+    return new Observable((observer) => {
+      this.socket.on('IsReceiveArray', (messages) => {
+        observer.next(messages.messages);
+      });
+    });
+  }
+  messageIsSeen():Observable<Message>{
+    return new Observable((observer) => {
+      this.socket.on('isRead', (message) => {
+        observer.next(message);
+      });
+    });
+  }
+  messagesIsSeen():Observable<Message[]>{
+    return new Observable((observer) => {
+      this.socket.on('updatedMessages', (message) => {
+        console.log(1);
+        observer.next(message);
+      });
+    });
   }
 }

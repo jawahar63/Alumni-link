@@ -10,6 +10,9 @@ import { Post } from '../../models/post.model';
 import { PostService } from '../../servies/post.service';
 import { AuthService } from '../../servies/auth.service';
 import { SocketService } from '../../servies/socket.service';
+import { ConvoService } from '../../servies/convo.service';
+import { ToasterService } from '../../servies/toaster.service';
+import { MessageService } from '../../servies/message.service';
 
 @Component({
   selector: 'app-profile',
@@ -38,10 +41,14 @@ export class ProfileComponent implements OnInit {
   isAllPostsLoaded: boolean = false; // To track if all posts are loaded
   page: number = 1;
   limit: number = 10;
+  width!:number;
 
   authService = inject(AuthService);
   profileservice = inject(ProfileService);
+  convoService=inject(ConvoService);
+  messageService=inject(MessageService);
   postService = inject(PostService);
+  toasterService=inject(ToasterService);
   router = inject(Router);
   route = inject(ActivatedRoute);
   socketService=inject(SocketService);
@@ -49,6 +56,7 @@ export class ProfileComponent implements OnInit {
   viewportScroller =inject(ViewportScroller)
 
   ngOnInit(): void {
+    this.width=window.innerWidth;
     this.id = this.route.snapshot.paramMap.get('id') || '';
     this.authService.AuthData.subscribe((data) => {
       this.checkUserId = data.get('user_id');
@@ -148,7 +156,20 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['editprofile/'+this.id]);
   }
   goToMessage() {
-    console.log("Hi");
+    const participants=[this.id,this.checkUserId]
+    this.convoService.getOrCreate(participants).subscribe({
+      next:(value)=> {
+        this.messageService.getConvoDetail(value.data);
+        if(this.width<768){
+          this.router.navigate(['message/chat']);
+        }else{
+          this.router.navigate(['message']);
+        }
+      },
+      error:(err)=> {
+        this.toasterService.addToast('error','Error1',err.error.message,5000);
+      },
+    })
   }
 
   selectChange(): void {

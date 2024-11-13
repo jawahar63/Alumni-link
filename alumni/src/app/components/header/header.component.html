@@ -20,7 +20,7 @@
                 class="block p-2 ps-10 text-sm text-white text-opacity-70 rounded-lg w-80 bg-dark focus:ring-grey focus:ring-opacity-50 focus:ring-2 focus:outline-none"
                 placeholder="Search...">
 
-            <div *ngIf="suggestions.length > 0" class="absolute z-10 w-full bg-dark rounded-lg mt-1 shadow-lg">
+            <div *ngIf="suggestions.length > 0" class="absolute z-10 w-full bg-dark rounded-lg mt-1 shadow-lg suggestion-box">
                 <ul class="max-h-60 overflow-auto">
                     <li *ngFor="let suggestion of suggestions"
                         class="cursor-pointer p-3 px-5 text-white hover:bg-darkgrey rounded-xl border-b border-yellow border-opacity-55">

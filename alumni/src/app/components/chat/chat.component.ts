@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ToasterService } from '../../servies/toaster.service';
 import { AuthService } from '../../servies/auth.service';
 import { FormsModule } from '@angular/forms';
+import { ConvoService } from '../../servies/convo.service';
 
 @Component({
   selector: 'app-chat',
@@ -17,6 +18,7 @@ export class ChatComponent implements OnInit {
   authService = inject(AuthService);
   messageService = inject(MessageService);
   toasterService = inject(ToasterService);
+  convoService=inject(ConvoService);
   cdr = inject(ChangeDetectorRef);
   Convo!: Convo;
   messages: Message[] = [];
@@ -30,22 +32,44 @@ export class ChatComponent implements OnInit {
     });
 
     this.messageService.ConvoDetail$.subscribe({
-      next: (value) => {
-        this.Convo = value;
-        if (this.Convo._id !== '') {
-          this.messageService.getMessages(this.Convo._id, this.id).subscribe({
-            next: (value) => {
-              this.messages = value.data;
-              this.scrollToBottom();
-            },
-            error: (err) => {
-              this.toasterService.addToast('error', 'Error1', err.message, 5000);
-            }
-          });
-        }
+    next: (value) => {
+      this.Convo = value;
+      if (this.Convo._id) {
+        this.messageService.joinChat(this.Convo._id);
+        this.messageService.getMessages(this.Convo._id, this.id).subscribe({
+          next: (value) => {
+            this.messages = value.data;
+            this.scrollToBottom();
+          },
+          error: (err) => {
+            this.toasterService.addToast('error', 'Error1', err.message, 5000);
+          }
+        });
       }
+    }
     });
-  }
+    this.messageService.receiveMessage().subscribe((message: Message) => {
+      if(message.sender._id!==this.id){
+        this.messageService.changeIsRead(message);
+      }
+      this.messages.push(message);
+    });
+    this.messageService.messageIsSeen().subscribe((message:Message)=>{
+      const messageIndex = this.messages.findIndex((data) => data._id === message._id);
+      if (messageIndex !== -1) {
+        this.messages[messageIndex] = message;
+      }
+    })
+    this.messageService.messagesIsSeen().subscribe((updatedMessages: Message[]) => {
+       updatedMessages.forEach(updatedMessage => {
+        const index = this.messages.findIndex(message => message._id === updatedMessage._id);
+
+        if (index !== -1) {
+            this.messages[index] = updatedMessage;
+        }
+    });
+    });
+    }
 
   getDisplayDate(date: string | Date): string {
     this.scrollToBottom();
@@ -67,7 +91,7 @@ export class ChatComponent implements OnInit {
     } else if (isYesterday) {
       return 'Yesterday';
     } else {
-      return messageDate.toLocaleDateString(); // Customize date format as needed
+      return messageDate.toLocaleDateString();
     }
   }
 
@@ -91,12 +115,11 @@ export class ChatComponent implements OnInit {
       };
       this.messageService.sendMessage(send).subscribe({
         next: (value) => {
-          console.log(value.data);
-          this.messages.push(value.data);
+          this.messageService.sendMessageSocket(this.Convo._id,value);
           this.scrollToBottom();
         },
         error: (err) => {
-          this.toasterService.addToast('error', 'Error1', err.message, 5000);
+          this.toasterService.addToast('error', 'Error1', err.error.message, 5000);
         }
       });
       this.message = '';

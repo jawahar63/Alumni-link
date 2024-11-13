@@ -25,10 +25,6 @@ const messageSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  isReceive:{
-    type: Boolean,
-    default: false,
-  }
 });
 
 export default mongoose.model("Message", messageSchema);

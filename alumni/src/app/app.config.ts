@@ -7,6 +7,7 @@ import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx
 import {} from 'dotenv/config';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 import { authInterceptor } from './interceptor/auth.interceptor';
+import { environment } from '../../src/environments/environment.development';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes),provideHttpClient(withInterceptors([authInterceptor])),
@@ -18,7 +19,7 @@ export const appConfig: ApplicationConfig = {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              "602870869710-togr2eqba3g3flr3hmm00i649mup3rd7.apps.googleusercontent.com",{
+              environment.google_api,{
                 oneTapEnabled:false,
                 prompt:'consent'
               }

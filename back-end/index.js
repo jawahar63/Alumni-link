@@ -21,6 +21,7 @@ import event from './models/event.js';
 const app=express();
 const server =http.createServer(app);
 const io = new Server(server,{
+    pingTimeout:60000,
     cors:{
         origin:[
             'http://localhost:4200',
@@ -79,6 +80,19 @@ io.on('connection',(socket)=>{
     console.log('user Connected',socket.id);
     socket.on('message',(msg)=>{
         io.emit('message',msg);
+    })
+    socket.on('joinChat', (room) => {
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+    });
+
+    socket.on('sendMessage', (messageData) => {
+        const { room, message } = messageData;
+    });
+    socket.on('changeIsRead',(messageData)=>{
+        const { room, message } = messageData;
+        message.isRead=true
+        io.to(room).emit('isRead', message);
     })
     socket.on('disconnect', () => {
     console.log('user disconnected');

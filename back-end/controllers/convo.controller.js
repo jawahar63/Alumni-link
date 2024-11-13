@@ -4,6 +4,7 @@ import User from '../models/user.js';
 import { CreateSuccess } from '../utils/success.js';
 import convo from '../models/convo.js';
 import message from '../models/message.js';
+import {io} from "../index.js";
 
 export const createConvo = async (req, res, next) => {
     try {
@@ -130,11 +131,6 @@ export const getConvo = async (req, res, next) => {
         sender: { $ne: userId },
         isRead: false
       });
-      await message.updateMany(
-        { conversationId: convo._id, sender: { $ne: userId } },
-        { $set: { isReceive: true } }
-      );
-
       return {
         _id: convo._id,
         participant: formattedParticipants[0],
@@ -206,4 +202,72 @@ export const search = async (req, res, next) => {
         return next(CreateError(500, error.message || "Internal Server Error"));
     }
 }
+export const getOrCreateConvo = async (req, res, next) => {
+    try {
+        const { participants } = req.body;
+
+        if (participants.length !== 2) {
+            return next(CreateError(400, 'Exactly 2 participants are required'));
+        }
+
+        let conversation = await convo.findOne({
+            participants: { $all: participants, $size: 2 }
+        }).populate({
+            path: 'participants',
+            select: 'firstName lastName username email profileImage roles batch domain company',
+            populate: { path: 'roles', select: 'role' }
+        });
+
+        if (conversation) {
+            const userId = participants[1].toString();
+            const filteredParticipants = conversation.participants.filter(
+                participant => participant._id.toString() !== userId
+            );
+
+            const formattedParticipants = filteredParticipants.map(participant => {
+                const isAlumni = participant.roles.some(role => role.role === 'alumni');
+                return isAlumni
+                    ? {
+                          _id: participant._id,
+                          username: participant.username,
+                          email: participant.email,
+                          profileImage: participant.profileImage,
+                          batch: participant.batch || null,
+                          domain: participant.domain || null,
+                          company: participant.company || null
+                      }
+                    : {
+                          _id: participant._id,
+                          username: participant.username,
+                          email: participant.email,
+                          profileImage: participant.profileImage
+                      };
+            });
+
+            const unreadMessageCount = await message.countDocuments({
+                conversationId: conversation._id,
+                sender: { $ne: userId },
+                isRead: false
+            });
+
+            const returnConvo = {
+                _id: conversation._id,
+                participant: formattedParticipants[0],
+                lastMessage: conversation.lastMessage,
+                lastMessageAt: conversation.lastMessageAt,
+                createdAt: conversation.createdAt,
+                unreadMessageCount
+            };
+
+            return next(CreateSuccess(200, 'Conversation already exists', returnConvo));
+        } else {
+            // Conversation doesn't exist, so we create one
+            req.body.participants = participants;  // Ensure participants are in the request body
+            return createConvo(req, res, next);     // Call the createConvo function
+        }
+    } catch (error) {
+        return next(CreateError(500, error.message || 'Internal Server Error'));
+    }
+};
+
 

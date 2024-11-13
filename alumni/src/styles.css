@@ -4,23 +4,31 @@
 
 @layer base {
 
+:root {
+        --scrollbar-thumb-color: #2A323C;
+        --scrollbar-thumb-hover-color: #1D232A;
+    }
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
 
     ::-webkit-scrollbar-track {
-        background-color: #1D232A;
+        background-color: transparent;
         border-radius: 9999px;
         margin: 2px;
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #2A323C;
+        background-color: var(--scrollbar-thumb-color);
         border-radius: 9999px;
-        border: 2px solid #1D232A;
+        border: 2px solid transparent;
+        transition: background-color 0.3s ease;
     }
 
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--scrollbar-thumb-hover-color);
+    }
 
 }
 

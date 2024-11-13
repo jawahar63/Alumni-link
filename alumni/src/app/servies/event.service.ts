@@ -68,10 +68,6 @@ export class EventService {
       headers:this.header
     })
   }
-
-
-
-  //Socket
   public onCreate() {
     return new Observable<Event>(observer => {
       this.socket.on('newEvent', (event:Event) => {

@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, HostListener, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { AuthService } from '../../servies/auth.service';
 import { routes } from '../../app.routes';
 import { Router, RouterModule } from '@angular/router';
@@ -17,12 +17,11 @@ import { debounceTime, switchMap } from 'rxjs';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [SideBarComponent,MatIconModule,CommonModule,RouterModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule,RouterModule,FormsModule,ReactiveFormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent implements OnInit {
-  
+export class HeaderComponent implements OnInit {  
   sanitizer=inject(DomSanitizer);
   authservice=inject(AuthService);
   profileservice=inject(ProfileService);
@@ -67,7 +66,7 @@ export class HeaderComponent implements OnInit {
     window.addEventListener('resize',()=>{
       this.checkScreenWidth();
     })
-
+    this.searchTermControl.untouched
     this.searchTermControl.valueChanges.pipe(
       debounceTime(300),
       switchMap(searchTerm => {
@@ -138,5 +137,15 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['profile/'+id]);
     this.searchTermControl.setValue('');
     this.suggestions = [];
+  }
+
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const isClickInside = target.closest('.suggestion-box') || target.closest('.search-input');
+    if (!isClickInside) {
+      this.suggestions = []; // Clear suggestions if click is outside
+    }
   }
 }

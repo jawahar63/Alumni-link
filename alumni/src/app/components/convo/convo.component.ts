@@ -54,10 +54,25 @@ export class ConvoComponent implements OnInit {
         this.toasterService.addToast('error','Error1',error.message,5000);
       }
     );
+
+    this.convoService.changeConvoDetail().subscribe((convo:Convo)=>{
+      const convoIndex = this.datas.findIndex((data) => data._id === convo._id);
+      if (convoIndex !== -1) {
+        this.datas[convoIndex] = convo;
+      }
+    })
   }
   @HostListener('window:resize',['$event'])
   onResize(event: Event): void {
     this.width=window.innerWidth;
+  }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const isClickInside = target.closest('.suggestion-box') || target.closest('.search-input');
+    if (!isClickInside) {
+      this.suggestions = []; // Clear suggestions if click is outside
+    }
   }
   searchbar(){
     this.showSearch=!this.showSearch

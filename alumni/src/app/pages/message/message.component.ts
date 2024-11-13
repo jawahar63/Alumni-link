@@ -14,7 +14,7 @@ import { Convo } from '../../models/convo.model';
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [HeaderComponent, SideBarComponent, CommonModule, FormsModule, ChatComponent, ConvoComponent],
+  imports: [ CommonModule, FormsModule, ChatComponent, ConvoComponent],
   templateUrl: './message.component.html',
   styleUrl: './message.component.css'
 })
