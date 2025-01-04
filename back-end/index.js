@@ -58,8 +58,9 @@ app.use('/api/event',eventRoute);
 app.use('/api/search',searchRoute);
 app.use('/api/convo',convoRoute);
 app.use('/api/message',messageRoute);
-app.get('/api/test', (req, res) => {
-    res.json({ message: 'API is working!' });
+app.get('/', (req, res) => {
+    res.json({ message: 'hi' });
+    res.redirect('https://alumni-link-bit.vercel.app/')
 });
 app.use((obj,req,res,next)=>{
     const statusCode =obj.status||500;
