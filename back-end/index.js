@@ -16,6 +16,7 @@ import path from "path";
 import http from 'http';
 import {Server} from 'socket.io';
 import event from './models/event.js';
+import { connectDB } from './utils/db.js';
 
 
 const app=express();
@@ -108,6 +109,7 @@ io.on('connection',(socket)=>{
 export { io, server };
 
 server.listen(4000,'0.0.0.0',()=>{
-    mongoDb();
+    // mongoDb();
+    connectDB();
     console.log("Connected");
 })

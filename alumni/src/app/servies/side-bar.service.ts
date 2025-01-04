@@ -11,9 +11,7 @@ export class SideBarService {
 
   currPage = new BehaviorSubject<string>("home");
 
-  // Method to watch the route and change page
   startRouteMonitoring() {
-    // Subscribe to router events (on page load and navigation)
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -21,7 +19,6 @@ export class SideBarService {
         this.changePageBasedOnRoute(url);
       });
 
-    // Optionally handle the initial route
     const currentUrl = this.router.url;
     this.changePageBasedOnRoute(currentUrl);
   }

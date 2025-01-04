@@ -10,7 +10,7 @@ import { MessageService } from '../../servies/message.service';
 @Component({
   selector: 'app-bottom-nav-bar',
   standalone: true,
-  imports: [CommonModule,MatIcon],
+  imports: [CommonModule],
   templateUrl: './bottom-nav-bar.component.html',
   styleUrl: './bottom-nav-bar.component.css'
 })

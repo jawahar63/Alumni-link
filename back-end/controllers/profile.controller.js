@@ -4,6 +4,7 @@ import sharp from "sharp"
 import User from "../models/user.js";
 import { CreateError } from "../utils/error.js"
 import { CreateSuccess } from "../utils/success.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const __dirname = path.resolve();
 export const viewprofile =async (req,res,next)=>{
@@ -11,6 +12,8 @@ export const viewprofile =async (req,res,next)=>{
         const user= await User.findById(req.params.id);
         if(!user)
             return next(CreateError(404,"user not found"));
+
+
         return next(CreateSuccess(200,user));
     } catch (error) {
         return next(CreateError(500, "Something went wrong"));
@@ -51,29 +54,31 @@ export const updateProfileImg = async (req, res, next) => {
     if (!user) {
       return next(CreateError(404, "User not found"));
     }
+
+    // Delete old profile image from Cloudinary if it exists
     if (user.profileImage) {
-      const oldImagePath = path.join(__dirname, 'uploads', 'dp', path.basename(user.profileImage));
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
+      const publicId = user.profileImage.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`uploads/dp/${publicId}`, {
+        resource_type: 'image',
+      });
     }
-    const filePath = `uploads/dp/${req.params.id}.jpg`;
-    const fullPath = path.join(__dirname, filePath);
-    const BASE_URL = process.env.BASE_URL;
-    const imageUrl = `${BASE_URL}${filePath}`;
 
-    await sharp(req.file.path)
-      .resize({ width: 300, height: 300, fit: sharp.fit.cover }) 
-      .jpeg({ quality: 90 })
-      .toFile(fullPath);
+    // Upload new image to Cloudinary using file buffer
+    const result = await cloudinary.uploader.upload(`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`, {
+      folder: 'uploads/dp',
+      public_id: req.params.id,
+      overwrite: true,
+      transformation: [{ width: 300, height: 300, crop: 'fill' }],
+    });
 
-    user.profileImage = imageUrl;
+    // Update the user's profile image URL
+    user.profileImage = result.secure_url;
     await user.save();
-    
 
-    res.status(200).json({ imageUrl });
+    // Respond with the new image URL
+    res.status(200).json({ imageUrl: result.secure_url });
   } catch (error) {
-    console.error(error);
-    return next(CreateError(500, "Something went wrong"));
+    console.error("Error uploading to Cloudinary:", error);
+    return next(CreateError(500, "Failed to upload image to Cloudinary"));
   }
 };

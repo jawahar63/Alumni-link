@@ -11,78 +11,50 @@ import sharp from "sharp"
 import mongoose from "mongoose";
 import {io} from "../index.js";
 import { populate } from "dotenv";
-
-const __dirname = path.resolve();
-const upload = multer({ dest: 'uploads/post/' });
-const uploadsDir = path.join(__dirname, 'uploads', 'post');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-const { promises: fsPromises } = fs;
+import cloudinary from '../utils/cloudinary.js';
 
 export const createPost = async (req, res, next) => {
-    try {
+  try {
+    const { author, caption, tags, location } = req.body;
 
-        const { author, caption, tags, location } = req.body;
-        const user = await User.findById(author).populate('username email batch domain company profileImage')
-        if (!user) {
-            return next(CreateError(404, "User not found"));
-        }
+    const user = await User.findById(author).populate(
+      'username email batch domain company profileImage'
+    );
+    if (!user) {
+      return next(CreateError(404, 'User not found'));
+    }
 
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: 'No files uploaded' });
-        }
-
-        let mediaFiles = await Promise.all(req.files.map(async (file) => {
-            if (!file.path) {
-                console.error('File path is undefined:', file);
-                throw new Error('File path is undefined');
-            }
-
-            const uniqueName = `${uuidv4()}-${path.basename(file.originalname)}`;
-            const outputPath = path.join(uploadsDir, uniqueName);
-
-            if (!fs.existsSync(file.path)) {
-                console.error(`File not found: ${file.path}`);
-                throw new Error(`File not found: ${file.path}`);
-            }
-
-            // Crop the image to a 4:5 aspect ratio using Sharp
-            await sharp(file.path)
-                .resize({
-                    width: 1000,
-                    height: 1000,
-                    fit: sharp.fit.cover,
-                    position: sharp.strategy.entropy
-                })
-                .toFile(outputPath);
-
-            // await fsPromises.unlink(file.path); // Use promises for unlinking
-            return { type: 'image', url: `uploads/post/${uniqueName}` };
-        }));
-
-        // Handle tags
-        const tagsArray = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : []);
-        const newPost = new Post({
-            author,
-            media: mediaFiles,
-            caption,
-            tags: tagsArray,
-            location
+    // Upload files to Cloudinary
+    const mediaFiles = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'post_media',
         });
+        mediaFiles.push({
+          type: 'image', // Adjust for other types later
+          url: result.secure_url,
+        });
+        fs.unlinkSync(file.path); // Remove the file from local storage after upload
+      }
+    }
 
-        await newPost.save();
-        const BASE_URL = process.env.BASE_URL;
+    // Handle tags
+    const tagsArray = Array.isArray(tags)
+      ? tags
+      : typeof tags === 'string'
+      ? tags.split(',').map((tag) => tag.trim())
+      : [];
 
-        const postWithFullUrls = {
-            ...newPost.toObject(),
-            author:user,
-            media: newPost.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        };
-        io.emit('newPost',postWithFullUrls);
+    const newPost = new Post({
+      author,
+      media: mediaFiles,
+      caption,
+      tags: tagsArray,
+      location,
+    });
+    await newPost.save();
+        io.emit('newPost',newPost);
         next(CreateSuccess(200, "Post created successfully"));
     } catch (error) {
         console.log(error);
@@ -91,69 +63,61 @@ export const createPost = async (req, res, next) => {
 };
 
 export const updatePost = async (req, res, next) => {
-    try {
-        const { postId } = req.params;
-        const { author, caption, tags, location, existingMedia } = req.body;
-        const user = await User.findById(author).populate('username email batch domain company profileImage');
-        if (!user) {
-            return next(CreateError(404, "User not found"));
-        }
+  try {
+    const { postId } = req.params;
+    const { author, caption, tags, location, existingMedia } = req.body;
 
-        // Get the post by ID
-        const post = await Post.findById(postId);
-        if (!post) {
-            return next(CreateError(404, "Post not found"));
-        }
+    // Verify author existence
+    const user = await User.findById(author).populate(
+      'username email batch domain company profileImage'
+    );
+    if (!user) {
+      return next(CreateError(404, 'User not found'));
+    }
 
-        if (!post.author.equals(new mongoose.Types.ObjectId(author))) {
-            return next(CreateError(403, "Unauthorized to update this post"));
-        }
+    // Get the post by ID
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(CreateError(404, 'Post not found'));
+    }
 
-        // Handle new media files (if any)
-        let mediaFiles = post.media || []; // Retain existing media if not removed
-        if (req.files && req.files.length > 0) {
-            const newMedia = await Promise.all(req.files.map(async (file) => {
-                const uniqueName = `${uuidv4()}-${path.basename(file.originalname)}`;
-                const outputPath = path.join(uploadsDir, uniqueName);
+    if (!post.author.equals(author)) {
+      return next(CreateError(403, 'Unauthorized to update this post'));
+    }
 
-                // Crop the image to a 4:5 aspect ratio using Sharp
-                await sharp(file.path)
-                    .resize({
-                        width: 1000, // 4:5 ratio (800x1000)
-                        height: 1000,
-                        fit: sharp.fit.cover,
-                        position: sharp.strategy.entropy
-                    })
-                    .toFile(outputPath);
-                    
-                return { type: 'image', url: `uploads/post/${uniqueName}` };
-            }));
-            mediaFiles = mediaFiles.concat(newMedia); // Append new images to existing media
-        }
+    // Handle new media files (if any)
+    let mediaFiles = post.media || [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'post_media',
+        });
+        mediaFiles.push({
+          type: 'image',
+          url: result.secure_url,
+        });
+        fs.unlinkSync(file.path); // Remove the file from local storage after upload
+      }
+    }
 
-        // Handle media removal from the database (without deleting the actual files)
-        if (existingMedia && Array.isArray(existingMedia)) {
-            mediaFiles = mediaFiles.filter(media => existingMedia.includes(media.url));
-        }
+    // Handle media removal from the database (without deleting Cloudinary files)
+    if (existingMedia && Array.isArray(existingMedia)) {
+      mediaFiles = mediaFiles.filter((media) => existingMedia.includes(media.url));
+    }
 
-        // Update post fields
-        post.caption = caption || post.caption;
-        const tagsArray = Array.isArray(tags) ? tags : (typeof tags === 'string' ? tags.split(',').map(tag => tag.trim()) : []);
-        post.location = location || post.location;
-        post.media = mediaFiles;
+    // Update post fields
+    post.caption = caption || post.caption;
+    post.tags = Array.isArray(tags)
+      ? tags
+      : typeof tags === 'string'
+      ? tags.split(',').map((tag) => tag.trim())
+      : post.tags;
+    post.location = location || post.location;
+    post.media = mediaFiles;
 
-        // Save updated post
+    // Save updated post
         await post.save();
-        const BASE_URL = process.env.BASE_URL;
-        const postWithFullUrls = {
-            ...post.toObject(),
-            author:user,
-            media: post.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        };
-        io.emit('editPost',{postId,post:postWithFullUrls});
+        io.emit('editPost',{postId,post});
         return next(CreateSuccess(200, "Post updated successfully"));
     } catch (error) {
         console.error(error);
@@ -183,22 +147,8 @@ export const getPostById = async (req, res, next) => {
             return next(CreateError(404, "Post not found"));
         }
 
-        // Get the base URL from environment variables
-        const BASE_URL = process.env.BASE_URL;
-        if (!BASE_URL) {
-            return next(CreateError(500, "BASE_URL is not defined"));
-        }
 
-        // Construct full URLs for media
-        const postWithFullUrls = {
-            ...post.toObject(),
-            media: post.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        };
-
-        return next(CreateSuccess(200, "Post retrieved successfully", postWithFullUrls));
+        return next(CreateSuccess(200, "Post retrieved successfully", post));
     } catch (error) {
         return next(CreateError(500, "Something went wrong"));
     }
@@ -233,27 +183,13 @@ export const getAllPosts = async (req, res, next) => {
 
         const totalPosts = await Post.countDocuments();
 
-        // Get the base URL from environment variables
-        const BASE_URL = process.env.BASE_URL;
-        if (!BASE_URL) {
-            return next(CreateError(500, "BASE_URL is not defined"));
-        }
-
-        // Construct full URLs for media
-        const postsWithFullUrls = posts.map(post => ({
-            ...post.toObject(),
-            media: post.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        }));
 
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts: postsWithFullUrls
+            posts: posts
         });
     } catch (error) {
         console.error(error);
@@ -289,27 +225,13 @@ export const getPostsByAuthor = async (req, res, next) => {
 
         const totalPosts = await Post.countDocuments({ author: authorId });
 
-        // Get the base URL from environment variables
-        const BASE_URL = process.env.BASE_URL;
-        if (!BASE_URL) {
-            return next(CreateError(500, "BASE_URL is not defined"));
-        }
-
-        // Construct full URLs for media
-        const postsWithFullUrls = posts.map(post => ({
-            ...post.toObject(),
-            media: post.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        }));
 
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts: postsWithFullUrls
+            posts: posts
         });
     } catch (error) {
         console.error(error);
@@ -360,27 +282,12 @@ export const filterPosts = async (req, res, next) => {
 
         const totalPosts = await Post.countDocuments(filter);
 
-        // Get the base URL from environment variables
-        const BASE_URL = process.env.BASE_URL;
-        if (!BASE_URL) {
-            return next(CreateError(500, "BASE_URL is not defined"));
-        }
-
-        // Construct full URLs for media
-        const postsWithFullUrls = posts.map(post => ({
-            ...post.toObject(),
-            media: post.media.map(media => ({
-                ...media,
-                url: `${BASE_URL}${media.url}`
-            }))
-        }));
-
         return res.status(200).json({
             success: true,
             page,
             totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
-            posts: postsWithFullUrls
+            posts: posts
         });
     } catch (error) {
         console.error(error);
@@ -633,34 +540,46 @@ export const getLikes = async (req, res, next) => {
     }
 };
 
-const deleteMediaFiles = async (mediaFiles) => {
-    const uploadsDir = path.join(__dirname, '../uploads/post'); // Adjust path as needed
-    for (const media of mediaFiles) {
-        const filePath = path.join(uploadsDir, path.basename(media.url));
-        if (fs.existsSync(filePath)) {
-            await fsPromises.unlink(filePath);
-        }
+const deleteMediaFiles = async (media) => {
+  try {
+    for (const file of media) {
+      const publicId = file.url.split('/').pop().split('.')[0]; // Extract public ID from the URL
+      await cloudinary.uploader.destroy(`post_media/${publicId}`);
     }
+  } catch (error) {
+    console.error("Error deleting media files from Cloudinary:", error);
+    throw new Error("Failed to delete media files");
+  }
 };
 
 export const deletePost = async (req, res, next) => {
-    try {
-        const { postId } = req.params;
-        const post = await Post.findById(postId);
-        if (!post) {
-            return next(CreateError(404, "Post not found"));
-        }
+  try {
+    const { postId } = req.params;
 
-        await deleteMediaFiles(post.media);
-        await Post.findByIdAndDelete(postId);
-
-        io.emit('deletePost',postId);
-
-        return res.status(200).json({
-            success: true,
-            message: "Post deleted successfully"
-        });
-    } catch (error) {
-        return next(CreateError(500, "Something went wrong"));
+    // Find the post
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(CreateError(404, "Post not found"));
     }
+
+    // Delete media files from Cloudinary
+    if (post.media && post.media.length > 0) {
+      await deleteMediaFiles(post.media);
+    }
+
+    // Delete the post from the database
+    await Post.findByIdAndDelete(postId);
+
+    // Emit the deletion event to connected clients
+    io.emit('deletePost', postId);
+
+    // Respond with success
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    return next(CreateError(500, "Something went wrong"));
+  }
 };

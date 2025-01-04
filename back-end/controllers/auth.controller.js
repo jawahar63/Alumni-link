@@ -35,6 +35,8 @@ export const login = async (req, res, next) => {
         const user = await User.findOne({ email: req.body.email }).populate("roles", "role");
         
         if (!user) {
+            const users = await Role.find()
+            console.log(users);
             return next(CreateError(404, "User not found"));
         }
         
