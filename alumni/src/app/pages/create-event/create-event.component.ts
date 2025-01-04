@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-create-event',
   standalone: true,
-  imports: [TableComponent,ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './create-event.component.html',
   styleUrl: './create-event.component.css'
 })

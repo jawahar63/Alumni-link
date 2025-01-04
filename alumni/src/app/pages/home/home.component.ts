@@ -15,7 +15,7 @@ import { ToasterService } from '../../servies/toaster.service';
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
-    imports: [HeaderComponent,SideBarComponent,PostTempComponent,CommonModule]
+    imports: [PostTempComponent,CommonModule]
 })
 export class HomeComponent implements OnInit {
     posts: Post[] = [];

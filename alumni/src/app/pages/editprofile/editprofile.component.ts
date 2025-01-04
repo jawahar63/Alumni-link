@@ -13,7 +13,7 @@ import { ToasterService } from '../../servies/toaster.service';
 @Component({
   selector: 'app-editprofile',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, ImageCropperComponent,NgOptimizedImage],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule,NgOptimizedImage],
   templateUrl: './editprofile.component.html',
   styleUrls: ['./editprofile.component.css']
 })

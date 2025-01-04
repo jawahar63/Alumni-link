@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-edit-event',
   standalone: true,
-  imports: [TableComponent,ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './edit-event.component.html',
   styleUrl: './edit-event.component.css'
 })

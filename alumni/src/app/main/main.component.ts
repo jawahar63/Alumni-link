@@ -16,7 +16,7 @@ import { SocialAuthService } from '@abacritt/angularx-social-login';
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule, ToasterComponent, ProfileComponent,BottomNavBarComponent,TableComponent],
+  imports: [HeaderComponent, SideBarComponent, RouterOutlet, CommonModule, ToasterComponent, BottomNavBarComponent],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'] // Corrected styleUrl to styleUrls
 })
