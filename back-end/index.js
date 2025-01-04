@@ -24,9 +24,7 @@ const server =http.createServer(app);
 const io = new Server(server,{
     pingTimeout:60000,
     cors:{
-        origin:[
-            'http://localhost:4200',
-        ],
+        origin:process.env.LIVE_URL,
         credentials: true 
     }
 
@@ -37,10 +35,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     // origin:'**',
-    origin: [
-        'http://localhost:4200',
-        'http://192.168.137.1:4200',
-    ],
+    origin: process.env.LIVE_URL,
     credentials: true
 }));
 const mongoDb= async()=>{
