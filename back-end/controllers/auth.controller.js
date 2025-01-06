@@ -181,6 +181,7 @@ export const googleLogin = async(req,res,next)=>{
             return next(CreateError(404,"user not found"));
         }
         const {roles}=user;
+        let token='';
         if(user.roles[0].role!=='alumni'){
             token = jwt.sign(
                 { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,email:user.email},
