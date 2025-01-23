@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     // origin:'**',
-    origin: process.env.LIVE_URL,
+    origin: [process.env.LIVE_URL,"http://10.40.36.209:4200"],
     credentials: true
 }));
 const mongoDb= async()=>{

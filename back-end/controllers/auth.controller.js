@@ -181,6 +181,7 @@ export const googleLogin = async(req,res,next)=>{
             return next(CreateError(404,"user not found"));
         }
         const {roles}=user;
+        let token='';
         if(user.roles[0].role!=='alumni'){
             token = jwt.sign(
                 { id: user._id, isAdmin: user.isAdmin, roles: user.roles,username:user.username,profileImage:user.profileImage,email:user.email},
@@ -201,7 +202,7 @@ export const googleLogin = async(req,res,next)=>{
         })
         // return next(CreateSuccess(200,"login Seccess!"));
     } catch (error) {
-        return next(CreateError(500,"Something went wrong"));
+        return next(CreateError(500,error.message));
     }
 }
 export const getData =async(req,res,next)=>{
