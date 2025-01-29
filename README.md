@@ -12,6 +12,16 @@
 - 🔍 **Search & Filters**: Find alumni based on domain, batch, or company.
 - 📜 **Posts & Updates**: Share experiences and insights.
 
+
+## live URL
+
+[Visit the website](https://alumni-link-bit.vercel.app/)
+
+username : test@email.com
+pass : test
+
+It will be slow due to free version of deployment website
+
 ## 🛠 Tech Stack
 - **Frontend**: Angular, Tailwind CSS
 - **Backend**: Node.js, Express.js
