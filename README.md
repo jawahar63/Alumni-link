@@ -27,7 +27,7 @@ Ensure you have the following installed:
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/your-username/alumni-link.git
+git clone https://github.com/jawahar63/alumni-link.git
 cd alumni-link
 ```
 
