@@ -2,22 +2,25 @@ import jwt from 'jsonwebtoken';
 import { CreateError } from '../utils/error.js';
 import { PDFArrayIsNotRectangleError } from 'pdf-lib';
 
-export const verifyToken = (req, res, next) => {
-    const token = req.cookies.access_token || req.headers['authorization']?.split(' ')[1];
-    if (!token) {
-        return next(CreateError(401, "You are not authenticated"));
-    }  
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            if (err.name === 'TokenExpiredError') {
-                return next(CreateError(403, "Token has expired"));
-            }
-            return next(CreateError(403, "Token is not valid"));
+const verifyAsync = promisify(jwt.verify);
+
+export const verifyToken = async (req, res, next) => {
+    try {
+        const token = req.cookies.access_token || req.headers['authorization']?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ message: "You are not authenticated" });
         }
-        
+
+        const user = await verifyAsync(token, process.env.JWT_SECRET);
         req.user = user;
         next();
-    });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(403).json({ message: "Token has expired" });
+        }
+        return res.status(403).json({ message: "Token is not valid" });
+    }
 };
 export const verifyUser =(req,res,next)=>{
     verifyToken(req,res,()=>{
