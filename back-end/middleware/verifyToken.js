@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { CreateError } from '../utils/error.js';
 import { PDFArrayIsNotRectangleError } from 'pdf-lib';
+import { promisify } from 'util';
 
 const verifyAsync = promisify(jwt.verify);
 
