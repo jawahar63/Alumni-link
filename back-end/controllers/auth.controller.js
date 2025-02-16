@@ -114,26 +114,30 @@ export const sendEmail= async(req,res,next)=>{
         service:"gmail",
         auth:{
             user:"d.jawahar6382@gmail.com",
-            pass:"auvgeuuoolvjstjr"
+            pass:process.env.GMAIL_PASSWORD
         }
     });
     let mailDetails={
-        form:"d.jawahar6382@gmail.com",
+        from:"d.jawahar6382@gmail.com",
         to:email,
         subject:"Reset Password link",
         html:`
         <html>
         <head>
-        <title>Password reset Request<title>
+        <title>Password reset Request</title>
         </head>
         <body>
         <h1>Password reset Request</h1>
         <p>Dear ${user.username} </p>
         <p>We have receiced a request to reset your password for your account. To complete the password reset process, please click on the button</p>
-        <a>href=${process.env.LIVE_URL}/reset/${token}<button style="background-color: #EDAE2F;color:white; padding:14px 20px;border:none;cursor:pointer;border-radius:4px" >Reset Password</button></a>
+        <a href="${process.env.LIVE_URL}/reset/${token}" style="text-decoration: none;">
+            <button style="background-color: #EDAE2F; color: white; padding: 14px 20px; border: none; cursor: pointer; border-radius: 4px;">
+                Reset Password
+            </button>
+        </a>
         <p>PLease note that this link is only valid for 5 mins. If you didn't request a password reset, please ignored it</p>
         <p>Thank you</p>
-        <p>Alumni Connect</p>
+        <p>Alumni Link</p>
         <body>
         </html>`,
     };
@@ -148,13 +152,17 @@ export const sendEmail= async(req,res,next)=>{
     })
 };
 export const reset=(req,res,next)=>{
-    const token =res.body.token;
-    const newPassword =res.body.password;
+    
+    const token =req.body.token;
+    const newPassword =req.body.password;
 
     jwt.verify(token,process.env.JWT_SECRET,async(err,data)=>{
+        
         if(err){
-            return CreateError(500,"Reset link is Expired!")
+            console.log(1);
+            return next(CreateError(500,"Reset link is Expired!"))
         }else{
+            
             const response =data;
             const user=await User.findOne({email:{$regex:'^'+response.email+"$",$options:'i'}});
             const salt =await bcrypt.genSalt(8);
